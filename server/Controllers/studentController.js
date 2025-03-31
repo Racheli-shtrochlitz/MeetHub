@@ -59,7 +59,7 @@ const deleteStudent = async (req, res) => {
             .populate('lessons')
             .populate('user');
         if (!student)
-            res.send("Student not found").status(404);
+            res.status(404).send("Student not found");
         else
             res.status(200).send(student + "deleted successfully!!!");
     }

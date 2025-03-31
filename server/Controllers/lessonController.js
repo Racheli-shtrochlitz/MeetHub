@@ -1,7 +1,12 @@
 const Lesson = require('../Models/lesson');
-const Student = require('../Models/student');
-const Teacher = require('../Models/teacher');
-const Material = require('../Models/material');
+
+const checkRole=(req,res,next)=>{
+    const {role}=req.user;
+    if(role!='teacher'){
+        return res.status(403).json({message:"Access denied"});
+    }
+    next();
+}
 
 const getLesson = async (req, res) => {
     const { id } = req.params;
@@ -11,7 +16,7 @@ const getLesson = async (req, res) => {
             .populate('student')
             .populate('materials');
         if (!lesson) {
-            res.send("Lesson not found").status(404);
+            res.status(404).send("Lesson not found");
         }
         else
             res.status(200).send(lesson);
@@ -24,20 +29,24 @@ const getLesson = async (req, res) => {
 const addLesson = async (req, res) => {
     const { lesson } = req.body;
     try {
-        const newLesson = (await Lesson.create(lesson))
+        const newLesson = await Lesson.create(lesson);
+        
+        const populatedLesson = await Lesson.findById(newLesson._id)
             .populate('teacher')
             .populate('student')
-            .populate('materials');;
-        if (!newLesson) {
-            res.send("Probably you didnt sent correctly data...").status(404);
+            .populate('materials');
+
+        if (!populatedLesson) {
+            return res.status(404).send("Probably you didn't send correct data...");
         }
-        else
-            res.status(201).send(newLesson);
+
+        res.status(201).send(populatedLesson);
     } catch (err) {
         console.error(err.message);
         res.status(500).send("Internal server error");
     }
 };
+
 
 const updateLesson = async (req, res) => {
     const { id } = req.params;
@@ -48,7 +57,7 @@ const updateLesson = async (req, res) => {
             .populate('student')
             .populate('materials');
         if (!newLesson)
-            res.send("Lesson not found").status(404);
+            res.status(404).send("Lesson not found");
         else
             res.status(200).send(newLesson);
     }
@@ -66,7 +75,7 @@ const deleteLesson = async (req, res) => {
             .populate('student')
             .populate('materials');
         if (!lesson)
-            res.send("Lesson not found").status(404);
+            res.status(404).send("Lesson not found");
         else
             res.status(200).send(lesson + "deleted successfully!!!");
     }
@@ -96,6 +105,7 @@ const getAllLessons = async (req, res) => {
 }
 
 module.exports = {
+    checkRole,
     getLesson,
     addLesson,
     updateLesson,
