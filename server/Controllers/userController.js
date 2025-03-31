@@ -1,6 +1,8 @@
 const User = require('../Models/user');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const {createTeacher}=require('./teacherController');
+const {createStudent}=require('./studentController');
 
 
 
@@ -37,12 +39,22 @@ const signUp=async(req,res)=>{
             name,
             email,
             password:await bcrypt.hash(password,10),//hashing the password
-            role,
-            createdAt
+            role
         });
         await newUser.save();
         const token=jwt.sign({id:newUser._id,role:newUser.role},process.env.SECRET_TOKEN,{ expiresIn: '1h' });
-        return res.status(201).json({token});
+
+        // הוספת ה-ID של המשתמש החדש לגוף הבקשה
+        req.body._id = newUser._id;
+
+        // טיפול ביצירת ישות מתאימה לפי התפקיד
+        if (role === 'teacher') {
+            return createTeacher(token, req, res);
+        } else if (role === 'student') {
+            return createStudent(token, req, res);
+        } else {
+            return res.status(400).json({ message: "Invalid role" });
+        }
     }
     catch(err){
         console.error(err.message);

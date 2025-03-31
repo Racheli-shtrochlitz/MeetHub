@@ -17,20 +17,21 @@ const getStudent = async (req, res) => {
     }
 };
 
-const addStudent = async (req, res) => {
-    const { student } = req.body;
+const createStudent = async (token, req, res) => {
     try {
-        const newStudent = await Student.create(student)
+        const newStudent = await Student.create({
+            user: req.body._id, 
+            lessons: req.body.lessons || [] , 
+        });
+
+        const populatedStudent = await Student.findById(newStudent._id)
             .populate('lessons')
             .populate('user');
-        if (!newStudent) {
-            res.send("Probably you didn't send correct data...").status(404);
-        }
-        else
-            res.status(201).send(newStudent);
+
+        return res.status(201).json({ token, student: populatedStudent });
     } catch (err) {
         console.error(err.message);
-        res.status(500).send("Internal server error");
+        res.status(500).json({ message: "Internal server error" });
     }
 };
 
@@ -88,7 +89,7 @@ const getAllStudents = async (req, res) => {
 
 module.exports = {
     getStudent,
-    addStudent,
+    createStudent,
     updateStudent,
     deleteStudent,
     getAllStudents

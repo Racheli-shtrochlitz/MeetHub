@@ -18,21 +18,20 @@ const getTeacher = async (req, res) => {
     }
 };
 
-const addTeacher = async (req, res) => {
+const createTeacher = async (req, res) => {
     const { teacher } = req.body;
+    teacher.user = req.body._id;
     try {
-        const newTeacher = await Teacher.create(teacher)
-            .populate('students')
-            .populate('lessons')
-            .populate('user');
+        const newTeacher = await Teacher.create(teacher);
+        await newTeacher.populate('students').populate('lessons').populate('user');
         if (!newTeacher) {
-            res.send("Probably you didnt sent correctly data...").status(404);
+            return res.status(404).json({ message: "Probably you didn't send correct data..." });
         }
         else
-            res.status(201).send(newTeacher);
+        return res.status(201).json(newTeacher);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send("Internal server error");
+        return res.status(500).json({ message: "Internal server error", error: err.message });
     }
 };
 
@@ -93,7 +92,7 @@ const getAllTeachers = async (req, res) => {
 
 module.exports = {
     getTeacher,
-    addTeacher,
+    createTeacher,
     updateTeacher,
     deleteTeacher,
     getAllTeachers
