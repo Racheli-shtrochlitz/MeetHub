@@ -1,12 +1,5 @@
 const Lesson = require('../Models/lesson');
 
-const checkRole=(req,res,next)=>{
-    const {role}=req.user;
-    if(role!='teacher'){
-        return res.status(403).json({message:"Access denied"});
-    }
-    next();
-}
 
 const getLesson = async (req, res) => {
     const { id } = req.params;

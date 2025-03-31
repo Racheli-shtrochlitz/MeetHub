@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { checkRole,
-    getLesson,
+const { getLesson,
     addLesson,
     updateLesson,
     deleteLesson,
     getAllLessons } = require('../Controllers/lessonController');
+const {checkRole} = require('../Controllers/checkAccess');
+
 
 //get lesson by id  
 router.get('/getLesson/:id', getLesson);
