@@ -4,7 +4,8 @@ const getStudent = async (req, res) => {
     const { id } = req.params;
     try {
         const student = await Student.findById(id)
-            .populate('lessons');
+            .populate('lessons')
+            .populate('user');
         if (!student) {
             res.send("Student not found").status(404);
         }
@@ -20,7 +21,8 @@ const addStudent = async (req, res) => {
     const { student } = req.body;
     try {
         const newStudent = await Student.create(student)
-            .populate('lessons');
+            .populate('lessons')
+            .populate('user');
         if (!newStudent) {
             res.send("Probably you didn't send correct data...").status(404);
         }
@@ -37,7 +39,8 @@ const updateStudent = async (req, res) => {
     const { student } = req.body;
     try {
         const newStudent = await Student.findByIdAndUpdate({ _id: id }, { student })
-            .populate('lessons');
+            .populate('lessons')
+            .populate('user');
         if (!newStudent)
             res.send("Student not found").status(404);
         else
@@ -53,7 +56,8 @@ const deleteStudent = async (req, res) => {
     const { id } = req.params;
     try {
         const student = await Student.findByIdAndDelete(id)
-            .populate('lessons');
+            .populate('lessons')
+            .populate('user');
         if (!student)
             res.send("Student not found").status(404);
         else
@@ -68,7 +72,8 @@ const deleteStudent = async (req, res) => {
 const getAllStudents = async (req, res) => {
     try {
         const students = await Student.find({})
-            .populate('lessons');
+            .populate('lessons')
+            .populate('user');
         if (!students||students.length==0) {
             res.send("No students found").status(404);
         }

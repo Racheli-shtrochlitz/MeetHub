@@ -2,9 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const studentSchema = new Schema({
-  name: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },  // הצפנת סיסמאות
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   lessons: [{ type: Schema.Types.ObjectId, ref: 'Lesson' }],  // שיעורים שהיו עם המורה
   createdAt: { type: Date, default: Date.now },
 });

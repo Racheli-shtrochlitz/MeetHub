@@ -5,7 +5,8 @@ const getTeacher = async (req, res) => {
     try {
         const teacher = await Teacher.findById(id)
             .populate('students')
-            .populate('lessons');
+            .populate('lessons')
+            .populate('user');
         if (!teacher) {
             res.send("Teacher not found").status(404);
         }
@@ -22,7 +23,8 @@ const addTeacher = async (req, res) => {
     try {
         const newTeacher = await Teacher.create(teacher)
             .populate('students')
-            .populate('lessons');
+            .populate('lessons')
+            .populate('user');
         if (!newTeacher) {
             res.send("Probably you didnt sent correctly data...").status(404);
         }
@@ -40,7 +42,8 @@ const updateTeacher = async (req, res) => {
     try {
         const newTecher = await Teacher.findByIdAndUpdate({ _id: id }, { teacher })
             .populate('students')
-            .populate('lessons');
+            .populate('lessons')
+            .populate('user');
         if (!newTecher)
             res.send("Teacher not found").status(404);
         else
@@ -57,7 +60,8 @@ const deleteTeacher = async (req, res) => {
     try {
         const teacher = await Teacher.findByIdAndDelete(id)
             .populate('students')
-            .populate('lessons');
+            .populate('lessons')
+            .populate('user');
         if (!teacher)
             res.send("Teacher not found").status(404);
         else
@@ -71,10 +75,10 @@ const deleteTeacher = async (req, res) => {
 
 const getAllTeachers = async (req, res) => {
     try {
-        console.log("Fetching teachers...");
         const teachers = await Teacher.find({})
             .populate('students')
-            .populate('lessons');
+            .populate('lessons')
+            .populate('user');
         if (!teachers || teachers.length === 0) {
             res.status(404).send("No teachers found");
         }
