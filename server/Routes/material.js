@@ -5,11 +5,13 @@ const { getMaterial,
     updateMaterial,
     deleteMaterial,
     getAllMaterials } = require('../Controllers/materialController');
+const {checkRole} = require('../Controllers/checkAccess');
+
 
 router.get('/getMaterial/:id', getMaterial);
-router.put('/addMaterial', addMaterial);
-router.post('/updateMaterial/:id', updateMaterial);
-router.delete('/deleteMaterial/:id', deleteMaterial);
+router.put('/addMaterial', checkRole('teacher'), addMaterial);
+router.post('/updateMaterial/:id', checkRole('teacher'), updateMaterial);
+router.delete('/deleteMaterial/:id', checkRole('teacher'), deleteMaterial);
 router.get('/getAllMaterials', getAllMaterials);
 
 module.exports = router;

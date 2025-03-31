@@ -5,11 +5,12 @@ const { getStudent,
     updateStudent,
     deleteStudent,
     getAllStudents } = require('../Controllers/studentController');
+const {checkOwnership} = require('../Controllers/checkAccess.js');
 
 router.get('/getStudent/:id',getStudent);
-router.put('/addStudent',addStudent);
-router.post('/updateStudent/:id',updateStudent);
-router.delete('/deleteStudent/:id',deleteStudent);
+router.put('/addStudent',checkOwnership, addStudent);
+router.post('/updateStudent/:id',checkOwnership, updateStudent);
+router.delete('/deleteStudent/:id',checkOwnership, deleteStudent);
 router.get('/getAllStudents',getAllStudents);
 
 module.exports = router;

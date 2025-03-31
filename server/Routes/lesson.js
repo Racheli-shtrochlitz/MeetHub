@@ -5,17 +5,17 @@ const { getLesson,
     updateLesson,
     deleteLesson,
     getAllLessons } = require('../Controllers/lessonController');
-const {checkRole} = require('../Controllers/checkAccess');
+const { checkRole } = require('../Controllers/checkAccess');
 
 
 //get lesson by id  
 router.get('/getLesson/:id', getLesson);
 //add lesson
-router.post('/addLesson',checkRole, addLesson);
+router.post('/addLesson',checkRole('teacher'), addLesson);
 //update lesson by id
-router.put('/updateLesson/:id',checkRole, updateLesson);
+router.put('/updateLesson/:id', checkRole('teacher'), updateLesson);
 //delete lesson by id
-router.delete('/deleteLesson/:id', checkRole,deleteLesson);
+router.delete('/deleteLesson/:id',  checkRole('teacher'),deleteLesson);
 //get all lessons
 router.get('/getAllLessons', getAllLessons);
 
