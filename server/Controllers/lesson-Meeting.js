@@ -33,6 +33,7 @@ async function getAccessToken() {
 
 app.post("/create-meeting", async (req, res) => {
     try {
+        console.log("======================")
         const token = await getAccessToken();
 
         const response = await axios.post(

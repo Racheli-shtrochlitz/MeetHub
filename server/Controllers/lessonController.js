@@ -1,4 +1,9 @@
 const Lesson = require('../Models/lesson');
+const axios = require("axios");
+const dotenv=require('dotenv');
+dotenv.config();
+const {checkRole}=require('../Controllers/checkAccess')
+
 
 
 const getLesson = async (req, res) => {
@@ -33,10 +38,15 @@ const addLesson = async (req, res) => {
             return res.status(404).send("Probably you didn't send correct data...");
         }
 
-        res.status(201).send(populatedLesson);
+       // const meetingResponse = await axios.post(`http://localhost:${process.env.PORT}/lesson/create-meeting`);
+
+        res.status(201).json({
+            lesson: populatedLesson,
+            //meeting: meetingResponse.data
+        });
     } catch (err) {
         console.error(err.message);
-        res.status(500).send("Internal server error");
+        return res.status(500).json({ message: "Internal server error", error: err.message });
     }
 };
 

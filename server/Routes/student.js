@@ -1,12 +1,13 @@
 const express=require('express');
 const router=express.Router();
 const { getStudent,
-    addStudent,
+    createStudent,
     updateStudent,
     deleteStudent,
     getAllStudents } = require('../Controllers/studentController');
 const {checkOwnership} = require('../Controllers/checkAccess.js');
 
+router.post('/createStudent/:id',checkOwnership, createStudent);
 router.get('/getStudent/:id',getStudent);
 router.post('/updateStudent/:id',checkOwnership, updateStudent);
 router.delete('/deleteStudent/:id',checkOwnership, deleteStudent);

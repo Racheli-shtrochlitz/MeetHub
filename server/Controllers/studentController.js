@@ -17,18 +17,16 @@ const getStudent = async (req, res) => {
     }
 };
 
-const createStudent = async (token, req, res) => {
+const createStudent = async (req, res) => {
     try {
         const newStudent = await Student.create({
-            user: req.body._id, 
-            lessons: req.body.lessons || [] , 
+            user: req.userId, 
+            lessons: req.lessons || [] 
         });
-
         const populatedStudent = await Student.findById(newStudent._id)
             .populate('lessons')
             .populate('user');
-
-        return res.status(201).json({ token, student: populatedStudent });
+        return res.status(201).json({student: populatedStudent });
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ message: "Internal server error" });

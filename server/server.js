@@ -27,7 +27,7 @@ mongoose.connect(process.env.DATABASE_URL, {
 
 
 app.use('/teacher',authenticateUser, teacherRoutes);
-app.use('/student',authenticateUser ,studentRoutes);
+app.use('/student' ,authenticateUser,studentRoutes);
 app.use('/material',authenticateUser,materialRoutes);
 app.use('/lesson',authenticateUser,lessonRoutes);
 app.use('/user',userRoutes);

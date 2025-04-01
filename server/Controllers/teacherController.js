@@ -14,21 +14,19 @@ const getTeacher = async (req, res) => {
             res.status(200).send(teacher);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send("Internal server error");
+        return res.status(500).json({ message: "Internal server error", error: err.message });
     }
 };
 
 const createTeacher = async (req, res) => {
-    const { teacher } = req.body;
-    teacher.user = req.body._id;
+    const { subject,students,lessons } = req.body;
     try {
-        const newTeacher = await Teacher.create(teacher);
-        await newTeacher.populate('students').populate('lessons').populate('user');
-        if (!newTeacher) {
-            return res.status(404).json({ message: "Probably you didn't send correct data..." });
-        }
-        else
-        return res.status(201).json(newTeacher);
+        const newTeacher = await Teacher.create({subject:subject,students:students,lessons:lessons,user:req.userId});
+        const populatedTeacher=await Teacher.findById(newTeacher._id)
+        .populate('students')
+        .populate('lessons')
+        .populate('user');
+        return res.status(201).json(populatedTeacher);
     } catch (err) {
         console.error(err.message);
         return res.status(500).json({ message: "Internal server error", error: err.message });
@@ -50,7 +48,7 @@ const updateTeacher = async (req, res) => {
     }
     catch (err) {
         console.error(err.message);
-        res.status(500).send("Internal server error");
+        return res.status(500).json({ message: "Internal server error", error: err.message });
     }
 }
 
@@ -68,7 +66,7 @@ const deleteTeacher = async (req, res) => {
     }
     catch (err) {
         console.error(err.message);
-        res.status(500).send("Internal server error");
+        return res.status(500).json({ message: "Internal server error", error: err.message });
     }
 }
 
@@ -86,7 +84,7 @@ const getAllTeachers = async (req, res) => {
     }
     catch (err) {
         console.error(err.message);
-        res.status(500).send("Internal server error");
+        return res.status(500).json({ message: "Internal server error", error: err.message });
     }
 }
 

@@ -28,7 +28,7 @@ const signIn=async(req,res)=>{
 }
 
 const signUp=async(req,res)=>{
-    const {name,email,password,role,createdAt}=req.body;
+    const {name,email,password,role}=req.body;
     try{
         const user=await User.findOne({email});
         if(user){
@@ -45,13 +45,13 @@ const signUp=async(req,res)=>{
         const token=jwt.sign({id:newUser._id,role:newUser.role},process.env.SECRET_TOKEN,{ expiresIn: '1h' });
 
         // הוספת ה-ID של המשתמש החדש לגוף הבקשה
-        req.body._id = newUser._id;
+        req.userId = newUser._id;
 
         // טיפול ביצירת ישות מתאימה לפי התפקיד
         if (role === 'teacher') {
-            return createTeacher(token, req, res);
+            return createTeacher( req, res);
         } else if (role === 'student') {
-            return createStudent(token, req, res);
+            return createStudent(req, res);
         } else {
             return res.status(400).json({ message: "Invalid role" });
         }
