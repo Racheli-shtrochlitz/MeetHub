@@ -5,7 +5,7 @@ const { getTeacher,
     updateTeacher,
     deleteTeacher,
     getAllTeachers } = require('../Controllers/teacherController');
-const {checkOwnership} = require('../Controllers/checkAccess.js');
+const {checkOwnership} = require('../Middlewares/checkAccess.js');
 
 
 router.get('/getTeacher/:id', getTeacher);

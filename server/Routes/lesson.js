@@ -5,7 +5,7 @@ const { getLesson,
     updateLesson,
     deleteLesson,
     getAllLessons } = require('../Controllers/lessonController');
-const { checkRole } = require('../Controllers/checkAccess');
+const { checkRole } = require('../Middlewares/checkAccess');
 
 
 //get lesson by id  

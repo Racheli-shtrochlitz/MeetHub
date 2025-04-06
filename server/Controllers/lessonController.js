@@ -2,7 +2,6 @@ const Lesson = require('../Models/lesson');
 const axios = require("axios");
 const dotenv=require('dotenv');
 dotenv.config();
-const {checkRole}=require('../Controllers/checkAccess')
 
 
 
@@ -108,7 +107,6 @@ const getAllLessons = async (req, res) => {
 }
 
 module.exports = {
-    checkRole,
     getLesson,
     addLesson,
     updateLesson,

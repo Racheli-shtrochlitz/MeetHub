@@ -31,7 +31,7 @@ async function getAccessToken() {
     }
 }
 
-app.post("/create-meeting", async (req, res) => {
+const createMeeting=async (req,res)=> {
     try {
         console.log("======================")
         const token = await getAccessToken();
@@ -62,6 +62,6 @@ app.post("/create-meeting", async (req, res) => {
         console.error("Error creating meeting:", error.response?.data || error.message);
         res.status(500).json({ error: "Failed to create Zoom meeting" });
     }
-});
+};
 
 app.listen(5000, () => console.log("Server running on port 5000"));

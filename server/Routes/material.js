@@ -5,7 +5,7 @@ const { getMaterial,
     updateMaterial,
     deleteMaterial,
     getAllMaterials } = require('../Controllers/materialController');
-const {checkRole} = require('../Controllers/checkAccess');
+const {checkRole} = require('../Middlewares/checkAccess');
 
 
 router.get('/getMaterial/:id', getMaterial);
