@@ -38,6 +38,9 @@ const signIn = async (req, res) => {
 const signUp = async (req, res) => {
     const { name, email, password, activeRole } = req.body;
 
+    if (!name||!email || !password || !activeRole)
+        return res.status(400).json({ error: 'Missing fields' });
+
     if(!['teacher','student'].includes(activeRole))
         return res.status(400).json({error:"Invalid role"});
 
@@ -57,23 +60,21 @@ const signUp = async (req, res) => {
         await newUser.save();
         const token = jwt.sign({ id: newUser._id, roles: newUser.roles, activeRole: activeRole }, process.env.SECRET_TOKEN, { expiresIn: '1h' });
 
+        // הוספת ה-ID של המשתמש החדש לגוף הבקשה
+        req.userId = newUser._id;
+
         // טיפול ביצירת ישות מתאימה לפי התפקיד
         if (activeRole === 'teacher') {
             await createTeacher(req, res);
         } else if (activeRole === 'student') {
             await createStudent(req, res);
-        } else {
-            return res.status(400).json({ message: "Invalid role" });
-        }
+        } 
 
-        // הוספת ה-ID של המשתמש החדש לגוף הבקשה
-        req.userId = newUser._id;
-
-        res.status(201).json({ token });
+        return res.status(201).json({ token });
     }
     catch (err) {
         console.error(err.message);
-        res.status(500).send("Internal server error");
+        return res.status(500).json({ message: "Internal server error", error: err.message });
     }
 }
 

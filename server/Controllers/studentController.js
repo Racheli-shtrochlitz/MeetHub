@@ -29,7 +29,7 @@ const createStudent = async (req, res) => {
         return res.status(201).json({student: populatedStudent });
     } catch (err) {
         console.error(err.message);
-        res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ message: "Internal server error", error: err.message });
     }
 };
 
