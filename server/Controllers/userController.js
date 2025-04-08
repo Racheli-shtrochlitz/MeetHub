@@ -1,62 +1,77 @@
 const User = require('../Models/user');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const {createTeacher}=require('./teacherController');
-const {createStudent}=require('./studentController');
+const { createTeacher } = require('./teacherController');
+const { createStudent } = require('./studentController');
 
 
 
-const signIn=async(req,res)=>{
-    const {email,password}=req.body;
-    try{
-        const user=await User.findOne({email});
-        if(!user){
-            return res.status(400).json({message:"User not found"})
+const signIn = async (req, res) => {
+    const { email, password, activeRole } = req.body;
+
+    if (!email || !password || !activeRole)
+        return res.status(400).json({ error: 'Missing fields' });
+
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({ message: "User not found" })
         }
         //to verify the password
-        const isMatch=await bcrypt.compare(password,user.password);
-        if(!isMatch){
-            return res.status(400).json({message:"Invalid credentials"})
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: "Invalid credentials" })
         }
-        const token=jwt.sign({id:user._id,role:user.role},process.env.SECRET_TOKEN,{ expiresIn: '1h' });
-        return res.status(200).json({token});
+
+        if (!user.roles.includes(activeRole))
+            return res.status(403).json({ error: `User is not assigned to role: ${activeRole}` })
+
+        const token = jwt.sign({ id: user._id, roles: user.roles, activeRole: activeRole }, process.env.SECRET_TOKEN, { expiresIn: '1h' });
+        return res.status(200).json({ token });
     }
-    catch(err){
+    catch (err) {
         console.error(err.message);
         res.status(500).json({ message: "Internal server error", error: err.message });
     }
 }
 
-const signUp=async(req,res)=>{
-    const {name,email,password,role}=req.body;
-    try{
-        const user=await User.findOne({email});
-        if(user){
-            return res.status(400).json({message:"User already exists"})
+const signUp = async (req, res) => {
+    const { name, email, password, activeRole } = req.body;
+
+    if(!['teacher','student'].includes(activeRole))
+        return res.status(400).json({error:"Invalid role"});
+
+    try {
+        const user = await User.findOne({ email });
+        if (user) {
+            return res.status(400).json({ message: "User already exists" })
         }
+
         //create a new user
-        const newUser=new User({
+        const newUser = new User({
             name,
             email,
-            password:await bcrypt.hash(password,10),//hashing the password
-            role
+            password: await bcrypt.hash(password, 10),//hashing the password
+            roles: [activeRole]
         });
         await newUser.save();
-        const token=jwt.sign({id:newUser._id,role:newUser.role},process.env.SECRET_TOKEN,{ expiresIn: '1h' });
+        const token = jwt.sign({ id: newUser._id, roles: newUser.roles, activeRole: activeRole }, process.env.SECRET_TOKEN, { expiresIn: '1h' });
+
+        // טיפול ביצירת ישות מתאימה לפי התפקיד
+        if (activeRole === 'teacher') {
+            await createTeacher(req, res);
+        } else if (activeRole === 'student') {
+            await createStudent(req, res);
+        } else {
+            return res.status(400).json({ message: "Invalid role" });
+        }
 
         // הוספת ה-ID של המשתמש החדש לגוף הבקשה
         req.userId = newUser._id;
 
-        // טיפול ביצירת ישות מתאימה לפי התפקיד
-        if (role === 'teacher') {
-            return createTeacher( req, res);
-        } else if (role === 'student') {
-            return createStudent(req, res);
-        } else {
-            return res.status(400).json({ message: "Invalid role" });
-        }
+        res.status(201).json({ token });
     }
-    catch(err){
+    catch (err) {
         console.error(err.message);
         res.status(500).send("Internal server error");
     }

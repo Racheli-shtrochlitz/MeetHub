@@ -5,7 +5,12 @@ const userSchema = new Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },  // הצפנת סיסמאות
-  role: { type: String, enum: ['teacher', 'student'], required: true },
+  roles: {
+    type: [String],
+    enum: ['teacher', 'student'],
+    default: [],
+  },  
+  activeRole:{type:String,enum: ['teacher', 'student']},
   createdAt: { type: Date, default: Date.now },
 });
 

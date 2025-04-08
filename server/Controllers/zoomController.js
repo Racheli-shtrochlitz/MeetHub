@@ -1,9 +1,5 @@
-const express = require("express");
 const axios = require("axios");
 require("dotenv").config();
-
-const app = express();
-app.use(express.json());
 
 async function getAccessToken() {
     const { CLIENT_ID, CLIENT_SECRET, ACCOUNT_ID } = process.env;
@@ -64,4 +60,6 @@ const createMeeting=async (req,res)=> {
     }
 };
 
-app.listen(5000, () => console.log("Server running on port 5000"));
+module.exports={
+    createMeeting
+}
