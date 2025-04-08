@@ -38,11 +38,11 @@ const signIn = async (req, res) => {
 const signUp = async (req, res) => {
     const { name, email, password, activeRole } = req.body;
 
-    if (!name||!email || !password || !activeRole)
+    if (!name || !email || !password || !activeRole)
         return res.status(400).json({ error: 'Missing fields' });
 
-    if(!['teacher','student'].includes(activeRole))
-        return res.status(400).json({error:"Invalid role"});
+    if (!['teacher', 'student'].includes(activeRole))
+        return res.status(400).json({ error: "Invalid role" });
 
     try {
         const user = await User.findOne({ email });
@@ -57,24 +57,67 @@ const signUp = async (req, res) => {
             password: await bcrypt.hash(password, 10),//hashing the password
             roles: [activeRole]
         });
-        await newUser.save();
-        const token = jwt.sign({ id: newUser._id, roles: newUser.roles, activeRole: activeRole }, process.env.SECRET_TOKEN, { expiresIn: '1h' });
 
         // הוספת ה-ID של המשתמש החדש לגוף הבקשה
         req.userId = newUser._id;
 
-        // טיפול ביצירת ישות מתאימה לפי התפקיד
+        //  טיפול ביצירת ישות מתאימה לפי התפקיד אם היתה תקלה ביצירת התפקיד, נעצור ולא נשמור את המשתמש
         if (activeRole === 'teacher') {
-            await createTeacher(req, res);
+            const teacher = await createTeacher(req, res);
+            if (!teacher)
+                return res.status(400).json({ error: "can't create a teacher" });
         } else if (activeRole === 'student') {
-            await createStudent(req, res);
-        } 
+            const student = await createStudent(req, res);
+            if (!student)
+                return res.status(400).json({ error: "can't create a student" });
+        }
 
-        return res.status(201).json({ token });
+        //שמירת המשתמש רק לאחר וידוא יצירת התפקיד
+        const savedUser = await newUser.save();
+        console.log('Saved User:', savedUser);
+        const token = jwt.sign({ id: newUser._id, roles: newUser.roles, activeRole: activeRole }, process.env.SECRET_TOKEN, { expiresIn: '1h' });
+
+        return res.status(201).json({ token: token, newUser: newUser });
     }
     catch (err) {
         console.error(err.message);
         return res.status(500).json({ message: "Internal server error", error: err.message });
+    }
+}
+
+const addProfile = async (req, res) => {
+
+    const { id } = req.user;
+    const {newRole } = req.body;
+    const user = await User.findById(id); 
+    const roles = user.roles; 
+
+    if (!newRole)
+        return res.status(400).json({ error: "you didnt provide a required parameter" });
+
+    if (!id)
+        return res.status(400).json({ error: "something went wrong..." });
+
+    if (roles.includes(newRole))
+        return res.status(400).json({ messege: `you already ${newRole}` });
+
+    if (!['student', 'teacher'].includes(newRole))
+        return res.status(400).json({ messege: `invalid role: ${newRole}` });
+
+    try {
+        if (newRole === 'teacher') {
+            await createTeacher(req, res);
+            await User.findByIdAndUpdate(id, { $push: { roles: newRole } });//update the remote array
+        }
+        else {
+            await createStudent(req, res);
+            await User.findByIdAndUpdate(id, { $push: { roles: newRole } });//update the remote array
+        }
+
+        return res.status(201).json("new role added successfully!");
+
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
 }
 
@@ -143,5 +186,6 @@ const signUp = async (req, res) => {
 
 module.exports = {
     signIn,
-    signUp
+    signUp,
+    addProfile
 };

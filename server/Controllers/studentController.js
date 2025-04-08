@@ -20,13 +20,12 @@ const getStudent = async (req, res) => {
 const createStudent = async (req, res) => {
     try {
         const newStudent = await Student.create({
-            user: req.userId, 
-            lessons: req.lessons || [] 
+            //המקרה הראשון להרשמת משתמש חדש והשני להוספת פרופיל (שעבר דרך אימות הטוקן)
+            user: req.userId || req.user.id,
+            lessons: req.lessons || []
         });
-        const populatedStudent = await Student.findById(newStudent._id)
-            .populate('lessons')
-            .populate('user');
-        return res.status(201).json({student: populatedStudent });
+
+        return newStudent;
     } catch (err) {
         console.error(err.message);
         return res.status(500).json({ message: "Internal server error", error: err.message });
@@ -73,7 +72,7 @@ const getAllStudents = async (req, res) => {
         const students = await Student.find({})
             .populate('lessons')
             .populate('user');
-        if (!students||students.length==0) {
+        if (!students || students.length == 0) {
             res.send("No students found").status(404);
         }
         else

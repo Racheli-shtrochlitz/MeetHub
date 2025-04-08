@@ -19,17 +19,15 @@ const getTeacher = async (req, res) => {
 };
 
 const createTeacher = async (req, res) => {
-    const { subject,students,lessons } = req.body;
+    const { subject, students, lessons } = req.body;
     try {
-        const newTeacher = await Teacher.create({subject:subject,students:students,lessons:lessons,user:req.userId});
-        const populatedTeacher=await Teacher.findById(newTeacher._id)
-        .populate('students')
-        .populate('lessons')
-        .populate('user');
-        return res.status(201).json(populatedTeacher);
+        //create a new teacher
+        const newTeacher = await Teacher.create({ subject: subject, students: students, lessons: lessons, user: req.userId||req.user.id,  });
+
+       return newTeacher;
     } catch (err) {
         console.error(err.message);
-        return res.status(500).json({ message: "Internal server error", error: err.message });
+        res.status(500).json({ message: "Internal server error", error: err.message });
     }
 };
 
