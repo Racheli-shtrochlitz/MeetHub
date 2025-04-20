@@ -7,85 +7,85 @@ const getMaterial = async (req, res) => {
             .populate('lesson')
             .populate('uploadBy');
         if (!material) {
-             res.send("Material not found").status(404);
+            return res.status(404).send("Material not found");
         }
         else
-         res.status(200).send(material);
+            return res.status(200).json(material);
     } catch (err) {
         console.error(err.message);
-         res.status(500).send("Internal server error");
+        return res.status(500).json({ message: "Internal server error", error: err.message });
     }
 };
 
 const addMaterial = async (req, res) => {
     const { material } = req.body;
     try {
-        const newMaterial = await Material.create(material)
+        const newMaterial = await Material.create(material);
+        const populatedMaterial=await Material.findById(newMaterial._id)
             .populate('lesson')
             .populate('uploadBy');
-        if (!newMaterial) {
-            res.send("Probably you didn't send correct data...").status(404);
+        if (!populatedMaterial) {
+            return res.status(404).send("Probably you didn't send correct data...");
         }
         else
-        res.status(201).send(newMaterial);
+            return res.status(201).json(populatedMaterial);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send("Internal server error");
+        return res.status(500).json({ message: "Internal server error", error: err.message });
     }
 };
 
 const updateMaterial = async (req, res) => {
-    const {id}=req.params;
+    const { id } = req.params;
     const { material } = req.body;
     try {
-        const newMaterial = await Material.findByIdAndUpdate({ _id: id}, { material})
+        const newMaterial = await Material.findByIdAndUpdate({ _id: id }, {...material},{new:true})
             .populate('lesson')
             .populate('uploadBy');
         if (!newMaterial)
-            res.send("Material not found").status(404);
+            return res.status(404).send("Material not found");
         else
-        res.status(200).send(newMaterial);
+            return res.status(200).json(newMaterial);
     }
     catch (err) {
         console.error(err.message);
-        res.status(500).send("Internal server error");
+        return res.status(500).json({ message: "Internal server error", error: err.message });
     }
 }
 
-const deleteMaterial = async (req, res) => { 
-    const {id}=req.params;
+const deleteMaterial = async (req, res) => {
+    const { id } = req.params;
     try {
-        const material=await Material.findByIdAndDelete(id)
+        const material = await Material.findByIdAndDelete(id)
             .populate('lesson')
             .populate('uploadBy');
         if (!material)
-            res.send("Material not found").status(404);
+            return res.status(404).send("Material not found");
         else
-        res.status(200).send(material +"deleted successfully!!!");
+            return res.status(200).json({metarial:material ,message: "deleted successfully!!!"});
     }
     catch (err) {
         console.error(err.message);
-        res.status(500).send("Internal server error");
+        return res.status(500).json({ message: "Internal server error", error: err.message });
     }
 }
 
 const getAllMaterials = async (req, res) => {
-    try{
-        console.log("Fetching Materials...");
+    try {
         const materials = await Material.find({})
             .populate('lesson')
             .populate('uploadBy');
-        if (!materials||materials.length===0) {
-            res.send("Materials not found").status(404);
+        if (!materials || materials.length === 0) {
+            return res.status(404).send("Materials not found");
         }
         else
-         res.status(200).send(materials);
+            return res.status(200).json(materials);
     }
-    catch(err){
+    catch (err) {
         console.error(err.message);
-        res.status(500).send("Internal server error");
+        return res.status(500).json({ message: "Internal server error", error: err.message });
     }
- }
+}
 
 module.exports = {
     getMaterial,

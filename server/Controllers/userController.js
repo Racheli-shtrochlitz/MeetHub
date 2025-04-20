@@ -26,7 +26,7 @@ const signIn = async (req, res) => {
         if (!user.roles.includes(activeRole))
             return res.status(403).json({ error: `User is not assigned to role: ${activeRole}` })
 
-        const token = jwt.sign({ id: user._id, roles: user.roles, activeRole: activeRole }, process.env.SECRET_TOKEN, { expiresIn: '1h' });
+        const token = jwt.sign({ id: user._id, activeRole: activeRole }, process.env.SECRET_TOKEN, { expiresIn: '1h' });
         return res.status(200).json({ token });
     }
     catch (err) {
@@ -75,7 +75,7 @@ const signUp = async (req, res) => {
         //שמירת המשתמש רק לאחר וידוא יצירת התפקיד
         const savedUser = await newUser.save();
         console.log('Saved User:', savedUser);
-        const token = jwt.sign({ id: newUser._id, roles: newUser.roles, activeRole: activeRole }, process.env.SECRET_TOKEN, { expiresIn: '1h' });
+        const token = jwt.sign({ id: newUser._id, activeRole: activeRole}, process.env.SECRET_TOKEN, { expiresIn: '1h' });
 
         return res.status(201).json({ token: token, newUser: newUser });
     }

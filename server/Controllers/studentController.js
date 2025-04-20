@@ -7,13 +7,13 @@ const getStudent = async (req, res) => {
             .populate('lessons')
             .populate('user');
         if (!student) {
-            res.send("Student not found").status(404);
+            return res.status(404).json("Student not found");
         }
         else
-            res.status(200).send(student);
+            return res.status(200).json(student);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send("Internal server error");
+        return res.status(500).json({ message: "Internal server error", error: err.message });
     }
 };
 
@@ -36,17 +36,17 @@ const updateStudent = async (req, res) => {
     const { id } = req.params;
     const { student } = req.body;
     try {
-        const newStudent = await Student.findByIdAndUpdate({ _id: id }, { student })
+        const newStudent = await Student.findByIdAndUpdate({ _id: id },  {...student} ,{ new: true })
             .populate('lessons')
             .populate('user');
         if (!newStudent)
-            res.send("Student not found").status(404);
+            return res.status(404).send("Student not found");
         else
-            res.status(200).send(newStudent);
+            return res.status(200).json(newStudent);
     }
     catch (err) {
         console.error(err.message);
-        res.status(500).send("Internal server error");
+        return res.status(500).json({ message: "Internal server error", error: err.message });
     }
 }
 
@@ -57,13 +57,13 @@ const deleteStudent = async (req, res) => {
             .populate('lessons')
             .populate('user');
         if (!student)
-            res.status(404).send("Student not found");
+           return res.status(404).send("Student not found");
         else
-            res.status(200).send(student + "deleted successfully!!!");
+            return res.status(200).json({student:student ,meessage: "deleted successfully!!!"});
     }
     catch (err) {
         console.error(err.message);
-        res.status(500).send("Internal server error");
+        return res.status(500).json({ message: "Internal server error", error: err.message });
     }
 }
 
@@ -73,14 +73,14 @@ const getAllStudents = async (req, res) => {
             .populate('lessons')
             .populate('user');
         if (!students || students.length == 0) {
-            res.send("No students found").status(404);
+            return res.status(404).send("No students found");
         }
         else
-            res.status(200).json(students);
+            return res.status(200).json(students);
     }
     catch (err) {
         console.error(err.message);
-        res.status(500).send("Internal server error");
+        return res.status(500).json({ message: "Internal server error", error: err.message });
     }
 }
 
