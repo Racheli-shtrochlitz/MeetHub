@@ -75,7 +75,7 @@ const signUp = async (req, res) => {
         //שמירת המשתמש רק לאחר וידוא יצירת התפקיד
         const savedUser = await newUser.save();
         console.log('Saved User:', savedUser);
-        const token = jwt.sign({ id: newUser._id, activeRole: activeRole}, process.env.SECRET_TOKEN, { expiresIn: '1h' });
+        const token = jwt.sign({ id: newUser._id, activeRole: activeRole}, process.env.SECRET_TOKEN, { expiresIn: '10h' });
 
         return res.status(201).json({ token: token, newUser: newUser });
     }

@@ -2,11 +2,13 @@ const jwt = require('jsonwebtoken');
 
 const authenticateUser=(req,res,next)=>{
     const token=req.header('Authorization');
+    console.log(token);
     if(!token){
         return res.status(401).send("Access denied. No token provided.");
     }
+    const tokenWithoutBearer = token.startsWith('Bearer ') ? token.slice(7) : token;
     try{
-        const decoded=jwt.verify(token,process.env.SECRET_TOKEN);//checking if the token is valid and validity
+        const decoded=jwt.verify(tokenWithoutBearer,process.env.SECRET_TOKEN);//checking if the token is valid and validity
         if(!decoded){
             return res.status(401).send("Invalid token.");
         }
@@ -14,7 +16,7 @@ const authenticateUser=(req,res,next)=>{
         next();//continue to the next middleware or crud function
     }
     catch(err){
-        return res.status(400).send("Invalid token.");
+        return res.status(500).json({error:err.message,message:"Invalid token."});
     }
 }
 

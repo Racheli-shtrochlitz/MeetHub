@@ -69,6 +69,7 @@ const deleteStudent = async (req, res) => {
 
 const getAllStudents = async (req, res) => {
     try {
+        console.log("kjhg");
         const students = await Student.find({})
             .populate('lessons')
             .populate('user');
