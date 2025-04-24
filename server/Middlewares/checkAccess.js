@@ -21,9 +21,15 @@ const authenticateUser=(req,res,next)=>{
 // Middleware to check if the user has the required role
 const checkRole = (requiredRole) => {
     return (req, res, next) => {
+<<<<<<< HEAD:server/Controllers/checkAccess.js
         const { isTeacher } = req.user;
 
         if (isTeacher !== requiredRole) {
+=======
+        const { activeRole } = req.user;
+
+        if (activeRole !== requiredRole) {
+>>>>>>> b0ebece9bcc4beabcdb7c892bac528580b53ab10:server/Middlewares/checkAccess.js
             return res.status(403).json({ message: 'Access denied. Insufficient permissions.' });
         }
 

@@ -7,7 +7,8 @@ const studentRoutes = require('./Routes/student.js');
 const materialRoutes = require('./Routes/material.js');
 const lessonRoutes = require('./Routes/lesson.js');
 const userRoutes = require('./Routes/user.js');
-const {authenticateUser} = require('./Controllers/checkAccess.js');
+const zoomRoutes=require('./Routes/zoom.js');
+const {authenticateUser} = require('./Middlewares/checkAccess.js');
 const jwt = require('jsonwebtoken');
 
 const app = express();
@@ -31,6 +32,7 @@ app.use('/student' ,authenticateUser,studentRoutes);
 app.use('/material',authenticateUser,materialRoutes);
 app.use('/lesson',authenticateUser,lessonRoutes);
 app.use('/user',userRoutes);
+app.use('/zoom',authenticateUser,zoomRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);

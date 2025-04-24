@@ -5,7 +5,7 @@ const { getStudent,
     updateStudent,
     deleteStudent,
     getAllStudents } = require('../Controllers/studentController');
-const {checkOwnership} = require('../Controllers/checkAccess.js');
+const {checkOwnership} = require('../Middlewares/checkAccess.js');
 
 router.post('/createStudent/:id',checkOwnership, createStudent);
 router.get('/getStudent/:id',getStudent);
