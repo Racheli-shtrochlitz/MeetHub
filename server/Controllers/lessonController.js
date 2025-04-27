@@ -1,4 +1,8 @@
 const Lesson = require('../Models/lesson');
+const Teacher = require('../Models/teacher');
+const Student = require('../Models/student');
+
+
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -26,6 +30,20 @@ const addLesson = async (req, res) => {
     try {
         const newLesson = await Lesson.create(lesson);
 
+        //update the teacher and student
+        const teacher = await Teacher.findById(lesson.teacher);
+        const student = await Student.findById(lesson.student);
+
+        if (teacher && !teacher.lessons.includes(newLesson._id)) {
+            teacher.lessons.push(newLesson._id);
+            await teacher.save();
+        }
+
+        if (student && !student.lessons.includes(newLesson._id)) {
+            student.lessons.push(newLesson._id);
+            await student.save();
+        }
+
         const populatedLesson = await Lesson.findById(newLesson._id)
             .populate('teacher')
             .populate('student')
@@ -52,7 +70,7 @@ const updateLesson = async (req, res) => {
     const { id } = req.params;
     const { lesson } = req.body;
     try {
-        const newLesson = await Lesson.findByIdAndUpdate({ _id: id }, {...lesson},{ new: true } )
+        const newLesson = await Lesson.findByIdAndUpdate({ _id: id }, { ...lesson }, { new: true })
             .populate('teacher')
             .populate('student')
             .populate('materials');
@@ -77,7 +95,7 @@ const deleteLesson = async (req, res) => {
         if (!lesson)
             return res.status(404).send("Lesson not found");
         else
-            return res.status(200).json({lesson:lesson ,message:"deleted successfully!!!"});
+            return res.status(200).json({ lesson: lesson, message: "deleted successfully!!!" });
     }
     catch (err) {
         console.error(err.message);

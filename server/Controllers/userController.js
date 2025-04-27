@@ -1,4 +1,8 @@
 const User = require('../Models/user');
+const Lesson = require('../Models/lesson');
+const Teacher = require('../Models/teacher');
+const Student = require('../Models/student');
+
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { createTeacher } = require('./teacherController');
@@ -121,71 +125,45 @@ const addProfile = async (req, res) => {
     }
 }
 
-// const getUser = async (req, res) => {
-//     const { id } = req.params;
-//     try {
-//         const user = await User.findById(id);
-//         if (!user) {
-//             res.send("User not found").status(404);
-//         }
-//         else
-//             res.status(200).send(User);
-//     } catch (err) {
-//         console.error(err.message);
-//         res.status(500).send("Internal server error");
-//     }
-// };
-
-// const addUser = async (req, res) => {
-//     const { user } = req.body;
-//     try {
-//         const newUser = (await User.create(user));
-//         if (!newUser) {
-//             res.send("Probably you didnt sent correctly data...").status(404);
-//         }
-//         else
-//             res.status(201).send(newUser);
-//     } catch (err) {
-//         console.error(err.message);
-//         res.status(500).send("Internal server error");
-//     }
-// };
-
-// const updateUser = async (req, res) => {
-//     const { id } = req.params;
-//     const { user } = req.body;
-//     try {
-//         const newUser = await User.findByIdAndUpdate({ _id: id }, { user });
-//         if (!newUser)
-//             res.send("User not found").status(404);
-//         else
-//             res.status(200).send(newUser);
-//     }
-//     catch (err) {
-//         console.error(err.message);
-//         res.status(500).send("Internal server error");
-//     }
-// }
-
-// const deleteUser = async (req, res) => {
-//     const { id } = req.params;
-//     try {
-//         const user = await User.findByIdAndDelete(id);
-//         if (!user)
-//             res.send("User not found").status(404);
-//         else
-//             res.status(200).send(User + "deleted successfully!!!");
-//     }
-//     catch (err) {
-//         console.error(err.message);
-//         res.status(500).send("Internal server error");
-//     }
-// }
-
+const getAllLessons = async (req, res) => {
+    const userId = req.user?.id;
+    const activeRole = req.user?.activeRole;
+  
+    if (!userId || !activeRole) {
+      return res.status(400).json({ message: "Missing user or role" });
+    }
+  
+    let object; 
+  
+    // pop the teacher or student according to the role
+    try {
+      if (activeRole === "teacher") {
+        object = await Teacher.findOne({ user: userId });
+      } else {
+        object = await Student.findOne({ user: userId });
+      }
+  
+      if (!object) {
+        return res.status(404).json({ message: `No ${activeRole} found with the given user ID` });
+      }
+  
+      // create the filter for lessons
+      const filter = activeRole === "teacher" ? { teacher: object._id } : { student: object._id };
+  
+      const lessons = await Lesson.find(filter);
+      return res.status(200).json(lessons);
+  
+    } catch (err) {
+      return res.status(500).json({ message: "Internal server error", error: err.message });
+    }
+  };
+  
+  
 
 
 module.exports = {
     signIn,
     signUp,
-    addProfile
+    addProfile,
+    getAllLessons
 };

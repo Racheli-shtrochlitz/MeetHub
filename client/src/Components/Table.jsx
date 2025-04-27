@@ -15,11 +15,11 @@ import { CustomerService } from './CustomerService';
 
 // The rule argument should be a string in the format "custom_[field]".
 FilterService.register('custom_activity', (value, filters) => {
-  const [from, to] = filters ?? [null, null];
-  if (from === null && to === null) return true;
-  if (from !== null && to === null) return from <= value;
-  if (from === null && to !== null) return value <= to;
-  return from <= value && value <= to;
+    const [from, to] = filters ?? [null, null];
+    if (from === null && to === null) return true;
+    if (from !== null && to === null) return from <= value;
+    if (from === null && to !== null) return value <= to;
+    return from <= value && value <= to;
 });
 
 export default function CustomFilterDemo() {
@@ -27,7 +27,7 @@ export default function CustomFilterDemo() {
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
         name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-        'country.name': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+        'subject': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
         representative: { value: null, matchMode: FilterMatchMode.IN },
         // For using custom filters, you must set FilterMatchMode.CUSTOM to matchMode.
         activity: { value: null, matchMode: FilterMatchMode.CUSTOM },
@@ -52,10 +52,10 @@ export default function CustomFilterDemo() {
                 console.error('Failed to fetch representatives', error);
             }
         };
-    
+
         fetchRepresentatives();
     }, []);
-    
+
     const [statuses] = useState(['unqualified', 'qualified', 'new', 'negotiation', 'renewal']);
 
     const getSeverity = (status) => {
@@ -87,7 +87,8 @@ export default function CustomFilterDemo() {
     const getCustomers = (data) => {
         return [...(data || [])].map((d) => {
             d.date = new Date(d.date);
-            d.name = d.user?.name || ''; 
+            d.name = d.user?.name || '';
+            d.subject = d.subject || '';
             return d;
         });
     };
@@ -196,15 +197,21 @@ export default function CustomFilterDemo() {
     return (
         <div className="card">
             <DataTable value={customers} paginator rows={10} dataKey="id" filters={filters} filterDisplay="row" loading={loading}
-                    globalFilterFields={['name', 'country.name', 'representative.name', 'status']} header={header} emptyMessage="No customers found.">
-                <Column field="name" header="Name" filter filterPlaceholder="Search by name" style={{ minWidth: '12rem' }} />
-                {/* <Column header="Subject" filterField="country.name" style={{ minWidth: '12rem' }} body={countryBodyTemplate} filter filterPlaceholder="Search by subject" /> */}
+                globalFilterFields={['createdAt', 'subject', 'representative.name', 'status']} header={header} emptyMessage="No customers found.">
+                <Column field="createdAt" header="Date" filter filterPlaceholder="Search by date" style={{ minWidth: '12rem' }} />
+                <Column
+                    field="subject"
+                    header="Subject"
+                    filterField="subject"
+                    style={{ minWidth: '12rem' }}
+                    filter
+                    filterPlaceholder="Search by subject"
+                />
                 {/* <Column header="Agent" filterField="representative" showFilterMenu={false} filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '14rem' }} */}
-                    {/* body={representativeBodyTemplate} filter filterElement={representativeRowFilterTemplate} /> */}
+                {/* body={representativeBodyTemplate} filter filterElement={representativeRowFilterTemplate} /> */}
                 <Column field="status" header="Status" showFilterMenu={false} filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '12rem' }} body={statusBodyTemplate} filter filterElement={statusRowFilterTemplate} />
                 <Column field="verified" header="Verified" dataType="boolean" style={{ minWidth: '6rem' }} body={verifiedBodyTemplate} filter filterElement={verifiedRowFilterTemplate} />
             </DataTable>
         </div>
     );
 }
-        
