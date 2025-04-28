@@ -8,9 +8,20 @@ import 'primereact/resources/primereact.css';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primeflex/primeflex.css';
 import './index.css';
+
+
 import { BrowserRouter } from 'react-router-dom';
-const root = ReactDOM.createRoot(document.getElementById('root'));
+import {userSlice} from './Store/UserSlice'
+
+
+const store = configureStore({
+  reducer: {
+    userSlice,
+  }
+});
+
 root.render(
+  <Provider store={store}>
   <React.StrictMode>
     <PrimeReactProvider>
     <BrowserRouter>
@@ -18,6 +29,7 @@ root.render(
   </BrowserRouter>
     </PrimeReactProvider>
   </React.StrictMode>
+ </Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function
