@@ -1,6 +1,7 @@
 import { useState, React } from 'react';
 import { Divider } from 'primereact/divider';
 import { InputText } from 'primereact/inputtext';
+import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,11 +12,13 @@ export default function Login() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [role, setRole] = useState(null);
+    const items = ['student', 'teacher'];
 
     const navigate = useNavigate();
 
     function connectToServer(email, password) {
-        fetch('http://localhost:3000/user/signIn', {
+        fetch('http://localhost:5000/user/signIn', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -28,7 +31,7 @@ export default function Login() {
                 if (!res.ok) {
                     throw new Error('Network response was not ok' + res.error);
                 }
-                    return res.json()
+                return res.json()
             })
             .then(response => {
                 console.log(response);
@@ -65,6 +68,10 @@ export default function Login() {
                             <label className="w-6rem">Password</label>
                             <InputText value={password} onChange={(e) => setPassword(e.target.value)} id="password" type="password" className="w-12rem" />
                         </div>
+                        <div className="flex flex-wrap justify-content-center align-items-center gap-2">
+                        <label className="w-6rem">role</label>
+                            <Dropdown value={role} onChange={(e) => setRole(e.value)} options={items} className="w-12rem" />
+                        </div>
                         <Button style={{
                             backgroundColor: isLIHovered ? 'rgb(168, 98, 148)' : 'rgb(130, 43, 105)',
                             borderColor: 'rgb(130, 43, 105)',
@@ -74,7 +81,7 @@ export default function Login() {
                         }}
                             onMouseEnter={() => setLIIsHovered(true)}
                             onMouseLeave={() => setLIIsHovered(false)}
-                            onClick={()=>handelLogIn} label="Login" icon="pi pi-user" className="w-10rem mx-auto"></Button>
+                            onClick={() => handelLogIn} label="Login" icon="pi pi-user" className="w-10rem mx-auto"></Button>
                     </div>
                     <div className="w-full md:w-2">
                         <Divider layout="vertical" className="hidden md:flex">
