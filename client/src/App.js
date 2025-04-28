@@ -21,7 +21,7 @@ function App() {
             <Table/>
             {/* <SideBar/> */}
         <Routes>
-          {/* <Route path="/login" element={<Login />} /> */}
+          <Route path="/login" element={<Login />} />
         </Routes>
       </Suspense>
     </>

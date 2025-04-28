@@ -1,6 +1,6 @@
 export const CustomerService = {
     async getData() {
-        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MDkwM2U5YjgxNDc3YzU4NGNmM2MwZSIsImFjdGl2ZVJvbGUiOiJ0ZWFjaGVyIiwiaWF0IjoxNzQ1NDIxMjg5LCJleHAiOjE3NDU0NTcyODl9.Rp9vfE3Lz8lg0F59yBmX7Ss0eXfcSdVVrOk2Z6BE69w";
+        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MGU0OWJkN2NkNmY1ZmFjNzRiYWVhZSIsImFjdGl2ZVJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzQ1NzY2ODQ1LCJleHAiOjE3NDU4MDI4NDV9.UM6k3K2DtTYeq8WxXu1L3R5kd5t9aYlxXO_10u2wiDM";
         const response = await fetch("http://localhost:3000/student/getAllStudents", {
             method: "GET",
             headers: {
