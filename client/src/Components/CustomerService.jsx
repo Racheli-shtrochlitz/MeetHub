@@ -1,12 +1,8 @@
 export const CustomerService = {
     async getData() {
-<<<<<<< HEAD
         const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MDkyY2EwMWYwZTA1MmFjYWFlMDExMCIsImFjdGl2ZVJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzQ1NDMxNzEzLCJleHAiOjE3NDU0Njc3MTN9.MWo0Hc-2ZZt5QfDELL2rrfh_rw52ZdI_TfTrtTGx07Y";
         const response = await fetch("http://localhost:3000/user/getAllLessons", {
-=======
-        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MGU0OWJkN2NkNmY1ZmFjNzRiYWVhZSIsImFjdGl2ZVJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzQ1NzY2ODQ1LCJleHAiOjE3NDU4MDI4NDV9.UM6k3K2DtTYeq8WxXu1L3R5kd5t9aYlxXO_10u2wiDM";
-        const response = await fetch("http://localhost:3000/student/getAllStudents", {
->>>>>>> login
+
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`,
