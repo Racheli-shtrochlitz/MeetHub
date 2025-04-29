@@ -7,7 +7,7 @@ const { signIn,
     getAllLessons
 } = require('../Controllers/userController');
 
-router.post('/signIn', signIn);
+router.post('/signIn', (req, res) => {return res.status(200).json("signIn")});
 router.post('/signUp', signUp);
 router.post('/addProfile',authenticateUser,addProfile);
 router.get('/getAllLessons',authenticateUser,getAllLessons);
