@@ -16,8 +16,8 @@ export default function LoginDemo() {
     const items = ['student', 'teacher'];
     const navigate = useNavigate();
 
-    function connectToServer(email, password) {
-        fetch('http://localhost:5000/user/signIn', {
+    function connectToServer() {
+        fetch('http://localhost:3000/user/signIn', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -50,7 +50,7 @@ export default function LoginDemo() {
     function handelLogIn(e) {
 
         console.log(email, password);
-        connectToServer(email, password);
+        connectToServer();
 
     }
 
@@ -68,7 +68,7 @@ export default function LoginDemo() {
                             <InputText value={password} onChange={(e) => setPassword(e.target.value)} id="password" type="password" className="w-12rem" />
                         </div>
                         <div className="flex flex-wrap justify-content-center align-items-center gap-2">
-                        <label className="w-6rem">role</label>
+                            <label className="w-6rem">role</label>
                             <Dropdown value={role} onChange={(e) => setRole(e.value)} options={items} className="w-12rem" />
                         </div>
                         <Button style={{
@@ -80,7 +80,7 @@ export default function LoginDemo() {
                         }}
                             onMouseEnter={() => setLIIsHovered(true)}
                             onMouseLeave={() => setLIIsHovered(false)}
-                            onClick={() => handelLogIn} label="Login" icon="pi pi-user" className="w-10rem mx-auto"></Button>
+                            onClick={() => handelLogIn()} label="Login" icon="pi pi-user" className="w-10rem mx-auto"></Button>
                     </div>
                     <div className="w-full md:w-2">
                         <Divider layout="vertical" className="hidden md:flex">
