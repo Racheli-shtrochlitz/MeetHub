@@ -4,17 +4,16 @@ import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
 import { useNavigate } from 'react-router-dom';
+import useUser from '../Hooks/useUser';
 
-export default function Login() {
+export default function LoginDemo() {
+    const user = useUser();
     const [isLIHovered, setLIIsHovered] = useState(false);
     const [isSIHovered, setSIIsHovered] = useState(false);
-
-
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState(null);
     const items = ['student', 'teacher'];
-
     const navigate = useNavigate();
 
     function connectToServer(email, password) {
@@ -24,7 +23,7 @@ export default function Login() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                email, password, activeRole: "student"
+                user
             }),
         })
             .then((res) => {
@@ -106,4 +105,3 @@ export default function Login() {
         </div>
     )
 }
-

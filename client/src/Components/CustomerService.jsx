@@ -1,25 +1,27 @@
 export const CustomerService = {
-    async getData() {
-        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MDkyY2EwMWYwZTA1MmFjYWFlMDExMCIsImFjdGl2ZVJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzQ1NDMxNzEzLCJleHAiOjE3NDU0Njc3MTN9.MWo0Hc-2ZZt5QfDELL2rrfh_rw52ZdI_TfTrtTGx07Y";
-        const response = await fetch("http://localhost:3000/user/getAllLessons", {
+    
+    async getData(token) {
+        console.log("CustomerService:  " +token);
+        const token2=token||"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MTEwZThlN2Q5MDU5YTIyYTc5Y2UzOSIsImFjdGl2ZVJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzQ1OTQ4MzAzLCJleHAiOjE3NDU5ODQzMDN9.GDrnrdEdsnsFTy8CUH6O-1Ua1F8e9MXn5vADfzS-3CM";
+        const response = await fetch("http://localhost:3000/student/getAllStudents", {
 
             method: "GET",
             headers: {
-                "Authorization": `Bearer ${token}`,
+                "Authorization": `Bearer ${token2}`,
             }
         });
         if (!response.ok) {
             throw new Error(`Failed to fetch: ${response.statusText}`);
         }
         const data = await response.json();
-        console.log(data);
+        //console.log(data);
 
         return data;
     },
 
     async getCustomersSmall() {
         const data = await this.getData();
-        console.log(data);
+       // console.log(data);
         return data.slice(0, 10);    },
 
     async getCustomersMedium() {
