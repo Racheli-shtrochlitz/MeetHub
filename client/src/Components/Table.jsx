@@ -12,6 +12,7 @@ import { MultiSelect } from 'primereact/multiselect';
 import { Tag } from 'primereact/tag';
 import { TriStateCheckbox } from 'primereact/tristatecheckbox';
 import { CustomerService } from './CustomerService';
+import useGetToken from '../Hooks/useGetToken';
 
 // The rule argument should be a string in the format "custom_[field]".
 FilterService.register('custom_activity', (value, filters) => {
@@ -37,11 +38,13 @@ export default function CustomFilterDemo() {
     const [loading, setLoading] = useState(true);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [representatives, setRepresentatives] = useState([]);
+    const token = useGetToken();
 
     useEffect(() => {
         const fetchRepresentatives = async () => {
             try {
-                const data = await CustomerService.getData();
+                //console.log(token);
+                const data = await CustomerService.getData(token);
                 // כאן נניח שאת רוצה שהשם והתמונה יתאימו למבנה הקודם
                 const reps = data.map(student => ({
                     name: `${student.user.name}`, // או student.name אם זה שדה יחיד

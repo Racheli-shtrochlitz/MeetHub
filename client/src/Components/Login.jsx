@@ -1,9 +1,47 @@
-import React from 'react'; 
+import React from 'react';
 import { Divider } from 'primereact/divider';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
+import useUser from '../Hooks/useUser';
 
 export default function LoginDemo() {
+    const user = useUser();
+    const onSubmit = () => {
+        fetch('http://localhost:5000/user/signIn', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                user
+            }),
+        })
+            .then((res) => {
+                if (!res.ok) {
+                    throw new Error('Network response was not ok' + res.error);
+                }
+                return res.json()
+            })
+            //save the token in the storage
+            .then(response => {
+                console.log(response);
+                if (response.token) {
+                    localStorage.setItem('token', response.token);
+                    // state.name = action.payload.name;
+                    // state.activeRole = action.payload.role;
+                    // state.email = action.payload.email;
+                    //state.isAuthenticated = true;
+                    return true;
+                }
+                else {
+                    console.log(response.message);
+                }
+            })
+            .catch((error) => {
+                console.error('There was a problem with the fetch operation:', error);
+            })
+        return false;
+    }
     return (
         <div className="card">
             <div className="flex flex-column md:flex-row">
@@ -33,4 +71,3 @@ export default function LoginDemo() {
         </div>
     )
 }
-        
