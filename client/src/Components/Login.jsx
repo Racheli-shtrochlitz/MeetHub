@@ -5,9 +5,10 @@ import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
 import { useNavigate } from 'react-router-dom';
 import useUser from '../Hooks/useUser';
+import { useDispatch } from 'react-redux';
+import { setUserDetails } from '../Store/UserSlice';
 
 export default function LoginDemo() {
-    const user = useUser();
     const [isLIHovered, setLIIsHovered] = useState(false);
     const [isSIHovered, setSIIsHovered] = useState(false);
     const [email, setEmail] = useState('');
@@ -15,41 +16,48 @@ export default function LoginDemo() {
     const [role, setRole] = useState(null);
     const items = ['student', 'teacher'];
     const navigate = useNavigate();
+    const dispatch=useDispatch();
 
-    function connectToServer() {
-        fetch('http://localhost:3000/user/signIn', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                user
-            }),
-        })
-            .then((res) => {
-                if (!res.ok) {
-                    throw new Error('Network response was not ok' + res.error);
-                }
-                return res.json()
-            })
-            .then(response => {
-                console.log(response);
-                if (response.token) {
-                    localStorage.setItem('token', response.token);
-                    navigate('/home')
-                }
-                else {
-                    console.log(response.message);
-                }
-            })
-            .catch((error) => {
-                console.error('There was a problem with the fetch operation:', error);
-            })
+    async function connectToServer() {
+        try {
+            const response = await fetch('http://localhost:3000/user/signIn', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                    activeRole: role,
+                    createdAt: "2025-03-31T12:34:56.789Z"
+                })
+            });
+    
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Unknown error occurred');
+            }
+    
+            const data = await response.json();
+            console.log(data);
+    
+            if (data.token) {
+                localStorage.setItem('token', data.token);
+                navigate('/home');
+                dispatch(setUserDetails({ email, password, activeRole: role }));
+            } else {
+                console.log(data.message || 'No token returned');
+            }
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error.message);
+        }
     }
+
+
 
     function handelLogIn(e) {
 
-        console.log(email, password);
+        console.log(email, password,role);
         connectToServer();
 
     }

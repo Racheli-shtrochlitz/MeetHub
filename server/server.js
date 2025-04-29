@@ -32,7 +32,7 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization']
   }));
 
-  app.options('*', cors());
+  app.use(cors());
 
 app.use('/teacher',authenticateUser, teacherRoutes);
 app.use('/student' ,authenticateUser,studentRoutes);
