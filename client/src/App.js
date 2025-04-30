@@ -20,6 +20,7 @@ function App() {
             {/* <SideBar/> */}
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
         </Routes>
       </Suspense>
     </>
