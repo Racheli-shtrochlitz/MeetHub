@@ -1,4 +1,4 @@
-import { useState, React } from 'react';
+import React, { useState } from 'react'; 
 import { Divider } from 'primereact/divider';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
@@ -63,53 +63,32 @@ export default function LoginDemo() {
     }
 
     return (
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "80vh", width: "100vw" }}>
-            <div className="card" >
-                <div className="flex flex-column md:flex-row">
-                    <div className="w-full md:w-5 flex flex-column align-items-center justify-content-center gap-3 py-5">
-                        <div className="flex flex-wrap justify-content-center align-items-center gap-2">
-                            <label className="w-6rem">email</label>
-                            <InputText value={email} onChange={(e) => setEmail(e.target.value)} id="email" type="text" className="w-12rem" />
-                        </div>
-                        <div className="flex flex-wrap justify-content-center align-items-center gap-2">
-                            <label className="w-6rem">Password</label>
-                            <InputText value={password} onChange={(e) => setPassword(e.target.value)} id="password" type="password" className="w-12rem" />
-                        </div>
-                        <div className="flex flex-wrap justify-content-center align-items-center gap-2">
-                            <label className="w-6rem">role</label>
-                            <Dropdown value={role} onChange={(e) => setRole(e.value)} options={items} className="w-12rem" />
-                        </div>
-                        <Button style={{
-                            backgroundColor: isLIHovered ? 'rgb(168, 98, 148)' : 'rgb(130, 43, 105)',
-                            borderColor: 'rgb(130, 43, 105)',
-                            boxShadowColor: 'rgb(104, 54, 90)',
-                            transition: 'background-color 0.3s ease'
-
-                        }}
-                            onMouseEnter={() => setLIIsHovered(true)}
-                            onMouseLeave={() => setLIIsHovered(false)}
-                            onClick={() => handelLogIn()} label="Login" icon="pi pi-user" className="w-10rem mx-auto"></Button>
+        <div className="card">
+            <div className="flex flex-column md:flex-row">
+                <div className="w-full md:w-5 flex flex-column align-items-center justify-content-center gap-3 py-5">
+                    <div className="flex flex-wrap justify-content-center align-items-center gap-2">
+                        <label className="w-6rem">Username</label>
+                        <InputText id="username" type="text" className="w-12rem" />
                     </div>
-                    <div className="w-full md:w-2">
-                        <Divider layout="vertical" className="hidden md:flex">
-                            <b>OR</b>
-                        </Divider>
-                        <Divider layout="horizontal" className="flex md:hidden" align="center">
-                            <b>OR</b>
-                        </Divider>
+                    <div className="flex flex-wrap justify-content-center align-items-center gap-2">
+                        <label className="w-6rem">Password</label>
+                        <InputText id="password" type="password" className="w-12rem" />
                     </div>
-                    <div className="w-full md:w-5 flex align-items-center justify-content-center py-5">
-                        <Button style={{
-                            backgroundColor: isSIHovered ? 'rgb(243, 204, 130)' : 'rgb(240,175,58)',
-                            borderColor: ' rgb(243, 194, 103)',
-                            boxShadowColor: 'rgb(173, 139, 76)',
-                        }}
-                            onMouseEnter={() => setSIIsHovered(true)}
-                            onMouseLeave={() => setSIIsHovered(false)}
-                            label="Sign Up" onClick={() => navigate('/signup')} icon="pi pi-user-plus" severity="success" className="w-10rem"></Button>
-                    </div>
+                    <Button onClick={handelLogIn()} label="Login" icon="pi pi-user" className="w-10rem mx-auto"></Button>
+                </div>
+                <div className="w-full md:w-2">
+                    <Divider layout="vertical" className="hidden md:flex">
+                        <b>OR</b>
+                    </Divider>
+                    <Divider layout="horizontal" className="flex md:hidden" align="center">
+                        <b>OR</b>
+                    </Divider>
+                </div>
+                <div className="w-full md:w-5 flex align-items-center justify-content-center py-5">
+                    <Button onClick= {()=>navigate("/signup")}label="Sign Up" icon="pi pi-user-plus" severity="success" className="w-10rem"></Button>
                 </div>
             </div>
         </div>
     )
 }
+        
