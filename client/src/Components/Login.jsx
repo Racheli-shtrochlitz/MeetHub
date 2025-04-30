@@ -43,8 +43,8 @@ export default function LoginDemo() {
     
             if (data.token) {
                 localStorage.setItem('token', data.token);
-                navigate('/home');
                 dispatch(setUserDetails({ email, password, activeRole: role }));
+                navigate('/home');
             } else {
                 console.log(data.message || 'No token returned');
             }
