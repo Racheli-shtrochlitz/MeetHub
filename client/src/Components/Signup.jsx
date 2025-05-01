@@ -35,12 +35,6 @@ export default function Signup() {
     const selectedRole = watch("role") || "";
 
 
-    const onSubmit = (data) => {
-
-        console.log(data);
-        connectToServer(data);
-    };
-
     function connectToServer(formData) {
         fetch('http://localhost:3000/user/signUp', {
             method: 'POST',
@@ -87,7 +81,7 @@ export default function Signup() {
         <Suspense fallback={<div>loading...</div>}>
             <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", height: "80vh", width: "100vw" }}>
                 <div className="card" >
-                    <form onSubmit={handleSubmit(onSubmit)}>
+                    <form onSubmit={handleSubmit(connectToServer)}>
                         <div className="flex flex-column md:flex-row">
                             <div className="w-full md:w-5 flex flex-column align-items-center justify-content-center gap-3 py-5">
                                 <div className="flex flex-wrap justify-content-center align-items-center gap-2">
