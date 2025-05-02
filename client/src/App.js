@@ -16,7 +16,7 @@ function App() {
 
       <Suspense fallback={<div>Loading...</div>}>
             <Navbar />
-            {/* <Table/> */}
+            <Table/>
             {/* <SideBar/> */}
         <Routes>
           <Route path="/login" element={<Login />} />

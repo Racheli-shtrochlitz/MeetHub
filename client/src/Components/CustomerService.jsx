@@ -2,7 +2,7 @@ export const CustomerService = {
     
     async getData(token) {
         console.log("CustomerService:  " +token);
-        const token2=token||"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MTEwZThlN2Q5MDU5YTIyYTc5Y2UzOSIsImFjdGl2ZVJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzQ1OTQ4MzAzLCJleHAiOjE3NDU5ODQzMDN9.GDrnrdEdsnsFTy8CUH6O-1Ua1F8e9MXn5vADfzS-3CM";
+        const token2=token||"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MTM3MzdjY2MxNTdhNjJkN2EyMWY5NyIsImFjdGl2ZVJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzQ2MTA1MjEzLCJleHAiOjE3NDYxNDEyMTN9.nS8fFOOOa3gJcOlyQzHvo3kUYVPv44DKqo2Z-bEDi_8";
         const response = await fetch("http://localhost:3000/student/getAllStudents", {
 
             method: "GET",

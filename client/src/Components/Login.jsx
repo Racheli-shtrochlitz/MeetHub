@@ -11,14 +11,12 @@ import { useForm, Controller } from 'react-hook-form';
 export default function LoginDemo() {
     const [isLIHovered, setIsLIHovered] = useState(false);
     const [isSIHovered, setIsSIHovered] = useState(false);
-
     const items = ['student', 'teacher'];
-
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const { control, register, handleSubmit, formState: { errors } } = useForm({
-        defaultValues: { role: '', email: '', password: '' }
+        defaultValues: { role: '', email: '', password: '' },
     });
 
 
@@ -36,12 +34,14 @@ export default function LoginDemo() {
             }),
         })
             .then(response => {
+                if (!response.ok) {
+                    alert("error: " + (response.message || 'Unknown error'));
+                    return;
+                }
                 return response.json();
             })
+
             .then(data => {
-                // if (!data.ok) {
-                //     throw new Error(data.error || 'Unknown error occurred');
-                // }
                 console.log(data);
                 if (data.token) {
                     console.log("token: " + data.token);
@@ -66,9 +66,9 @@ export default function LoginDemo() {
 
     return (
         <div className="card">
-            
+
             <form onSubmit={handleSubmit(connectToServer)}>
-            <div className="flex flex-column md:flex-row">
+                <div className="flex flex-column md:flex-row">
                     <div className="w-full md:w-5 flex flex-column align-items-center justify-content-center gap-3 py-5">
                         <div className="flex flex-wrap justify-content-center align-items-center gap-2">
                             <label className="w-6rem">Role</label>
@@ -101,7 +101,7 @@ export default function LoginDemo() {
                                 {...register("password", {
                                     required: "Password is required",
                                     pattern: {
-                                        value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/,
+                                        value: /^.{6,}$/,
                                         message: "Password must be at least 6 characters, include letters and numbers"
                                     }
                                 })}
@@ -122,31 +122,31 @@ export default function LoginDemo() {
                             type='submit'
                         ></Button>
                     </div>
-                <div className="w-full md:w-2">
-                    <Divider layout="vertical" className="hidden md:flex">
-                        <b>OR</b>
-                    </Divider>
-                    <Divider layout="horizontal" className="flex md:hidden" align="center">
-                        <b>OR</b>
-                    </Divider>
+                    <div className="w-full md:w-2">
+                        <Divider layout="vertical" className="hidden md:flex">
+                            <b>OR</b>
+                        </Divider>
+                        <Divider layout="horizontal" className="flex md:hidden" align="center">
+                            <b>OR</b>
+                        </Divider>
+                    </div>
+                    <div className="w-full md:w-5 flex align-items-center justify-content-center py-5">
+                        <Button style={{
+                            backgroundColor: isSIHovered ? 'rgb(168, 98, 148)' : 'rgb(130, 43, 105)',
+                            borderColor: 'rgb(130, 43, 105)',
+                            boxShadowColor: 'rgb(104, 54, 90)',
+                            transition: 'background-color 0.3s ease'
+
+                        }}
+                            onMouseEnter={() => setIsSIHovered(true)}
+                            onMouseLeave={() => setIsSIHovered(false)}
+                            label="Sign Up" icon="pi pi-user-plus" severity="success" className="w-10rem"
+                            onClick={() => { navigate('/signup'); }}
+                        ></Button>
+                    </div>
+
                 </div>
-                <div className="w-full md:w-5 flex align-items-center justify-content-center py-5">
-                    <Button style={{
-                        backgroundColor: isSIHovered ? 'rgb(168, 98, 148)' : 'rgb(130, 43, 105)',
-                        borderColor: 'rgb(130, 43, 105)',
-                        boxShadowColor: 'rgb(104, 54, 90)',
-                        transition: 'background-color 0.3s ease'
 
-                    }}
-                        onMouseEnter={() => setIsSIHovered(true)}
-                        onMouseLeave={() => setIsSIHovered(false)}
-                        label="Sign Up" icon="pi pi-user-plus" severity="success" className="w-10rem"
-                        onClick={() => {navigate('/signup');}}
-                    ></Button>               
-                     </div>
-
-            </div>
-            
             </form>
         </div>
     )
