@@ -20,10 +20,10 @@ function App() {
             {/* <Table/> */}
             {/* <SideBar/> */}
         <Routes>
+          <Route path="/signup" element={<SignUp />} />
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
         </Routes>
       </Suspense>
     </>
