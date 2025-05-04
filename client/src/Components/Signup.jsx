@@ -176,10 +176,6 @@ export default function Signup() {
                     <div className="w-full md:w-5 flex align-items-center justify-content-center py-5">
                         <img alt="logo" src="/logimage.png" style={{ marginTop: "15%", width: "100%", height: "100%" }} />
                     </div>)}
-
-                <Button onClick={() => { localStorage.removeItem('token'); }}>
-                    clear token
-                </Button>
             </div>
         </Suspense>
     )
