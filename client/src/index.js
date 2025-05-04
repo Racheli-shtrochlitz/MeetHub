@@ -9,28 +9,29 @@ import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primeflex/primeflex.css';
 import './index.css';
 import { configureStore } from '@reduxjs/toolkit';
-import { Provider } from 'react-redux'; 
+import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import  userSlice  from './Store/UserSlice';
+import userSlice from './Store/UserSlice';
 
 const store = configureStore({
   reducer: {
-    user: userSlice, 
+    user: userSlice,
   }
 });
 
-const root = ReactDOM.createRoot(document.getElementById('root')); 
+const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
-  <Provider store={store}>
-    <React.StrictMode>
+  <React.StrictMode>
+    <Provider store={store}>
       <PrimeReactProvider>
         <BrowserRouter>
           <App />
         </BrowserRouter>
       </PrimeReactProvider>
-    </React.StrictMode>
-  </Provider>
+    </Provider>
+  </React.StrictMode>
+
 );
 
 reportWebVitals();
