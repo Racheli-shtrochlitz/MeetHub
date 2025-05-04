@@ -177,6 +177,5 @@ export default function Signup() {
                         <img alt="logo" src="/logimage.png" style={{ marginTop: "15%", width: "100%", height: "100%" }} />
                     </div>)}
             </div>
-        </Suspense>
     )
 }
