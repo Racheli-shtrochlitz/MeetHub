@@ -101,7 +101,7 @@ export default function LoginDemo() {
                                 {...register("password", {
                                     required: "Password is required",
                                     pattern: {
-                                        value: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/,
+                                        value: /^(?=.*[A-Za-z])(?=.*\d).{6,}$/,
                                         message: "Password must be at least 6 characters, include letters and numbers"
                                     }
                                 })}
