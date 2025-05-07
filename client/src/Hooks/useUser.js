@@ -1,8 +1,8 @@
 import { useSelector } from 'react-redux'
 
 const useUser = () => {
-  const user = JSON.stringify(useSelector(state => state.user));
-  return user;
+  return useSelector(state => state.user.user); 
 }
 
 export default useUser
+

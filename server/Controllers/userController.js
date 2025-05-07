@@ -58,7 +58,8 @@ const signUp = async (req, res) => {
             name,
             email,
             password: await bcrypt.hash(password, 10),//hashing the password
-            roles: [activeRole]
+            roles: [activeRole],
+            activeRole
         });
 
         // הוספת ה-ID של המשתמש החדש לגוף הבקשה
@@ -78,7 +79,7 @@ const signUp = async (req, res) => {
         //שמירת המשתמש רק לאחר וידוא יצירת התפקיד
         const savedUser = await newUser.save();
         console.log('Saved User:', savedUser);
-        const token = jwt.sign({ id: newUser._id, activeRole: activeRole}, process.env.SECRET_TOKEN, { expiresIn: '10h' });
+        const token = jwt.sign({ id: newUser._id, activeRole: activeRole }, process.env.SECRET_TOKEN, { expiresIn: '10h' });
 
         return res.status(201).json({ token: token, newUser: newUser });
     }
@@ -91,9 +92,9 @@ const signUp = async (req, res) => {
 const addProfile = async (req, res) => {
 
     const { id } = req.user;
-    const {newRole } = req.body;
-    const user = await User.findById(id); 
-    const roles = user.roles; 
+    const { newRole } = req.body;
+    const user = await User.findById(id);
+    const roles = user.roles;
 
     if (!newRole)
         return res.status(400).json({ error: "you didnt provide a required parameter" });
@@ -125,44 +126,78 @@ const addProfile = async (req, res) => {
 }
 
 const getAllLessons = async (req, res) => {
-    const userId = req.user?.id;
-    const activeRole = req.user?.activeRole;
-  
-    if (!userId || !activeRole) {
-      return res.status(400).json({ message: "Missing user or role" });
+    const id = req.user.id;
+    const activeRole = req.user.activeRole;
+
+    if (!id || !activeRole) {
+        return res.status(400).json({ message: "Missing user or role" });
     }
-  
-    let object; 
-  
+
+    let object;
+
     // pop the teacher or student according to the role
     try {
-      if (activeRole === "teacher") {
-        object = await Teacher.findOne({ user: userId });
-      } else {
-        object = await Student.findOne({ user: userId });
-      }
-  
-      if (!object) {
-        return res.status(404).json({ message: `No ${activeRole} found with the given user ID` });
-      }
-  
-      // create the filter for lessons
-      const filter = activeRole === "teacher" ? { teacher: object._id } : { student: object._id };
-  
-      const lessons = await Lesson.find(filter);
-      return res.status(200).json(lessons);
-  
-    } catch (err) {
-      return res.status(500).json({ message: "Internal server error", error: err.message });
+
+        if (activeRole === "teacher") {
+            object = await Teacher.findOne({ user: id });
+        } else {
+            object = await Student.findOne({ user: id });
+        }
+
+        if (!object) {
+            return res.status(404).json({ message: `No ${activeRole} found with the given user ID` });
+        }
+
+        // create the filter for lessons
+        const filter = activeRole === "teacher" ? { teacher: object._id } : { student: object._id };
+
+        const lessons = await Lesson.find(filter)
+        .populate({
+            path: 'student',
+            populate: { path: 'user' }
+        })
+        .populate({
+            path: 'teacher',
+            populate: { path: 'user' }
+        });
+        return res.status(200).json(lessons);
+
+
+    }catch (err) {
+        console.error(err); 
+        return res.status(500).json({ message: "Internal server error", error: err.message });
     }
-  };
-  
-  
+    
+};
+
+const getUserByToken = async (req, res) => {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+        return res.status(401).json({ message: 'Authorization header missing' });
+    }
+
+    const token = authHeader.split(' ')[1];
+    try {
+        const secret = process.env.SECRET_TOKEN;
+        const decoded = jwt.verify(token, secret);
+        const { id } = decoded;
+        const user=await User.findById(id);
+        return res.status(200).json(user);
+    }
+    catch (err) {
+        res.status(500).json({ err: err.message, message: "internak server error" });
+    }
+}
+
+
+
 
 
 module.exports = {
     signIn,
     signUp,
     addProfile,
-    getAllLessons
+    getAllLessons,
+    getUserByToken
 };
