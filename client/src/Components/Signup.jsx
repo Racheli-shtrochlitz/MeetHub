@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { setUserDetails } from '../Store/UserSlice';
+import { Dialog } from 'primereact/dialog';
+
 
 export default function Signup() {
 
@@ -79,7 +81,7 @@ export default function Signup() {
     }
 
     return (
-        <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", height: "80vh", width: "100vw" }}>
+        <Dialog header="log in" visible={true} style={{ width: '50vw' }} onHide={() => { navigate('/login'); }}>
             <div className="card" >
                 <form onSubmit={handleSubmit(connectToServer)}>
                     <div className="flex flex-column md:flex-row">
@@ -162,20 +164,16 @@ export default function Signup() {
                                 boxShadowColor: 'rgb(104, 54, 90)',
                                 transition: 'background-color 0.3s ease'
 
-                                }}
-                                    onMouseEnter={() => setIsHovered(true)}
-                                    onMouseLeave={() => setIsHovered(false)}
-                                    label="Sign Up" icon="pi pi-user-plus" severity="success" className="w-10rem"
-                                    type='submit'
-                                ></Button>
-                            </div>
+                            }}
+                                onMouseEnter={() => setIsHovered(true)}
+                                onMouseLeave={() => setIsHovered(false)}
+                                label="Sign Up" icon="pi pi-user-plus" severity="success" className="w-10rem"
+                                type='submit'
+                            ></Button>
                         </div>
-                    </form>
-                </div>
-                {window.innerWidth > 768 && ( // או כל רוחב שאתה מגדיר לפלאפונים
-                    <div className="w-full md:w-5 flex align-items-center justify-content-center py-5">
-                        <img alt="logo" src="/logimage.png" style={{ marginTop: "15%", width: "100%", height: "100%" }} />
-                    </div>)}
+                    </div>
+                </form>
             </div>
+        </Dialog>
     )
 }
