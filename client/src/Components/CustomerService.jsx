@@ -1,44 +1,51 @@
 export const CustomerService = {
-    
+
     async getData(token) {
-        console.log("CustomerService:  " +token);
-        const token2=token||"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MTEwZThlN2Q5MDU5YTIyYTc5Y2UzOSIsImFjdGl2ZVJvbGUiOiJzdHVkZW50IiwiaWF0IjoxNzQ1OTQ4MzAzLCJleHAiOjE3NDU5ODQzMDN9.GDrnrdEdsnsFTy8CUH6O-1Ua1F8e9MXn5vADfzS-3CM";
-        const response = await fetch("http://localhost:3000/student/getAllStudents", {
+        console.log("CustomerService111:  " , token);
+        const response = await fetch("http://localhost:3000/user/getAllLessons", {
 
             method: "GET",
             headers: {
-                "Authorization": `Bearer ${token2}`,
+                "Authorization": `Bearer ${token}`
             }
         });
+
+        console.log("CustomerService token: ",token)
+        console.log("CustomerService response:  ", response);
+
         if (!response.ok) {
-            throw new Error(`Failed to fetch: ${response.statusText}`);
+            console.log(response)
+            return [
+               
+            ]
+                ;
         }
         const data = await response.json();
-        //console.log(data);
-
+        console.log("CustomerService:  ", data);
         return data;
     },
 
-    async getCustomersSmall() {
-        const data = await this.getData();
-       // console.log(data);
-        return data.slice(0, 10);    },
+    async getCustomersSmall(token) {
+        const data = await this.getData(token);
+        return data.slice(0, 10);
+    },
 
-    async getCustomersMedium() {
-        const data = await this.getData();
-        console.log(data);
+    async getCustomersMedium(token) {
+        const data = await this.getData(token);
+        console.log("getCustomersMedium:  ", data);
+
         return data.slice(0, 20);
     },
 
-    async getCustomersLarge() {
-        const data = await this.getData();
-        console.log(data);
-        return data.slice(0, 100);    },
+    async getCustomersLarge(token) {
+        const data = await this.getData(token);
+        return data.slice(0, 100);
+    },
 
-    async getCustomersXLarge() {
-        const data = await this.getData();
-        console.log(data);
-        return data.slice(0, 200);    },
+    async getCustomersXLarge(token) {
+        const data = await this.getData(token);
+        return data.slice(0, 200);
+    },
 
     async getCustomers(params) {
         const queryParams = params
@@ -48,6 +55,6 @@ export const CustomerService = {
             : '';
 
         return fetch('https://www.primefaces.org/data/customers?' + queryParams).then((res) => res.json());
-        //return await this.getData();
+        //return await this.getData(token);
     }
 };

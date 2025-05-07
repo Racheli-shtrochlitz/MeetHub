@@ -11,6 +11,7 @@ const lessonSchema = new Schema({
   recording: { type: String },  // קישור להקלטת השיעור (אם יש)
   feedback: { type: String },  // משוב על השיעור
   createdAt: { type: Date, default: Date.now },
+  attachments:{type:String}
 });
 
 module.exports = mongoose.model('Lesson', lessonSchema);

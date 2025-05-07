@@ -26,13 +26,14 @@ mongoose.connect(process.env.DATABASE_URL, {
     console.error("Error connecting to MongoDB:", err.message);
 });
 
-app.use(cors({
-    origin: 'http://localhost:3001', 
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-  }));
+const corsOptions = {
+    origin: '*', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
 
-  app.use(cors());
+app.use(cors(corsOptions));
+
 
 app.use('/teacher',authenticateUser, teacherRoutes);
 app.use('/student' ,authenticateUser,studentRoutes);

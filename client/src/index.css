@@ -16,8 +16,9 @@ code {
 
 :root {
   --text-color: rgb(0, 1, 40);
-  /* --primary-color: #0a58ca;
-  --surface-ground: #f9f9f9; */
+   --primary-color: #0a58ca; 
+  --surface-ground: #f9f9f9; 
+  --purple: rgb(130, 43, 105);
 }
 
 body {

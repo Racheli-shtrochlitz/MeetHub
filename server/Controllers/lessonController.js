@@ -34,6 +34,10 @@ const addLesson = async (req, res) => {
         const teacher = await Teacher.findById(lesson.teacher);
         const student = await Student.findById(lesson.student);
 
+        if (!teacher || !student) {
+            return res.status(404).json({ message: "Teacher or student not found" });
+        }
+
         if (teacher && !teacher.lessons.includes(newLesson._id)) {
             teacher.lessons.push(newLesson._id);
             await teacher.save();
