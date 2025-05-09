@@ -12,6 +12,7 @@ const Table = lazy(() => import('./Components/Table'));
 const SideBar = lazy(() => import('./Components/Sidebar'));
 const SignUp = lazy(() => import('./Components/Signup'));
 const Home = lazy(() => import('./Components/Home'));
+const Profile = lazy(() => import('./Components/Profile'));
 
 
 function App() {
@@ -47,6 +48,7 @@ function App() {
     <Suspense fallback={<div>Loading...</div>}>
       <Navbar />
       <Routes>
+        <Route path="/profile" element={<Profile />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
