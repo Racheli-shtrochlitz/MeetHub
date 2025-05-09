@@ -12,6 +12,9 @@ const Table = lazy(() => import('./Components/Table'));
 const SideBar = lazy(() => import('./Components/Sidebar'));
 const SignUp = lazy(() => import('./Components/Signup'));
 const Home = lazy(() => import('./Components/Home'));
+const UploadFiles = lazy(() => import('./Components/UploadFiles'));
+const AddLesson = lazy(() => import('./Components/AddLesson'));
+
 
 
 function App() {
@@ -52,6 +55,9 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/lessons" element={<Table />} />
+        <Route path="addLesson" element={<AddLesson/>}/>
+        <Route path="/upload" element={<UploadFiles/>}/>
+
       </Routes>
     </Suspense>
   );
