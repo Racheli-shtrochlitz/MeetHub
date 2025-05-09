@@ -8,9 +8,13 @@ const lessonSchema = new Schema({
   zoomLink: { type: String, required: true },  // קישור זום לשיעור
   subject:{type:String},
   materials: [{ type: Schema.Types.ObjectId, ref: 'Material' }],  // חומרים שהועלו לשיעור
-  recording: { type: String },  // קישור להקלטת השיעור (אם יש)
+  recording: { type: Boolean },  // קישור להקלטת השיעור (אם יש)
   feedback: { type: String },  // משוב על השיעור
+<<<<<<< Updated upstream
   createdAt: { type: Date, default: Date.now },
+=======
+  createdAt: { type: Date, default: Date.now }
+>>>>>>> Stashed changes
 });
 
 module.exports = mongoose.model('Lesson', lessonSchema);
