@@ -12,7 +12,7 @@ const SideBar = lazy(() => import('./Components/Sidebar'));
 const SignUp = lazy(() => import('./Components/Signup'));
 const Home = lazy(() => import('./Components/Home'));
 const AddLesson = lazy(() => import('./Components/AddLesson'));
-const UploadFiles = lazy(() => import('./Components/UploadFiles'));
+// const UploadFiles = lazy(() => import('./Components/UploadFiles'));
 
 
 function App() {
