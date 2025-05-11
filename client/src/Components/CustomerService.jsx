@@ -1,7 +1,8 @@
+
 export const CustomerService = {
 
     async getData(token) {
-        console.log("CustomerService111:  " , token);
+        console.log("CustomerService111:  ", token);
         const response = await fetch("http://localhost:3000/user/getAllLessons", {
 
             method: "GET",
@@ -10,13 +11,13 @@ export const CustomerService = {
             }
         });
 
-        console.log("CustomerService token: ",token)
+        console.log("CustomerService token: ", token)
         console.log("CustomerService response:  ", response);
 
         if (!response.ok) {
             console.log(response)
             return [
-               
+
             ]
                 ;
         }
@@ -56,5 +57,14 @@ export const CustomerService = {
 
         return fetch('https://www.primefaces.org/data/customers?' + queryParams).then((res) => res.json());
         //return await this.getData(token);
+    },
+
+    async getUsers(user,token) {
+        const data =await this.getData(token);
+        if (user.activeRole === 'teacher') {
+            return data.map(u => u.student).filter(Boolean);
+
+        }
+        return data.map(u => u.teacher).filter(Boolean);
     }
 };

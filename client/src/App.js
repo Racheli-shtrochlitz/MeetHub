@@ -37,6 +37,7 @@ function App() {
           email: data.email,
           activeRole: data.activeRole
         }));
+        console.log(data);
       } catch (err) {
         console.error(err);
       }
