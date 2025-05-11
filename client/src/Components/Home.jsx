@@ -15,11 +15,10 @@ export default function Home() {
         fetch('http://localhost:3000/user/addProfile', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Authorization': localStorage.getItem('token'),
             },
             body: JSON.stringify({
-                activeRole: role,
-                token: localStorage.getItem('token')
+                newRole: role
             }),
         })
             .then(response => {
