@@ -10,11 +10,17 @@ export default function BasicDemo() {
     const items = [
         {
             label: 'Profile',
-            icon: 'pi pi-user'
+            icon: 'pi pi-user',
+            command: () => {
+                navigate('/profile')
+            }
         },
         {
             label: 'Home',
-            icon: 'pi pi-home'
+            icon: 'pi pi-home',
+            command: () => {
+                navigate('/home')
+            }
         },
         {
             label: 'Projects',
@@ -55,7 +61,7 @@ export default function BasicDemo() {
         ,
         {
             label: 'Login',
-            icon: 'pi pi-sign-in' ,
+            icon: 'pi pi-sign-in',
             command: () => {
                 navigate('/login');
             }

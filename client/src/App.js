@@ -8,11 +8,12 @@ import { setUserDetails } from './Store/UserSlice';
 const Login = lazy(() => import('./Components/Login'));
 const Navbar = lazy(() => import('./Components/Navbar'));
 const Table = lazy(() => import('./Components/Table'));
-const SideBar = lazy(() => import('./Components/Sidebar'));
+const SideBar = lazy(() => import('./Components/Profile'));
 const SignUp = lazy(() => import('./Components/Signup'));
 const Home = lazy(() => import('./Components/Home'));
 const AddLesson = lazy(() => import('./Components/AddLesson'));
-const UploadFiles = lazy(() => import('./Components/UploadFiles'));
+// const UploadFiles = lazy(() => import('./Components/UploadFiles'));
+const Profile = lazy(()=>import('./Components/Profile'))
 
 
 function App() {
@@ -47,6 +48,7 @@ function App() {
     <Suspense fallback={<div>Loading...</div>}>
       <Navbar />
       <Routes>
+        <Route path='/profile' element={<Profile/>}/>
         <Route path="/table" element={<Table />} />
         <Route path="/addLesson" element={<AddLesson />} />
         <Route path="/signup" element={<SignUp />} />
