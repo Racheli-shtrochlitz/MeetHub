@@ -1,5 +1,45 @@
 const Teacher = require('../Models/teacher');
 
+const getAllStudents = async (req, res) => {
+    console.log("in getAllStudents")
+    const { id } = req.params;
+    try {
+        const teacher = await Teacher.findById(id)
+            .populate('students')
+        if (!teacher) {
+            return res.status(404).send("Teacher not found");
+        }
+        else{
+            students = teacher.students.map(student => {return { name: student.name}});
+            return res.status(200).json(students);
+        }
+        
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).json({ message: "Internal server error", error: err.message });
+    }
+}
+
+const getAllSubjects = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const teacher = await Teacher.findById(id)
+            .populate('subjects');
+        if (!teacher) {
+            return res.status(404).send("Teacher not found");
+        }
+        else{
+            subjects = teacher.subject.map(subject => {return { subject: subject }});
+            return res.status(200).json(students);
+        }
+        
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).json({ message: "Internal server error", error: err.message });
+    }
+}
+
+
 const getTeacher = async (req, res) => {
     const { id } = req.params;
     try {
@@ -91,5 +131,6 @@ module.exports = {
     createTeacher,
     updateTeacher,
     deleteTeacher,
-    getAllTeachers
+    getAllTeachers,
+    getAllStudents
 };
