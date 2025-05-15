@@ -27,6 +27,10 @@ const getLesson = async (req, res) => {
 
 const addLesson = async (req, res) => {
     const { lesson } = req.body;
+    lesson.teacher = req.user.id; // Set the teacher to the logged-in user
+    lesson.zoomLink =  "https://zoom.us/join"||"create meeting" ; //from zoom
+    lesson.materials = [];//from drive
+    lesson.feedback = "";
     try {
         const newLesson = await Lesson.create(lesson);
 

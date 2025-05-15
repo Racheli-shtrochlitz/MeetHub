@@ -70,7 +70,6 @@ export default function LoginDemo() {
         <div className="card flex justify-content-center">
             <Dialog header="log in" visible={true} style={{ width: '50vw' }} onHide={() => {  navigate('/home'); }}>
             <div className="card">
-
                 <form onSubmit={handleSubmit(connectToServer)}>
                     <div className="flex flex-column md:flex-row">
                         <div className="w-full md:w-5 flex flex-column align-items-center justify-content-center gap-3 py-5">
