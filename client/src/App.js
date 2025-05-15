@@ -13,6 +13,9 @@ const SideBar = lazy(() => import('./Components/Sidebar'));
 const SignUp = lazy(() => import('./Components/Signup'));
 const Home = lazy(() => import('./Components/Home'));
 const Profile = lazy(() => import('./Components/Profile'));
+const UploadFiles = lazy(() => import('./Components/UploadFiles'));
+const AddLesson = lazy(() => import('./Components/AddLesson'));
+
 
 
 function App() {
@@ -35,6 +38,7 @@ function App() {
           email: data.email,
           activeRole: data.activeRole
         }));
+        console.log(data);
       } catch (err) {
         console.error(err);
       }
@@ -54,6 +58,9 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/lessons" element={<Table />} />
+        <Route path="addLesson" element={<AddLesson/>}/>
+        <Route path="/upload" element={<UploadFiles/>}/>
+
       </Routes>
     </Suspense>
   );
