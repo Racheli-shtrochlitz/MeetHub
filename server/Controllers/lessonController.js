@@ -4,6 +4,7 @@ const Student = require('../Models/student');
 
 
 const dotenv = require('dotenv');
+const student = require('../Models/student');
 dotenv.config();
 
 
@@ -27,10 +28,22 @@ const getLesson = async (req, res) => {
 
 const addLesson = async (req, res) => {
     const { lesson } = req.body;
-    lesson.teacher = req.user.id; // Set the teacher to the logged-in user
-    lesson.zoomLink =  "https://zoom.us/join"||"create meeting" ; //from zoom
+    console.log("lesson: ", lesson);
+    //change id of user to id of teacher
+    const teacher = await Teacher.findOne({})
+        .populate({ path: 'user', match: { _id: req.user.id } });
+    lesson.teacher = teacher._id; 
+    const student = await Student.findOne({})
+        .populate({ path: 'user', match: { name: req.body.student } });
+    lesson.student = student._id;
+    if (!lesson.student) {
+        return res.status(404).json({ message: "Student not found" });
+    }
+
+    lesson.zoomLink = "https://zoom.us/join" || "create meeting"; //from zoom
     lesson.materials = [];//from drive
     lesson.feedback = "";
+    console.log("lesson for creating: ", lesson);
     try {
         const newLesson = await Lesson.create(lesson);
 

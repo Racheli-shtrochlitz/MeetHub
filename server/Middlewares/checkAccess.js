@@ -56,6 +56,9 @@ const checkOwnership = (req, res, next) => {
     const userIdFromToken = req.user.id;
     const userIdFromRequest = req.params.id || req.body.userId;
 
+    console.log("userIdFromToken: ", userIdFromToken);
+    console.log("userIdFromRequest: ", userIdFromRequest);
+    console.log("req.params: ", req.params);
     if (!userIdFromRequest || userIdFromToken !== userIdFromRequest) {
         return res.status(403).json({ message: 'Access denied. You can only modify your own data.' });
     }

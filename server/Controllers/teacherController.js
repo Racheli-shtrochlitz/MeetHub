@@ -2,18 +2,24 @@ const Teacher = require('../Models/teacher');
 
 const getAllStudents = async (req, res) => {
     console.log("in getAllStudents")
-    const { id } = req.params;
+    const id = "680d4eb6234d6fbd967ca351" || req.user.id;
+    console.log("id: ", id)
     try {
-        const teacher = await Teacher.findById(id)
-            .populate('students')
+        const teacher = await Teacher.findOne({ user: id })
+            .populate({
+                path: 'students',
+                populate: { path: 'user', model: 'User' }
+            });
         if (!teacher) {
             return res.status(404).send("Teacher not found");
         }
-        else{
-            students = teacher.students.map(student => {return { name: student.name}});
+        else {
+            console.log("teacher: ", teacher)
+            students = teacher.students.map(student => { return student.user.name })
+            console.log("students: ", students)
             return res.status(200).json(students);
         }
-        
+
     } catch (err) {
         console.error(err.message);
         return res.status(500).json({ message: "Internal server error", error: err.message });
@@ -21,18 +27,17 @@ const getAllStudents = async (req, res) => {
 }
 
 const getAllSubjects = async (req, res) => {
-    const { id } = req.params;
+    const id = req.user.id;
     try {
-        const teacher = await Teacher.findById(id)
-            .populate('subjects');
+        const teacher = await Teacher.findOne({ user: id })
         if (!teacher) {
             return res.status(404).send("Teacher not found");
         }
-        else{
-            subjects = teacher.subject.map(subject => {return { subject: subject }});
-            return res.status(200).json(students);
+        else {
+            subjects = teacher.subject
+            return res.status(200).json(subjects);
         }
-        
+
     } catch (err) {
         console.error(err.message);
         return res.status(500).json({ message: "Internal server error", error: err.message });
@@ -132,5 +137,6 @@ module.exports = {
     updateTeacher,
     deleteTeacher,
     getAllTeachers,
-    getAllStudents
+    getAllStudents,
+    getAllSubjects
 };

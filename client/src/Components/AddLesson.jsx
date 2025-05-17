@@ -11,16 +11,15 @@ import { Dropdown } from 'primereact/dropdown';
 export default function AddLesson() {
     const navigate = useNavigate();
 
-    const [subjectItems, setSubjectItems] = useState(["demo", "temp"]);
     const [studentValue, setStudentValue] = useState(null);
     const [studentsItems, setStudentsItems] = useState(["temp", "demo"]);
-    const [subjectValue, setSubjectValue] = useState();
+
+    const [subjectItems, setSubjectItems] = useState(["demo", "temp"]);
     const [datetime, setDateTime] = useState(null);
     const [checked, setChecked] = useState(false);
     const [visible, setVisible] = useState(false);
 
 
-    const [subjects, setSubjects] = useState([]);
     const [selectedSubject, setSelectedSubject] = useState(null);
     const [filteredSubjects, setFilteredSubjects] = useState(null);
 
@@ -30,10 +29,10 @@ export default function AddLesson() {
             let _filteredSubjects;
 
             if (!event.query.trim().length) {
-                _filteredSubjects = [...subjects];
+                _filteredSubjects = [...subjectItems];
             }
             else {
-                _filteredSubjects = subjects.filter((subject) => {
+                _filteredSubjects = subjectItems.filter((subject) => {
                     return subject.toLowerCase().startsWith(event.query.toLowerCase());
                 });
             }
@@ -44,21 +43,20 @@ export default function AddLesson() {
 
 
     function sendToServer() {
-        const body = JSON.stringify({
-            "lesson": {
-                "student": "681245909db7e8970fd8fd46" || studentValue,
-                "lessonDate": datetime,
-                "subject": subjectValue,
-                "recording": checked,
-            }
-        })
-        console.log(body);
         fetch('http://localhost:3000/lesson/addLesson', {
             method: 'POST',
             headers: {
                 'Authorization': localStorage.getItem('token'),
+                'Content-Type': 'application/json', // הוסיפי את זה!
             },
-            body: body
+            body: JSON.stringify({
+                "lesson": {
+                    "student": studentValue,
+                    "lessonDate": datetime,
+                    "subject": selectedSubject,
+                    "recording": checked,
+                }
+            })
         })
             .then(response => {
                 // if (!response.ok) {
@@ -66,53 +64,57 @@ export default function AddLesson() {
                 //     return;
                 // }
                 if (!response) {
+                    alert("error: " + (response.message || 'Unknown error'));
                     console.log("error: " + (response.message || 'Unknown error'));
                     return;
                 }
                 console.log(response);
+                alert("Lesson added successfully!");
                 return response.json();
+            })
+            .catch((error) => {
+                alert("Failed to add lesson. Please try again.")
+                console.error('There was a problem with the fetch operation:', error);
             })
     }
 
     useEffect(() => {
         {
-           setStudentsItems(getAllStudentsAndSubjects("students"));
-
-           setSubjects( getAllStudentsAndSubjects("subjects"))
-
+            getAllStudentsAndSubjects("students").then((data) => { setStudentsItems(data) });
+            getAllStudentsAndSubjects("subjects").then((data) => { setSubjectItems(data); });
         }
     }, []);
 
 
     const getAllStudentsAndSubjects = (curFetch) => {
-        // let curUrl = '';
-        // if (curFetch === "students") {
-        //     curUrl = 'http://localhost:3000/teacher/getAllStudents';
-        // }
-        // else if (curFetch === "subjects") {
-        //     curUrl = 'http://localhost:3000/teacher/getAllSubjects';
-        // }
-        // fetch(curUrl, {
-        //     method: 'GET',
-        //     headers: {
-        //         'Authorization': localStorage.getItem('token'),
-        //     },
-        // })
-        //     .then(response => {
-        //         if (!response.ok) {
-        //             alert("error: " + (response.message || 'Unknown error'));
-        //             return;
-        //         }
-        //         return response.json();
-        //     })
-        //     .then(data => {
-        //         console.log(data);
-        //         return data;
-        //     })
-        //     .catch((error) => {
-        //         console.error('There was a problem with the fetch operation:', error);
-        //     })
-        return ["hbnj", "jhnmk", "jjn"]
+        let curUrl = '';
+        if (curFetch === "students") {
+            curUrl = 'http://localhost:3000/teacher/getAllStudents';
+        }
+        else if (curFetch === "subjects") {
+            curUrl = 'http://localhost:3000/teacher/getAllSubjects';
+        }
+        return fetch(curUrl, {
+            method: 'GET',
+            headers: {
+                'Authorization': localStorage.getItem('token'),
+            },
+        })
+            .then(response => {
+                if (!response.ok) {
+                    alert("error: " + (response.message || 'Unknown error'));
+                    return;
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                return data;
+            })
+            .catch((error) => {
+                console.error(`There was a problem with the fetch operation (get all ${curFetch}):`, error);
+                return [];
+            })
 
     }
     return (
@@ -131,7 +133,8 @@ export default function AddLesson() {
                         <label htmlFor="buttondisplay" className="font-bold block mb-2">
                             subject
                         </label>
-                        <AutoComplete field="name" value={selectedSubject} suggestions={filteredSubjects} completeMethod={search} onChange={(e) => setSelectedSubject(e.value)} />
+                        {/* problem with the style of auto complete can'ot sae the writing */}
+                        <AutoComplete field="name" value={selectedSubject} suggestions={filteredSubjects} panelStyle={{ backgroundColor: 'white', color: 'black' }} completeMethod={search} onChange={(e) => setSelectedSubject(e.value)} />
                     </div>
                     <div className="flex-auto">
                         <label htmlFor="buttondisplay" className="font-bold block mb-2">
