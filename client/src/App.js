@@ -9,7 +9,6 @@ import { setUserDetails } from './Store/UserSlice';
 const Login = lazy(() => import('./Components/Login'));
 const Navbar = lazy(() => import('./Components/Navbar'));
 const Table = lazy(() => import('./Components/Table'));
-const SideBar = lazy(() => import('./Components/Sidebar'));
 const SignUp = lazy(() => import('./Components/Signup'));
 const Home = lazy(() => import('./Components/Home'));
 const Profile = lazy(() => import('./Components/Profile'));
