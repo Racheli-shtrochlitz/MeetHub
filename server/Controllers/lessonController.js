@@ -29,31 +29,23 @@ const getLesson = async (req, res) => {
 const addLesson = async (req, res) => {
     const { lesson } = req.body;
     console.log("lesson: ", lesson);
-    //change id of user to id of teacher
-    const teacher = await Teacher.findOne({})
-        .populate({ path: 'user', match: { _id: req.user.id } });
-    lesson.teacher = teacher._id; 
-    const student = await Student.findOne({})
-        .populate({ path: 'user', match: { name: req.body.student } });
-    lesson.student = student._id;
+
     if (!lesson.student) {
-        return res.status(404).json({ message: "Student not found" });
+        return res.status(404).json({ message: "Student is required" });
     }
 
-    lesson.zoomLink = "https://zoom.us/join" || "create meeting"; //from zoom
-    lesson.materials = [];//from drive
-    lesson.feedback = "";
+    if (!lesson.teacher) {
+        return res.status(404).json({ message: "Teacher is required" });
+    }
+
+    const teacher = await Teacher.findById(lesson.teacher);
+    const student = await Student.findById(lesson.student);
+
     console.log("lesson for creating: ", lesson);
     try {
         const newLesson = await Lesson.create(lesson);
 
         //update the teacher and student
-        const teacher = await Teacher.findById(lesson.teacher);
-        const student = await Student.findById(lesson.student);
-
-        if (!teacher || !student) {
-            return res.status(404).json({ message: "Teacher or student not found" });
-        }
 
         if (teacher && !teacher.lessons.includes(newLesson._id)) {
             teacher.lessons.push(newLesson._id);
@@ -74,12 +66,10 @@ const addLesson = async (req, res) => {
             return res.status(404).json("Probably you didn't send correct data...");
         }
 
-        // const meetingResponse = await axios.post(`http://localhost:${process.env.PORT}/lesson/create-meeting`);
-
         return res.status(201).json({
             lesson: populatedLesson,
-            //meeting: meetingResponse.data
         });
+
     } catch (err) {
         console.error(err.message);
         return res.status(500).json({ message: "Internal server error", error: err.message });

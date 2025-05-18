@@ -7,6 +7,7 @@ import { CustomerService } from './CustomerService';
 import useGetToken from '../Hooks/useGetToken';
 import useUser from '../Hooks/useUser';
 import { MultiSelect } from 'primereact/multiselect';
+import UserAvatar from '../Components/UserAvatar';
 
 
 
@@ -18,8 +19,13 @@ export default function CustomDateFilterDemo() {
         subject: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
         userId: { value: null, matchMode: FilterMatchMode.IN },
     });
+
     const token = useGetToken();
     const user = useUser();
+
+    const userBodyTemplate = (rowData) => <UserAvatar user={rowData.user} />;
+    const usersItemTemplate = (option) => <UserAvatar user={option} />;
+
 
     useEffect(() => {
         if (!token || !user?.activeRole) return;
@@ -80,60 +86,7 @@ export default function CustomDateFilterDemo() {
         });
     };
 
-    const getRandomColor = (name) => {
-        const colors = ['#f44336', '#e91e63', '#9c27b0', '#3f51b5', '#2196f3', '#009688', '#4caf50', '#ff9800', '#795548'];
-        let hash = 0;
-        for (let i = 0; i < name.length; i++) {
-            hash = name.charCodeAt(i) + ((hash << 5) - hash);
-        }
-        const index = Math.abs(hash) % colors.length;
-        return colors[index];
-    };
 
-    const renderUserAvatar = (user) => {
-        const hasImage = !!user.image;
-        const bgColor = getRandomColor(user.name);
-        const firstLetter = user.name?.charAt(0)?.toUpperCase() || '?';
-
-        return (
-            <div className="flex align-items-center gap-2">
-                {hasImage ? (
-                    <img
-                        alt={user.name}
-                        src={`https://primefaces.org/cdn/primereact/images/avatar/${user.image}`}
-                        width="32"
-                        height="32"
-                        style={{ borderRadius: '50%' }}
-                        onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = '';
-                        }}
-                    />
-                ) : (
-                    <div
-                        style={{
-                            width: 32,
-                            height: 32,
-                            borderRadius: '50%',
-                            backgroundColor: bgColor,
-                            color: 'white',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            fontWeight: 'bold'
-                        }}
-                    >
-                        {firstLetter}
-                    </div>
-                )}
-                <span>{user.name}</span>
-            </div>
-        );
-    };
-
-    const userBodyTemplate = (rowData) => renderUserAvatar(rowData.user);
-
-    const usersItemTemplate = (option) => renderUserAvatar(option);
     const userRowFilterTemplate = (options) => {
         return (
             <MultiSelect
@@ -155,7 +108,7 @@ export default function CustomDateFilterDemo() {
             />
         );
     };
-    
+
 
 
 

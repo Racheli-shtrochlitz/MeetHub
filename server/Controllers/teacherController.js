@@ -1,9 +1,7 @@
 const Teacher = require('../Models/teacher');
 
 const getAllStudents = async (req, res) => {
-    console.log("in getAllStudents")
-    const id = "680d4eb6234d6fbd967ca351" || req.user.id;
-    console.log("id: ", id)
+    const id = req.user.id;
     try {
         const teacher = await Teacher.findOne({ user: id })
             .populate({
@@ -15,8 +13,7 @@ const getAllStudents = async (req, res) => {
         }
         else {
             console.log("teacher: ", teacher)
-            students = teacher.students.map(student => { return student.user.name })
-            console.log("students: ", students)
+            students = teacher.students;
             return res.status(200).json(students);
         }
 
@@ -131,6 +128,46 @@ const getAllTeachers = async (req, res) => {
     }
 }
 
+const addStudent = async (req, res) => {
+    const { student } = req.body;
+    const userId = req.user.id;
+
+    try {
+        const teacherId = await Teacher.find({ user: userId });
+        const teacher = await Teacher.findById(teacherId);
+        if (!teacher)
+            return res.status(404).json({ error: "Teacher not found" });
+
+        // מוסיפים את הסטודנט לרשימת הסטודנטים
+        await Teacher.findByIdAndUpdate(
+            teacherId,
+            { $addToSet: { students: student } },
+            { new: true }
+        );
+
+        const updated = await Teacher.findById(teacherId);
+        console.log("updated teacher: ", updated)
+
+
+        return res.status(200).json({ message: "Student added successfully!" });
+
+    } catch (err) {
+        return res.status(500).json({ error: err.message });
+    }
+};
+
+const getTeacherByToken = async (req, res) => {
+    try{
+        const teacher=await Teacher.findOne({user:req.user.id});
+        return res.status(200).json(teacher);
+    }
+    catch (err) {
+        return res.status(500).json({ error: err.message, message: "===Invalid token." });
+    }
+}
+
+
+
 module.exports = {
     getTeacher,
     createTeacher,
@@ -138,5 +175,7 @@ module.exports = {
     deleteTeacher,
     getAllTeachers,
     getAllStudents,
-    getAllSubjects
+    getAllSubjects,
+    addStudent,
+    getTeacherByToken
 };
