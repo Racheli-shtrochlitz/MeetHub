@@ -29,7 +29,7 @@ export default function CustomDateFilterDemo() {
 
     useEffect(() => {
         if (!token || !user?.activeRole) return;
-        CustomerService.getCustomersMedium(token).then((data) => {
+        CustomerService.getData(token).then((data) => {
             setCustomers(getCustomers(data));
         });
     }, [user, token]);
