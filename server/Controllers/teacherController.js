@@ -2,7 +2,7 @@ const Teacher = require('../Models/teacher');
 
 const getAllStudents = async (req, res) => {
     console.log("in getAllStudents")
-    const id = "680d4eb6234d6fbd967ca351" || req.user.id;
+    const id = req.user.id;
     console.log("id: ", id)
     try {
         const teacher = await Teacher.findOne({ user: id })
