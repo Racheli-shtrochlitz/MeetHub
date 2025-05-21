@@ -1,4 +1,7 @@
 const Teacher = require('../Models/teacher');
+const User = require('../Models/user');
+const Student = require('../Models/student');
+
 
 const getAllStudents = async (req, res) => {
     const id = req.user.id;
@@ -129,32 +132,35 @@ const getAllTeachers = async (req, res) => {
 }
 
 const addStudent = async (req, res) => {
-    const { student } = req.body;
+    const { email } = req.body;
     const userId = req.user.id;
 
     try {
-        const teacherId = await Teacher.find({ user: userId });
-        const teacher = await Teacher.findById(teacherId);
-        if (!teacher)
-            return res.status(404).json({ error: "Teacher not found" });
+        const user = await User.findOne({ email: email });
+        if (!user) return res.status(404).json({ error: "User not found" });
 
-        // מוסיפים את הסטודנט לרשימת הסטודנטים
+        const student = await Student.findOne({ user: user._id });
+        if (!student) return res.status(404).json({ error: "Student not found" });
+
+        const teacher = await Teacher.findOne({ user: userId });
+        if (!teacher) return res.status(404).json({ error: "Teacher not found" });
+
+        if (teacher.students.some(id => id.equals(student._id))) {
+            return res.status(400).json({ error: "Student already exists" });
+        }        
+
         await Teacher.findByIdAndUpdate(
-            teacherId,
-            { $addToSet: { students: student } },
+            teacher._id,
+            { $addToSet: { students: student._id } },
             { new: true }
         );
 
-        const updated = await Teacher.findById(teacherId);
-        console.log("updated teacher: ", updated)
-
-
         return res.status(200).json({ message: "Student added successfully!" });
-
     } catch (err) {
         return res.status(500).json({ error: err.message });
     }
 };
+
 
 const getTeacherByToken = async (req, res) => {
     try{
