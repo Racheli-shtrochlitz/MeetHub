@@ -1,29 +1,15 @@
+import api from "../Services/api";
 
 export const CustomerService = {
 
-    async getData(token) {
-        const response = await fetch("http://localhost:3000/user/getAllLessons", {
-
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${token}`
-            }
-        });
-
-        if (!response.ok) {
-            console.log(response)
-            return [
-
-            ]
-                ;
-        }
-        const data = await response.json();
-        console.log("CustomerService:  ", data);
+    async getData() {
+        const response = await api.get('user/getAllLessons');
+        const data = response.data;
         return data;
     },
 
-    async getUsers(user,token) {
-        const data =await this.getData(token);
+    async getUsers(user) {
+        const data =await this.getData();
         if (user.activeRole === 'teacher') {
             return data.map(u => u.student).filter(Boolean);
 
