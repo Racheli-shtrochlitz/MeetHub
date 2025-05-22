@@ -44,7 +44,6 @@ function App() {
         console.error(err);
       }
     }
-
     if (token) fetchData();
   }, [token]);
 
@@ -53,16 +52,22 @@ function App() {
     <Suspense fallback={<div>Loading...</div>}>
       <Navbar />
       <Routes>
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile" element={<Profile />} >
+          <Route path="lessons" element={<Table />} />
+          <Route path="addLesson" element={<AddLesson/>} />
+          <Route path="calendar" element={<Calendar />} />
+          <Route path="records" element={<>demo</>} />
+          <Route path="students" element={< >demo</>} />
+          <Route path="addStudent" element={< >demo</>} />
+          <Route path="messages" element={< >demo</>} />
+          <Route path="sendMessage" element={< >demo</>} />
+          <Route path="messageSettings" element={<>demo</>} />
+        </Route>
         <Route path="/signup" element={<SignUp />} />
         <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/lessons" element={<Table />} />
-        <Route path="addLesson" element={<AddLesson/>}/>
         <Route path="/upload" element={<UploadFiles/>}/>
-        <Route path="/calendar" element={<Calendar/>}/>
-
       </Routes>
     </Suspense>
   );
