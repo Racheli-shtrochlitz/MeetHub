@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from 'primereact/button';
 import { useNavigate } from 'react-router-dom';
+import api from '../Services/api';
 
 export default function Home() {
     const navigate = useNavigate();
@@ -12,50 +13,18 @@ export default function Home() {
             navigate('/login');
             return;
         }
-        fetch('http://localhost:3000/user/addProfile', {
-            method: 'POST',
-            headers: {
-                'Authorization': localStorage.getItem('token'),
-            },
-            body: JSON.stringify({
-                newRole: role
-            }),
-        })
-            .then(response => {
-                return response.json();
-            })
-            .then(data => {
-                // if (!data.ok) {
-                //     throw new Error(data.error || 'Unknown error occurred');
-                // }
-                console.log(data);
-                if (data.token) {
-                    console.log("token: " + data.token);
-                    localStorage.setItem('token', data.token);
-                    alert(`hi ${data.newUser.name}!\n thanks for joining us as a ${role}.`);
-                    // dispatch(setActiveRole({
-                    //     activeRole: role
-                    // }));
-                } else {
-                    alert("error: " + data.message);
-                    console.log(data.message);
-                }
-            })
-            .catch((error) => {
-                console.error('There was a problem with the fetch operation:', error);
-            })
+        // const response = await api.post('user/addProfile', {
+        //     newRole: role
+        // });
+
+
+        //מה אמור להיות פה? הוספת פרופיל???
+        
+            
     }
 
     return (
         <div class="antialiased pb-6 relative">
-
-            {/* <div style={{
-                backgroundImage: "url('/home-background.jpg'),url('hb2.png'), url('hb3.png')", backgroundSize: 'cover', height: '100vh',
-                flexDirection: "column",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center"
-            }} > */}
             <div style={{
                 backgroundImage: "url('/home-background.jpg')",
                 backgroundSize: 'cover',

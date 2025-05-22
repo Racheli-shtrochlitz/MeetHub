@@ -5,6 +5,7 @@ import useGetToken from './Hooks/useGetToken';
 import useUser from './Hooks/useUser';
 import { useDispatch } from 'react-redux';
 import { setUserDetails } from './Store/UserSlice';
+import api from './Services/api';
 
 const Login = lazy(() => import('./Components/Login'));
 const Navbar = lazy(() => import('./Components/Navbar'));
@@ -15,6 +16,7 @@ const Profile = lazy(() => import('./Components/Profile'));
 const UploadFiles = lazy(() => import('./Components/UploadFiles'));
 const AddLesson = lazy(() => import('./Components/AddLesson'));
 const Calendar = lazy(() => import('./Components/Calendar'));
+const AddStudent = lazy(() => import('./Components/AddStudent'));
 
 
 
@@ -27,18 +29,15 @@ function App() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch('http://localhost:3000/user/getUserByToken', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        const data = await response.json();
+        const response = await api.get('user/getUserByToken');
+        const data = response.data;
+
         dispatch(setUserDetails({
           name: data.name,
           email: data.email,
           activeRole: data.activeRole
         }));
+        
         console.log(data);
       } catch (err) {
         console.error(err);
@@ -68,6 +67,10 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/upload" element={<UploadFiles/>}/>
+        <Route path="/calendar" element={<Calendar/>}/>
+        <Route path="/addStudent" element={<AddStudent/>}/>
+
+
       </Routes>
     </Suspense>
   );

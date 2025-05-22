@@ -8,6 +8,7 @@ import { Dialog } from 'primereact/dialog';
 import { Dropdown } from 'primereact/dropdown';
 import useGetToken from '../Hooks/useGetToken';
 import UserAvatar from '../Components/UserAvatar';
+import api from "../Services/api";
 
 
 export default function AddLesson() {
@@ -49,23 +50,8 @@ export default function AddLesson() {
 
         const fetchTeacher = async () => {
             try {
-                const response = await fetch('http://localhost:3000/teacher/getTeacherByToken', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    console.error("Error:", errorData.message || "Unknown error");
-                    alert("Error: " + (errorData.message || "Unknown error"));
-                    return;
-                }
-
-                const data = await response.json();
-                setTeacher(data);
+                const response = await api.get('teacher/getTeacherByToken');
+                setTeacher(response.data);
             } catch (error) {
                 console.error('Fetch error:', error);
                 alert('Fetch error: ' + error.message);
@@ -81,54 +67,28 @@ export default function AddLesson() {
         let zoomLink;
 
         try {
-            const response = await fetch('http://localhost:3000/zoom/createMeeting', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-            });
+            const response = await api.post('zoom/createMeeting');
+            const data = response.data;
+            zoomLink = data.joinUrl;
 
-            if (response.ok) {
-                const data = await response.json();
-                zoomLink = data.joinUrl;
-            } else {
-                const err = await response.json();
-                console.error("Zoom Server error:", err.message || err);
-                alert("Error creating Zoom meeting: " + (err.message || "Unknown error"));
-            }
         } catch (error) {
             alert("Failed to create Zoom meeting. Using default link.");
             console.error('Zoom fetch error:', error);
         }
 
         try {
-            const response = await fetch('http://localhost:3000/lesson/addLesson', {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    lesson: {
-                        teacher: teacher?._id,
-                        student: studentValue,
-                        lessonDate: datetime.toISOString(),
-                        subject: selectedSubject,
-                        recording: checked,
-                        zoomLink: zoomLink
-                    }
-                })
+            const response = await api.post('lesson/addLesson', {
+                lesson: {
+                    teacher: teacher?._id,
+                    student: studentValue,
+                    lessonDate: datetime.toISOString(),
+                    subject: selectedSubject,
+                    recording: checked,
+                    zoomLink: zoomLink
+                }
             });
 
-            if (!response.ok) {
-                const err = await response.json();
-                console.error("Lesson Server error:", err.message || err);
-                alert("Error: " + (err.message || "Unknown error"));
-                return;
-            }
-
-            const data = await response.json();
+            const data = response.data;
             alert("Lesson added successfully!");
             console.log("Response:", data);
         } catch (error) {
@@ -144,136 +104,123 @@ export default function AddLesson() {
         getAllStudentsAndSubjects("subjects").then((data) => setSubjectItems(data));
     }, []);
 
-    const getAllStudentsAndSubjects = (curFetch) => {
+    const getAllStudentsAndSubjects = async (curFetch) => {
         let curUrl = '';
 
         if (curFetch === "students") {
-            curUrl = 'http://localhost:3000/teacher/getAllStudents';
+            curUrl = 'teacher/getAllStudents';
         } else if (curFetch === "subjects") {
-            curUrl = 'http://localhost:3000/teacher/getAllSubjects';
+            curUrl = 'teacher/getAllSubjects';
         }
 
-        return fetch(curUrl, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-            },
-        })
-            .then(response => {
-                if (!response.ok) {
-                    alert("error: " + (response.message || 'Unknown error'));
-                    return;
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log(data);
-                return data;
-            })
-            .catch((error) => {
-                console.error(`There was a problem with the fetch operation (get all ${curFetch}):`, error);
-                return [];
-            });
+        try {
+            const response = await api.get(curUrl);
+            return response.data;
+        } catch (error) {
+            console.error(`Fetch error (${curFetch}):`, error);
+            return [];
+        }
     };
 
-    const studentItemTemplate = (student) => {
-        return (
-            <div className="flex align-items-center gap-2">
-                <UserAvatar user={{ name: student.user.name, image: student.user.image }} />
-            </div>
-        );
-    };
 
-    const selectedStudentTemplate = (student) => {
-        if (!student || !student.user) return null;
-    
-        return (
-            <div className="flex align-items-center gap-2">
-                <UserAvatar user={{ name: student.user.name, image: student.user.image }} />
-            </div>
-        );
-    };
-    
-
-
+const studentItemTemplate = (student) => {
     return (
-        <div className="card flex justify-content-center">
-            <Button label="add lesson" icon="pi pi-external-link" onClick={() => setVisible(true)} />
-
-            <Dialog header="add lesson" visible={visible} style={{ width: '30vw' }} onHide={() => setVisible(false)}>
-                <div className="card flex flex-wrap gap-3 p-fluid">
-                    <div className="flex-auto">
-
-                        <label htmlFor="buttondisplay" className="font-bold block mb-2">
-                            student
-                        </label>
-                        <Dropdown
-                            value={studentValue}
-                            onChange={(e) => setStudentValue(e.value)}
-                            options={studentsItems || []}
-                            optionValue="_id"
-                            className="w-full md:w-14rem"
-                            itemTemplate={studentItemTemplate}
-                            valueTemplate={selectedStudentTemplate}
-                        />
-
-                    </div>
-
-                    <div className="flex-auto">
-                        <label htmlFor="buttondisplay" className="font-bold block mb-2">
-                            subject
-                        </label>
-                        <AutoComplete
-                            field="name"
-                            value={selectedSubject}
-                            suggestions={filteredSubjects}
-                            panelStyle={{ backgroundColor: 'white', color: 'black' }}
-                            completeMethod={search}
-                            onChange={(e) => setSelectedSubject(e.value)}
-                        />
-                    </div>
-
-                    <div className="flex-auto">
-                        <label htmlFor="buttondisplay" className="font-bold block mb-2">
-                            date and time
-                        </label>
-                        <Calendar
-                            value={datetime}
-                            onChange={(e) => setDateTime(e.value)}
-                            showTime
-                            hourFormat="24"
-                            showIcon
-                        />
-                    </div>
-
-                    <div className="flex align-items-center">
-                        <ToggleButton
-                            checked={checked}
-                            onChange={(e) => setChecked(e.value)}
-                            className="w-8rem"
-                        />
-                        <label className="ml-2">recording</label>
-                    </div>
-
-                    <div className="flex-auto">
-                        <Button label="upload" icon="pi pi-external-link" onClick={() => navigate('/upload')} />
-                    </div>
-
-                    <Button
-                        label="Ok"
-                        icon="pi pi-check"
-                        onClick={() => {
-                            if (!teacher?._id) {
-                                alert("Teacher not loaded yet.");
-                                return;
-                            }
-                            sendToServer();
-                            setVisible(false);
-                        }}
-                        autoFocus
-                    />
-                </div>
-            </Dialog>
+        <div className="flex align-items-center gap-2">
+            <UserAvatar user={{ name: student.user.name, image: student.user.image }} />
         </div>
     );
+};
+
+const selectedStudentTemplate = (student) => {
+    if (!student || !student.user) return null;
+
+    return (
+        <div className="flex align-items-center gap-2">
+            <UserAvatar user={{ name: student.user.name, image: student.user.image }} />
+        </div>
+    );
+};
+
+
+
+return (
+    <div className="card flex justify-content-center">
+        <Button label="add lesson" icon="pi pi-external-link" onClick={() => setVisible(true)} />
+
+        <Dialog header="add lesson" visible={visible} style={{ width: '30vw' }} onHide={() => setVisible(false)}>
+            <div className="card flex flex-wrap gap-3 p-fluid">
+                <div className="flex-auto">
+
+                    <label htmlFor="buttondisplay" className="font-bold block mb-2">
+                        student
+                    </label>
+                    <Dropdown
+                        value={studentValue}
+                        onChange={(e) => setStudentValue(e.value)}
+                        options={studentsItems || []}
+                        optionValue="_id"
+                        className="w-full md:w-14rem"
+                        itemTemplate={studentItemTemplate}
+                        valueTemplate={selectedStudentTemplate}
+                    />
+
+                </div>
+
+                <div className="flex-auto">
+                    <label htmlFor="buttondisplay" className="font-bold block mb-2">
+                        subject
+                    </label>
+                    <AutoComplete
+                        field="name"
+                        value={selectedSubject}
+                        suggestions={filteredSubjects}
+                        panelStyle={{ backgroundColor: 'white', color: 'black' }}
+                        completeMethod={search}
+                        onChange={(e) => setSelectedSubject(e.value)}
+                    />
+                </div>
+
+                <div className="flex-auto">
+                    <label htmlFor="buttondisplay" className="font-bold block mb-2">
+                        date and time
+                    </label>
+                    <Calendar
+                        value={datetime}
+                        onChange={(e) => setDateTime(e.value)}
+                        showTime
+                        hourFormat="24"
+                        showIcon
+                    />
+                </div>
+
+                <div className="flex align-items-center">
+                    <ToggleButton
+                        checked={checked}
+                        onChange={(e) => setChecked(e.value)}
+                        className="w-8rem"
+                    />
+                    <label className="ml-2">recording</label>
+                </div>
+
+                <div className="flex-auto">
+                    <Button label="upload" icon="pi pi-external-link" onClick={() => navigate('/upload')} />
+                </div>
+
+                <Button
+                    label="Ok"
+                    icon="pi pi-check"
+                    onClick={() => {
+                        if (!teacher?._id) {
+                            alert("Teacher not loaded yet.");
+                            return;
+                        }
+                        sendToServer();
+                        setVisible(false);
+                    }}
+                    autoFocus
+                />
+            </div>
+        </Dialog>
+    </div>
+);
 }

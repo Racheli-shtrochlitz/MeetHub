@@ -8,8 +8,13 @@ import { useDispatch } from 'react-redux';
 import { setUserDetails } from '../Store/UserSlice';
 import { useForm, Controller } from 'react-hook-form';
 import { Dialog } from 'primereact/dialog';
+import api from '../Services/api';
+import { Toast } from 'primereact/toast';
+import { useRef } from 'react';
 
 export default function LoginDemo() {
+    
+    const toast = useRef(null);
     const [isLIHovered, setIsLIHovered] = useState(false);
     const [isSIHovered, setIsSIHovered] = useState(false);
     const items = ['student', 'teacher'];
@@ -23,52 +28,38 @@ export default function LoginDemo() {
 
 
     async function connectToServer(formData) {
-        fetch('http://localhost:3000/user/signIn', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
+        try {
+            const response = await api.post('user/signIn', {
                 email: formData.email,
                 password: formData.password,
                 activeRole: formData.role
-            }),
-        })
-            .then(response => {
-                if (!response.ok) {
-                    alert("error: " + (response.message || 'Unknown error'));
-                    return;
-                }
-                return response.json();
-            })
-
-            .then(data => {
-                console.log(data);
-                if (data.token) {
-                    console.log("token: " + data.token);
-                    localStorage.setItem('token', data.token);
-                    alert(`welcome back!`);
-                    dispatch(setUserDetails({
-                        email: formData.email,
-                        password: formData.password,
-                        activeRole: formData.role
-                    }));
-                    navigate('/home');
-                } else {
-                    alert("error: " + data.message);
-                    console.log(data.message);
-                }
-            })
-            .catch((error) => {
-                console.error('There was a problem with the fetch operation:', error);
-            })
+            });
+    
+            const data = response.data;
+    
+            localStorage.setItem('token', data.token);
+            dispatch(setUserDetails({
+                email: formData.email,
+                password: formData.password,
+                activeRole: formData.role
+            }));
+    
+            navigate('/home');
+    
+        } catch (error) {
+            console.error('Login failed:', error);
+            toast.current.show({
+                severity: 'error',
+                summary: 'Login Failed',
+                detail: 'Invalid credentials',
+                life: 3000
+            });
+        }
     }
-
-
-
-    return (
-        <div className="card flex justify-content-center">
-            <Dialog header="log in" visible={true} style={{ width: '50vw' }} onHide={() => {  navigate('/home'); }}>
+    
+return (
+    <div className="card flex justify-content-center">
+        <Dialog header="log in" visible={true} style={{ width: '50vw' }} onHide={() => { navigate('/home'); }}>
             <div className="card">
                 <form onSubmit={handleSubmit(connectToServer)}>
                     <div className="flex flex-column md:flex-row">
@@ -112,7 +103,7 @@ export default function LoginDemo() {
                                 />
                                 {errors.password && <p style={{ color: 'red', fontSize: '12px' }}>{errors.password.message}</p>}
                             </div>
-                            
+
                             <Button style={{
                                 backgroundColor: isLIHovered ? 'rgb(239, 193, 107)' : 'rgb(240,175,58)',
                                 borderColor: 'rgb(240,175,58)',
@@ -154,6 +145,7 @@ export default function LoginDemo() {
                 </form>
             </div>
         </Dialog>
-            </div>
-            )
+        <Toast ref={toast} />
+    </div>
+)
 }
