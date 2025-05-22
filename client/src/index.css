@@ -28,3 +28,8 @@ body {
 .p-menuitem-text {
   color: var(--text-color) !important;
 }
+
+.p-tooltip .p-tooltip-text {
+  white-space: nowrap !important;
+  writing-mode: horizontal-tb !important;
+}

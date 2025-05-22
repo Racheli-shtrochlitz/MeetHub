@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { AutoComplete } from 'primereact/autocomplete';
 import UserAvatar from './UserAvatar';
 import api from '../Services/api';
+import { Outlet } from 'react-router-dom';
 
 export default function Profile() {
     const navigate = useNavigate();
@@ -173,6 +174,8 @@ export default function Profile() {
                     </div>
                 </div>
             </div>
+            <Outlet />
+
         </div>
     )
 }
