@@ -10,8 +10,7 @@ const lessonSchema = new Schema({
   materials: [{ type: Schema.Types.ObjectId, ref: 'Material' }],  // חומרים שהועלו לשיעור
   recording: { type: Boolean },  // קישור להקלטת השיעור (אם יש)
   feedback: { type: String },  // משוב על השיעור
-  createdAt: { type: Date, default: Date.now },
-  attachments:{type:String}
+  createdAt: { type: Date, default: Date.now }
 });
 
 module.exports = mongoose.model('Lesson', lessonSchema);

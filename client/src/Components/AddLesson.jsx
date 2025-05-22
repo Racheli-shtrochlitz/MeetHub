@@ -32,7 +32,6 @@ export default function AddLesson() {
     const search = (event) => {
         setTimeout(() => {
             let _filteredSubjects;
-
             if (!event.query.trim().length) {
                 _filteredSubjects = [...subjectItems];
             } else {
@@ -40,14 +39,12 @@ export default function AddLesson() {
                     return subject.toLowerCase().startsWith(event.query.toLowerCase());
                 });
             }
-
             setFilteredSubjects(_filteredSubjects);
         }, 250);
     };
 
     useEffect(() => {
         if (!token) return;
-
         const fetchTeacher = async () => {
             try {
                 const response = await api.get('teacher/getTeacherByToken');
@@ -57,25 +54,20 @@ export default function AddLesson() {
                 alert('Fetch error: ' + error.message);
             }
         };
-
         fetchTeacher();
     }, [token]);
 
     async function sendToServer() {
         if (!teacher) return;
-
         let zoomLink;
-
         try {
             const response = await api.post('zoom/createMeeting');
             const data = response.data;
             zoomLink = data.joinUrl;
-
         } catch (error) {
             alert("Failed to create Zoom meeting. Using default link.");
             console.error('Zoom fetch error:', error);
         }
-
         try {
             const response = await api.post('lesson/addLesson', {
                 lesson: {
@@ -87,7 +79,6 @@ export default function AddLesson() {
                     zoomLink: zoomLink
                 }
             });
-
             const data = response.data;
             alert("Lesson added successfully!");
             console.log("Response:", data);
@@ -99,20 +90,17 @@ export default function AddLesson() {
 
     useEffect(() => {
         if (!token) return;
-
         getAllStudentsAndSubjects("students").then((data) => setStudentsItems(data));
         getAllStudentsAndSubjects("subjects").then((data) => setSubjectItems(data));
     }, []);
 
     const getAllStudentsAndSubjects = async (curFetch) => {
         let curUrl = '';
-
         if (curFetch === "students") {
             curUrl = 'teacher/getAllStudents';
         } else if (curFetch === "subjects") {
             curUrl = 'teacher/getAllSubjects';
         }
-
         try {
             const response = await api.get(curUrl);
             return response.data;
