@@ -19,10 +19,6 @@ const Calendar = lazy(() => import('./Components/Calendar'));
 const AddStudent = lazy(() => import('./Components/AddStudent'));
 
 
-const AddLesson = lazy(() => import('./Components/AddLesson'));
-// const UploadFiles = lazy(() => import('./Components/UploadFiles'));
-
-
 function App() {
   const dispatch = useDispatch();
   const token = useGetToken();

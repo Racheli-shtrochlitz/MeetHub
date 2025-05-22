@@ -9,7 +9,7 @@ import { Dropdown } from 'primereact/dropdown';
 import useGetToken from '../Hooks/useGetToken';
 import UserAvatar from '../Components/UserAvatar';
 import api from "../Services/api";
-
+import { InputText } from "primereact/inputtext";
 
 export default function AddLesson() {
     const navigate = useNavigate();
@@ -20,9 +20,10 @@ export default function AddLesson() {
     const [subjectItems, setSubjectItems] = useState(["demo", "temp"]);
     const [datetime, setDateTime] = useState(null);
     const [checked, setChecked] = useState(false);
-    const [visible, setVisible] = useState(false);
+    const [visible, setVisible] = useState(true);
     const [selectedSubject, setSelectedSubject] = useState(null);
     const [filteredSubjects, setFilteredSubjects] = useState(null);
+    const [materialLink, setMaterialLink] = useState('');
     const [teacher, setTeacher] = useState(null);
 
     useEffect(() => {
@@ -76,6 +77,7 @@ export default function AddLesson() {
                     lessonDate: datetime.toISOString(),
                     subject: selectedSubject,
                     recording: checked,
+                    materials: materialLink,
                     zoomLink: zoomLink
                 }
             });
@@ -111,104 +113,108 @@ export default function AddLesson() {
     };
 
 
-const studentItemTemplate = (student) => {
-    return (
-        <div className="flex align-items-center gap-2">
-            <UserAvatar user={{ name: student.user.name, image: student.user.image }} />
-        </div>
-    );
-};
-
-const selectedStudentTemplate = (student) => {
-    if (!student || !student.user) return null;
-
-    return (
-        <div className="flex align-items-center gap-2">
-            <UserAvatar user={{ name: student.user.name, image: student.user.image }} />
-        </div>
-    );
-};
-
-
-
-return (
-    <div className="card flex justify-content-center">
-        <Button label="add lesson" icon="pi pi-external-link" onClick={() => setVisible(true)} />
-
-        <Dialog header="add lesson" visible={visible} style={{ width: '30vw' }} onHide={() => setVisible(false)}>
-            <div className="card flex flex-wrap gap-3 p-fluid">
-                <div className="flex-auto">
-
-                    <label htmlFor="buttondisplay" className="font-bold block mb-2">
-                        student
-                    </label>
-                    <Dropdown
-                        value={studentValue}
-                        onChange={(e) => setStudentValue(e.value)}
-                        options={studentsItems || []}
-                        optionValue="_id"
-                        className="w-full md:w-14rem"
-                        itemTemplate={studentItemTemplate}
-                        valueTemplate={selectedStudentTemplate}
-                    />
-
-                </div>
-
-                <div className="flex-auto">
-                    <label htmlFor="buttondisplay" className="font-bold block mb-2">
-                        subject
-                    </label>
-                    <AutoComplete
-                        field="name"
-                        value={selectedSubject}
-                        suggestions={filteredSubjects}
-                        panelStyle={{ backgroundColor: 'white', color: 'black' }}
-                        completeMethod={search}
-                        onChange={(e) => setSelectedSubject(e.value)}
-                    />
-                </div>
-
-                <div className="flex-auto">
-                    <label htmlFor="buttondisplay" className="font-bold block mb-2">
-                        date and time
-                    </label>
-                    <Calendar
-                        value={datetime}
-                        onChange={(e) => setDateTime(e.value)}
-                        showTime
-                        hourFormat="24"
-                        showIcon
-                    />
-                </div>
-
-                <div className="flex align-items-center">
-                    <ToggleButton
-                        checked={checked}
-                        onChange={(e) => setChecked(e.value)}
-                        className="w-8rem"
-                    />
-                    <label className="ml-2">recording</label>
-                </div>
-
-                <div className="flex-auto">
-                    <Button label="upload" icon="pi pi-external-link" onClick={() => navigate('/upload')} />
-                </div>
-
-                <Button
-                    label="Ok"
-                    icon="pi pi-check"
-                    onClick={() => {
-                        if (!teacher?._id) {
-                            alert("Teacher not loaded yet.");
-                            return;
-                        }
-                        sendToServer();
-                        setVisible(false);
-                    }}
-                    autoFocus
-                />
+    const studentItemTemplate = (student) => {
+        return (
+            <div className="flex align-items-center gap-2">
+                <UserAvatar user={{ name: student.user.name, image: student.user.image }} />
             </div>
-        </Dialog>
-    </div>
-);
+        );
+    };
+
+    const selectedStudentTemplate = (student) => {
+        if (!student || !student.user) return null;
+
+        return (
+            <div className="flex align-items-center gap-2">
+                <UserAvatar user={{ name: student.user.name, image: student.user.image }} />
+            </div>
+        );
+    };
+
+
+
+    return (
+        <div className="card flex justify-content-center">
+            <Dialog header="add lesson" visible={visible} style={{ width: '30vw' }} onHide={() => setVisible(false)}>
+                <div className="card flex flex-wrap gap-3 p-fluid">
+                    <div className="flex-auto">
+
+                        <label htmlFor="buttondisplay" className="font-bold block mb-2">
+                            student
+                        </label>
+                        <Dropdown
+                            value={studentValue}
+                            onChange={(e) => setStudentValue(e.value)}
+                            options={studentsItems || []}
+                            optionValue="_id"
+                            className="w-full md:w-14rem"
+                            itemTemplate={studentItemTemplate}
+                            valueTemplate={selectedStudentTemplate}
+                        />
+
+                    </div>
+
+                    <div className="flex-auto">
+                        <label htmlFor="buttondisplay" className="font-bold block mb-2">
+                            subject
+                        </label>
+                        <AutoComplete
+                            field="name"
+                            value={selectedSubject}
+                            suggestions={filteredSubjects}
+                            panelStyle={{ backgroundColor: 'white', color: 'black' }}
+                            completeMethod={search}
+                            onChange={(e) => setSelectedSubject(e.value)}
+                        />
+                    </div>
+
+                    <div className="flex-auto">
+                        <label htmlFor="buttondisplay" className="font-bold block mb-2">
+                            date and time
+                        </label>
+                        <Calendar
+                            value={datetime}
+                            onChange={(e) => setDateTime(e.value)}
+                            showTime
+                            hourFormat="24"
+                            showIcon
+                        />
+                    </div>
+
+                    <div className="flex align-items-center">
+                        <ToggleButton
+                            style={{width: '2rem'}}
+                            checked={checked}
+                            onChange={(e) => setChecked(e.value)}
+                            className="w-8rem"
+                        /> 
+                        <label htmlFor="buttondisplay" className="font-bold block mb-2">
+                            recording
+                        </label>
+                    </div>
+
+                    <div className="flex-auto">
+                         <label htmlFor="buttondisplay" className="font-bold block mb-2">
+                            material link (in drive)
+                        </label>
+                        <InputText value={materialLink} onChange={(e) => setMaterialLink(e.target.value)} />
+                    </div>
+
+                    <Button
+                        label="Ok"
+                        icon="pi pi-check"
+                        onClick={() => {
+                            if (!teacher?._id) {
+                                alert("Teacher not loaded yet.");
+                                return;
+                            }
+                            sendToServer();
+                            setVisible(false);
+                        }}
+                        autoFocus
+                    />
+                </div>
+            </Dialog>
+        </div>
+    );
 }
