@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FilterMatchMode } from 'primereact/api';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -8,10 +8,16 @@ import useGetToken from '../Hooks/useGetToken';
 import useUser from '../Hooks/useUser';
 import { MultiSelect } from 'primereact/multiselect';
 import UserAvatar from '../Components/UserAvatar';
+import { FaTrash } from 'react-icons/fa';
+import { Toast } from 'primereact/toast';
+import api from '../Services/api';
+
 
 
 
 export default function CustomDateFilterDemo() {
+
+    const toast = useRef(null);
     const [customers, setCustomers] = useState([]);
     const [users, setusers] = useState([]);
     const [filters, setFilters] = useState({
@@ -109,9 +115,32 @@ export default function CustomDateFilterDemo() {
         );
     };
 
+    const handleDelete = async (lesson) => {
+        if (window.confirm('Are you sure you want to delete this lesson?')) {
 
+            try {
+                console.log(lesson.id)
+                const response = await api.delete(`lesson/deleteLesson/${lesson.id}`);
+                console.log(response)
+                toast.current.show({
+                    severity: 'success',
+                    summary: 'Successful Delete',
+                    detail: 'Lesson Deleted Successfuly',
+                    life: 3000
+                });
+                setCustomers(prev => prev.filter(l => l.id !== lesson.id));
 
-
+            }
+            catch (err) {
+                toast.current.show({
+                    severity: 'error',
+                    summary: 'Delete Failed',
+                    detail: err.message,
+                    life: 3000
+                });
+            }
+        }
+    };
 
     return (
         <div className="card">
@@ -132,16 +161,16 @@ export default function CustomDateFilterDemo() {
                     filterElement={userRowFilterTemplate}
                 />
 
-
-
                 <Column header="Attachments" body={(rowData) =>
                     rowData.attachments
                         ? <a href={rowData.attachments} target="_blank" rel="noreferrer">Open Folder</a>
                         : '—'} style={{ minWidth: '12rem' }} />
+
                 <Column header="Recording" body={(rowData) =>
                     rowData.recordingUrl
                         ? <a href={rowData.recordingUrl} target="_blank" rel="noreferrer">View</a>
                         : '—'} style={{ minWidth: '10rem' }} />
+
                 <Column
                     header="Start Lesson"
                     body={(rowData) => {
@@ -173,7 +202,23 @@ export default function CustomDateFilterDemo() {
                     style={{ minWidth: '10rem' }}
                 />
 
+                <Column
+                    body={(rowData) => (
+                        <Button
+                            icon={<FaTrash />}
+                            className="p-button-rounded p-button-text"
+                            onClick={() => handleDelete(rowData)}
+                            tooltip="Delete Lesson"
+                            tooltipOptions={{ position: 'top' }}
+                            style={{ color: 'var(--blue)'}}
+                        />
+                    )}
+                    style={{ width: '3rem', textAlign: 'center' }}
+                />
+
             </DataTable>
+            <Toast ref={toast} />
+
         </div>
     );
 }
