@@ -17,6 +17,7 @@ const UploadFiles = lazy(() => import('./Components/UploadFiles'));
 const AddLesson = lazy(() => import('./Components/AddLesson'));
 const Calendar = lazy(() => import('./Components/Calendar'));
 const AddStudent = lazy(() => import('./Components/AddStudent'));
+const SendMessage = lazy(() => import('./Components/SendMessage'));
 
 
 function App() {
