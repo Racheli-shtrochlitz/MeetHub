@@ -124,16 +124,16 @@ const addProfile = async (req, res) => {
     const roles = user.roles;
 
     if (!newRole)
-        return res.status(400).json({ error: "you didnt provide a required parameter" });
+        return res.status(400).json({ error: "you didn't provide a required parameter" });
 
     if (!id)
-        return res.status(400).json({ error: "something went wrong..." });
+        return res.status(400).json({ error: "something went wrong... no id" });
 
     if (roles.includes(newRole))
-        return res.status(400).json({ messege: `you already ${newRole}` });
+        return res.status(500).json({ message: `you are already ${newRole}` });
 
     if (!['student', 'teacher'].includes(newRole))
-        return res.status(400).json({ messege: `invalid role: ${newRole}` });
+        return res.status(500).json({ message: `invalid role: ${newRole}` });
 
     try {
         if (newRole === 'teacher') {
@@ -145,7 +145,7 @@ const addProfile = async (req, res) => {
             await User.findByIdAndUpdate(id, { $push: { roles: newRole } });//update the remote array
         }
 
-        return res.status(201).json("new role added successfully!");
+        return res.status(200).json("new role added successfully!");
 
     } catch (err) {
         res.status(500).json({ message: err.message });

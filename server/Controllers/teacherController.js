@@ -67,9 +67,8 @@ const createTeacher = async (req, res) => {
     const { subject, students, lessons } = req.body;
     try {
         //create a new teacher
-        const newTeacher = await Teacher.create({ subject: subject, students: students, lessons: lessons, user: req.userId || req.user.id, });
-
-        return newTeacher;
+        const newTeacher = await Teacher.create({ subject: subject || [], students: students || [], lessons: lessons || [], user: req.userId || req.user.id, });
+        return res.status(200).json({message : "teacher created successfully!",teacher:newTeacher})
     } catch (err) {
         console.error(err.message);
         return res.status(500).json({ message: "Internal server error", error: err.message });
