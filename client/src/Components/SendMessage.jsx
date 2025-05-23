@@ -11,14 +11,14 @@ import { useEffect, useState } from "react";
 export default function SendMessage() {
     const toast = useRef(null);
 
-    const [studentsItems, setStudentsItems] = useState([]);
+    const [emailsItems, setEmailsItems] = useState([]);
 
     const form = useFormik({
-        initialValues: { student: "", message: "" },
+        initialValues: { emails: "", message: "" },
         validate: (data) => {
             const errors = {};
-            if (!data.student) {
-                errors.student = "Student is required.";
+            if (!data.emails) {
+                errors.emails = "Student is required.";
             }
             if (!data.message) {
                 errors.message = "Message is required.";
@@ -29,39 +29,45 @@ export default function SendMessage() {
     });
 
 useEffect(() => {
-    const fetchStudents = async () => {
+    const fetchEmails = async () => {
+    const activeRole = localStorage.getItem('activeRole') ||"teacher";
+    let url = '';
         try {
-            const response = await api.get('teacher/getAllStudents');
-            setStudentsItems(response.data);
+            if(activeRole == "teacher") 
+                url = "teacher/getAllStudents";
+            else if(activeRole == "student")
+                url = "student/getAllTeachers";
+            const response = await api.get(url);
+            setEmailsItems(response.data);
         } catch (error) {
             console.error(`Fetch error:`, error);
-            setStudentsItems([]);
+            setEmailsItems([]);
         }
     };
 
-    fetchStudents();
+    fetchEmails();
 }, []);
 
 useEffect(() => {
-    if (studentsItems.length > 0) {
-        form.setFieldValue("student", studentsItems[0]._id); 
+    if (emailsItems.length > 0) {
+        form.setFieldValue("student", emailsItems[0]._id); 
     }
-}, [studentsItems]);
+}, [emailsItems]);
 
-    const studentItemTemplate = (student) => {
+    const emailItemTemplate = (email) => {
         return (
             <div className="flex align-items-center gap-2">
-                <UserAvatar user={{ name: student.user.name, image: student.user.image }} />
+                <UserAvatar user={{ name: email.user.name, image: email.user.image }} />
             </div>
         );
     };
 
-    const selectedStudentTemplate = (student) => {
-        if (!student || !student.user) return null;
+    const selectedEmailsTemplate = (emails) => {
+        if (!emails || !emails.user) return null;
 
         return (
             <div className="flex align-items-center gap-2">
-                <UserAvatar user={{ name: student.user.name, image: student.user.image }} />
+                <UserAvatar user={{ name: emails.user.name, image: emails.user.image }} />
             </div>
         );
     };
@@ -69,9 +75,10 @@ useEffect(() => {
     const connectToServer = async () => {
         try {
             const response = await api.post("message/sendMessage", {
-                student: form.values.student,
+                email: form.values.emails,
                 message: form.values.message
             });
+            alert(response)
             toast.current.show({
                 severity: "success",
                 summary: "message sent",
@@ -110,20 +117,20 @@ useEffect(() => {
             >
                 <div className="flex flex-column">
                     <label htmlFor="email" className="mb-2 font-semibold text-sm">
-                        Student
+                        Emails
                     </label>
 
                     <Dropdown
-                        id="student"
-                        name="student"
-                        value={form.values.student}
-                        onChange={(e) => form.setFieldValue("student", e.target.value)}
+                        id="emails"
+                        name="emails"
+                        value={form.values.emails}
+                        onChange={(e) => form.setFieldValue("emails", e.target.value)}
                         onBlur={form.handleBlur}
-                        options={studentsItems}
+                        options={emailsItems}
                         optionValue="_id"
                         className="w-full md:w-14rem"
-                        itemTemplate={studentItemTemplate}
-                        valueTemplate={selectedStudentTemplate}
+                        itemTemplate={emailItemTemplate}
+                        valueTemplate={selectedEmailsTemplate}
                     />
                     </div>
                 <div className="flex justify-content-end">
@@ -141,7 +148,7 @@ useEffect(() => {
                 <div className="flex justify-content-end">
                     <Button
                         type="submit"
-                        label="Add"
+                        label="Send"
                         size="small"
                         disabled={!form.isValid || !form.dirty}
                     />

@@ -1,4 +1,24 @@
 const Student = require('../Models/student');
+const teacher = require('../Models/teacher');
+
+const getAllTeachersEmail = async (req, res) => {
+    const id = req.user.id;
+    try {
+        const teachers = await teacher.find({ students: id }).populate('user');
+        if (!teachers || teachers.length === 0) {
+            return res.status(404).send("No teachers found");
+        }
+        else
+        {
+            teachers = teachers.forEach(teacher => { return teacher.user.email})
+            return res.status(200).json(teachers);
+        }
+    } catch (error) {
+        console.error('Error fetching teachers:', error);
+        throw error;
+    }
+
+}
 
 const getStudent = async (req, res) => {
     const { id } = req.params;
@@ -89,5 +109,6 @@ module.exports = {
     createStudent,
     updateStudent,
     deleteStudent,
-    getAllStudents
+    getAllStudents,
+    getAllTeachersEmail
 };
