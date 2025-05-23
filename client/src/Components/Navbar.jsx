@@ -4,11 +4,15 @@ import { Menubar } from 'primereact/menubar';
 import { useNavigate } from 'react-router-dom';
 import api from '../Services/api';
 import useUser from '../Hooks/useUser';
+import { useDispatch } from 'react-redux';
+import { logOut } from '../Store/UserSlice'; 
+
 
 
 
 export default function BasicDemo() {
 
+    const dispatch = useDispatch();
     const user = useUser();
 
     async function connectToServer(role) {
@@ -72,8 +76,9 @@ export default function BasicDemo() {
             command: () => {
                 if (localStorage.getItem('token')) {
                     localStorage.removeItem('token');
-                    window.location.reload();
-                    navigate('/login');
+                    dispatch(logOut());
+                    //window.location.reload();
+                    navigate('/home');
                 } else {
                     navigate('/login');
                 }
