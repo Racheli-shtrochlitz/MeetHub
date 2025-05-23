@@ -1,7 +1,7 @@
 const Student = require('../Models/student');
 const teacher = require('../Models/teacher');
 
-const getAllTeachersEmail = async (req, res) => {
+const getAllTeachers = async (req, res) => {
     const id = req.user.id;
     try {
         const teachers = await teacher.find({ students: id }).populate('user');
@@ -10,7 +10,6 @@ const getAllTeachersEmail = async (req, res) => {
         }
         else
         {
-            teachers = teachers.forEach(teacher => { return teacher.user.email})
             return res.status(200).json(teachers);
         }
     } catch (error) {
@@ -110,5 +109,5 @@ module.exports = {
     updateStudent,
     deleteStudent,
     getAllStudents,
-    getAllTeachersEmail
+    getAllTeachers
 };

@@ -16,7 +16,6 @@ export default function BasicDemo() {
                     navigate('/login');
                 }
                 else {
-                    alert("welcome back!");
                     navigate('/profile');
                 }
             }

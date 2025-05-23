@@ -8,8 +8,10 @@ import api from "../Services/api";
 import UserAvatar from "./UserAvatar";
 import { Dropdown } from 'primereact/dropdown';
 import { useEffect, useState } from "react";
+import useUser from "../Hooks/useUser";
 export default function SendMessage() {
     const toast = useRef(null);
+    const user = useUser(); 
 
     const [emailsItems, setEmailsItems] = useState([]);
 
@@ -30,13 +32,13 @@ export default function SendMessage() {
 
 useEffect(() => {
     const fetchEmails = async () => {
-    const activeRole = localStorage.getItem('activeRole') ||"teacher";
+    const activeRole = localStorage.getItem('activeRole')
     let url = '';
         try {
             if(activeRole == "teacher") 
-                url = "teacher/getAllStudents";
+                url = "/teacher/getAllStudents";
             else if(activeRole == "student")
-                url = "student/getAllTeachers";
+                url = "/student/getAllTeachers";
             const response = await api.get(url);
             setEmailsItems(response.data);
         } catch (error) {
@@ -74,7 +76,7 @@ useEffect(() => {
 
     const connectToServer = async () => {
         try {
-            const response = await api.post("message/sendMessage", {
+            const response = await api.post("/message/sendMessage", {
                 email: form.values.emails,
                 message: form.values.message
             });

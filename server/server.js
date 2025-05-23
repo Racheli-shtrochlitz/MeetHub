@@ -34,7 +34,6 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-
 app.use('/teacher', authenticateUser, teacherRoutes);
 app.use('/student', authenticateUser, studentRoutes);
 app.use('/material', authenticateUser, materialRoutes);

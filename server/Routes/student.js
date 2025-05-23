@@ -5,14 +5,14 @@ const { getStudent,
     updateStudent,
     deleteStudent,
     getAllStudents,
-    getAllTeachersEmail } = require('../Controllers/studentController');
+    getAllTeachers } = require('../Controllers/studentController');
 const {checkOwnership} = require('../Middlewares/checkAccess.js');
-
+getAllTeachers
 router.post('/createStudent/:id',checkOwnership, createStudent);
 router.get('/getStudent/:id',getStudent);
 router.post('/updateStudent/:id',checkOwnership, updateStudent);
 router.delete('/deleteStudent/:id',checkOwnership, deleteStudent);
 router.get('/getAllStudents',getAllStudents);
-router.get('/getAllTeachersEmail',getAllTeachersEmail);
+router.get('/getAllTeachers',getAllTeachers);
 
 module.exports = router;
