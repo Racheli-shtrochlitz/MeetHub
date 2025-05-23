@@ -50,6 +50,23 @@ const updateTeacher = async (req, res) => {
     }
 }
 
+const deleteTeacher = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const teacher = await Teacher.findByIdAndDelete(id)
+            .populate('students')
+            .populate('lessons')
+            .populate('user');
+        if (!teacher)
+            res.send("Teacher not found").status(404);
+        else
+            res.status(200).send(teacher + "deleted successfully!!!");
+    }
+    catch (err) {
+        console.error(err.message);
+        return res.status(500).json({ message: "Internal server error", error: err.message });
+    }
+}
 
 const getAllTeachers = async (req, res) => {
     try {
