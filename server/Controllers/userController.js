@@ -1,4 +1,8 @@
 const User = require('../Models/user');
+const Lesson = require('../Models/lesson');
+const Teacher = require('../Models/teacher');
+const Student = require('../Models/student');
+
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const { createTeacher } = require('./teacherController');
@@ -15,29 +19,28 @@ const signIn = async (req, res) => {
     try {
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).json({ message: "User not found" })
+            return res.status(400).json({ error: "User not found" })
         }
         //to verify the password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(400).json({ message: "Invalid credentials" })
+            return res.status(400).json({ error: "Invalid credentials" })
         }
 
         if (!user.roles.includes(activeRole))
             return res.status(403).json({ error: `User is not assigned to role: ${activeRole}` })
 
-        const token = jwt.sign({ id: user._id, roles: user.roles, activeRole: activeRole }, process.env.SECRET_TOKEN, { expiresIn: '1h' });
+        const token = jwt.sign({ id: user._id, activeRole: activeRole }, process.env.SECRET_TOKEN, { expiresIn: '1h' });
         return res.status(200).json({ token });
     }
     catch (err) {
         console.error(err.message);
-        res.status(500).json({ message: "Internal server error", error: err.message });
+        res.status(500).json({ error: "Internal server error", error: err.message });
     }
 }
 
 const signUp = async (req, res) => {
     const { name, email, password, activeRole } = req.body;
-
     if (!name || !email || !password || !activeRole)
         return res.status(400).json({ error: 'Missing fields' });
 
@@ -55,7 +58,8 @@ const signUp = async (req, res) => {
             name,
             email,
             password: await bcrypt.hash(password, 10),//hashing the password
-            roles: [activeRole]
+            roles: [activeRole],
+            activeRole
         });
 
         // הוספת ה-ID של המשתמש החדש לגוף הבקשה
@@ -75,7 +79,7 @@ const signUp = async (req, res) => {
         //שמירת המשתמש רק לאחר וידוא יצירת התפקיד
         const savedUser = await newUser.save();
         console.log('Saved User:', savedUser);
-        const token = jwt.sign({ id: newUser._id, roles: newUser.roles, activeRole: activeRole }, process.env.SECRET_TOKEN, { expiresIn: '1h' });
+        const token = jwt.sign({ id: newUser._id, activeRole: activeRole }, process.env.SECRET_TOKEN, { expiresIn: '10h' });
 
         return res.status(201).json({ token: token, newUser: newUser });
     }
@@ -85,12 +89,39 @@ const signUp = async (req, res) => {
     }
 }
 
+const updateUser = async (req, res) => {
+    const { name, email, password } = req.body;
+    const id = req.user.id;
+
+    if (!name || !email || !password) {
+        return res.status(400).json({ err: "missing fields" });
+    }
+
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const updatedUser = await User.findByIdAndUpdate(
+            id,
+            { name, email, password: hashedPassword },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ err: "User not found" });
+        }
+
+        return res.status(200).json(updatedUser);
+    } catch (err) {
+        return res.status(500).json({ message: "Internal server error", error: err.message });
+    }
+};
+
+
 const addProfile = async (req, res) => {
 
     const { id } = req.user;
-    const {newRole } = req.body;
-    const user = await User.findById(id); 
-    const roles = user.roles; 
+    const { newRole } = req.body;
+    const user = await User.findById(id);
+    const roles = user.roles;
 
     if (!newRole)
         return res.status(400).json({ error: "you didnt provide a required parameter" });
@@ -121,71 +152,80 @@ const addProfile = async (req, res) => {
     }
 }
 
-// const getUser = async (req, res) => {
-//     const { id } = req.params;
-//     try {
-//         const user = await User.findById(id);
-//         if (!user) {
-//             res.send("User not found").status(404);
-//         }
-//         else
-//             res.status(200).send(User);
-//     } catch (err) {
-//         console.error(err.message);
-//         res.status(500).send("Internal server error");
-//     }
-// };
+const getAllLessons = async (req, res) => {
+    const id = req.user.id;
+    const activeRole = req.user.activeRole;
 
-// const addUser = async (req, res) => {
-//     const { user } = req.body;
-//     try {
-//         const newUser = (await User.create(user));
-//         if (!newUser) {
-//             res.send("Probably you didnt sent correctly data...").status(404);
-//         }
-//         else
-//             res.status(201).send(newUser);
-//     } catch (err) {
-//         console.error(err.message);
-//         res.status(500).send("Internal server error");
-//     }
-// };
+    if (!id || !activeRole) {
+        return res.status(400).json({ message: "Missing user or role" });
+    }
 
-// const updateUser = async (req, res) => {
-//     const { id } = req.params;
-//     const { user } = req.body;
-//     try {
-//         const newUser = await User.findByIdAndUpdate({ _id: id }, { user });
-//         if (!newUser)
-//             res.send("User not found").status(404);
-//         else
-//             res.status(200).send(newUser);
-//     }
-//     catch (err) {
-//         console.error(err.message);
-//         res.status(500).send("Internal server error");
-//     }
-// }
+    let object;
 
-// const deleteUser = async (req, res) => {
-//     const { id } = req.params;
-//     try {
-//         const user = await User.findByIdAndDelete(id);
-//         if (!user)
-//             res.send("User not found").status(404);
-//         else
-//             res.status(200).send(User + "deleted successfully!!!");
-//     }
-//     catch (err) {
-//         console.error(err.message);
-//         res.status(500).send("Internal server error");
-//     }
-// }
+    // pop the teacher or student according to the role
+    try {
+
+        if (activeRole === "teacher") {
+            object = await Teacher.findOne({ user: id });
+        } else {
+            object = await Student.findOne({ user: id });
+        }
+
+        if (!object) {
+            return res.status(404).json({ message: `No ${activeRole} found with the given user ID` });
+        }
+
+        // create the filter for lessons
+        const filter = activeRole === "teacher" ? { teacher: object._id } : { student: object._id };
+
+        const lessons = await Lesson.find(filter)
+        .populate({
+            path: 'student',
+            populate: { path: 'user' }
+        })
+        .populate({
+            path: 'teacher',
+            populate: { path: 'user' }
+        });
+        return res.status(200).json(lessons);
+
+
+    }catch (err) {
+        console.error(err); 
+        return res.status(500).json({ message: "Internal server error", error: err.message });
+    }
+    
+};
+
+const getUserByToken = async (req, res) => {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader) {
+        return res.status(401).json({ message: 'Authorization header missing' });
+    }
+
+    const token = authHeader.split(' ')[1];
+    try {
+        const secret = process.env.SECRET_TOKEN;
+        const decoded = jwt.verify(token, secret);
+        const { id } = decoded;
+        const user=await User.findById(id);
+        return res.status(200).json(user);
+    }
+    catch (err) {
+        res.status(500).json({ err: err.message, message: "internak server error" });
+    }
+}
+
+
 
 
 
 module.exports = {
     signIn,
     signUp,
-    addProfile
+    addProfile,
+    getAllLessons,
+    getUserByToken,
+    updateUser
 };

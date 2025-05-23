@@ -12,7 +12,7 @@ const {authenticateUser} = require('./Middlewares/checkAccess.js');
 const jwt = require('jsonwebtoken');
 
 const app = express();
-app.use(cors());
+// app.use(cors());
 dotenv.config();
 app.use(express.json()); // Middleware to parse JSON
 const PORT = process.env.PORT || 5000;
@@ -25,6 +25,14 @@ mongoose.connect(process.env.DATABASE_URL, {
 .catch(err => {
     console.error("Error connecting to MongoDB:", err.message);
 });
+
+const corsOptions = {
+    origin: '*', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
 
 
 app.use('/teacher',authenticateUser, teacherRoutes);
