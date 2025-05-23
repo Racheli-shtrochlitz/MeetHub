@@ -13,7 +13,6 @@ export default function BasicDemo() {
             icon: 'pi pi-user',
             command: () => {
                 if (!localStorage.getItem('token')) {
-                    alert("please login first!");
                     navigate('/login');
                 }
                 else {
