@@ -12,7 +12,7 @@ import { Outlet } from 'react-router-dom';
 export default function Profile() {
     const navigate = useNavigate();
 
-    const activeRole = localStorage.getItem('activeRole') || "teacher";
+    const activeRole = localStorage.getItem('activeRole');
 
     const usrName = localStorage.getItem('name') || "User";
     const [countMess, setCountMess] = useState(0);
@@ -35,7 +35,7 @@ export default function Profile() {
             })
     }
     return (
-        <div className="min-h-screen flex relative" style={{height: '92vh !important'}}>
+        <div className="min-h-screen flex relative" style={{ height: '92vh !important' }}>
             <div className="surface-section h-screen flex-shrink-0 border-right-1 surface-border select-none" style={{ width: '280px', backgroundColor: 'white' }}>
                 <div className="min-h-screen flex relative lg:static surface-ground">
                     <div id="app-sidebar-2" className="surface-section h-screen block flex-shrink-0 absolute lg:static left-0 top-0 z-1 border-right-1 surface-border select-none" style={{ width: '280px' }}>
@@ -95,6 +95,7 @@ export default function Profile() {
                                         </ul>
                                     </li>
                                 </ul>
+                                {activeRole === "teacher" ? (
                                 <ul className="list-none p-3 m-0">
                                     <li>
                                         <StyleClass nodeRef={btnRef2} selector="@next" enterFromClassName="hidden" enterActiveClassName="slidedown" leaveToClassName="hidden" leaveActiveClassName="slideup">
@@ -123,7 +124,7 @@ export default function Profile() {
                                             </li>
                                         </ul>
                                     </li>
-                                </ul>
+                                </ul>) : (<></>)}
                                 <ul className="list-none p-3 m-0">
                                     <StyleClass nodeRef={btnRef3} selector="@next" enterFromClassName="hidden" enterActiveClassName="slidedown" leaveToClassName="hidden" leaveActiveClassName="slideup">
                                         <div ref={btnRef3} className="p-ripple p-3 flex align-items-center justify-content-between text-600 cursor-pointer">
@@ -162,6 +163,7 @@ export default function Profile() {
                                             </a>
                                         </li>
                                     </ul>
+
                                 </ul>
                             </div>
                             <div className="mt-auto">
@@ -174,7 +176,7 @@ export default function Profile() {
                     </div>
                 </div>
             </div>
-             <Outlet /> 
+            <Outlet />
         </div>
     )
 }
