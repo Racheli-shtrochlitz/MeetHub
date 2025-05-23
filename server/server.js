@@ -33,6 +33,9 @@ app.use('/material',authenticateUser,materialRoutes);
 app.use('/lesson',authenticateUser,lessonRoutes);
 app.use('/user',userRoutes);
 app.use('/zoom',authenticateUser,zoomRoutes);
+app.use('/material',authenticateUser,()=>{
+    
+})
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
