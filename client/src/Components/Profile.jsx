@@ -78,7 +78,7 @@ export default function Profile() {
                                                     <Ripple />
                                                 </a>
                                             </li>
-                                            {activeRole === "teacher" ? (<li onClick={() =>{navigate('addLesson')}}>
+                                            {activeRole === "teacher" ? (<li onClick={() => { navigate('addLesson') }}>
                                                 <a className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
                                                     <i className="pi pi-calendar-plus mr-2"></i>
                                                     <span className="font-medium">Add lesson</span>
@@ -107,7 +107,7 @@ export default function Profile() {
                                         </StyleClass>
                                         <ul className="list-none p-0 m-0 overflow-hidden">
                                             <li>
-                                                <a onClick={()=>{navigate('students')}} className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
+                                                <a onClick={() => { navigate('students') }} className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
                                                     <i className="pi pi-users mr-2"></i>
                                                     <span className="font-medium">your students</span>
                                                     <span className="inline-flex align-items-center justify-content-center ml-auto bg-blue-500 text-0 border-circle" style={{ minWidth: '1.5rem', height: '1.5rem' }}>
@@ -115,7 +115,7 @@ export default function Profile() {
                                                     <Ripple />
                                                 </a>
                                             </li>
-                                            <li onClick={() =>{navigate('addStudent')}}>
+                                            <li onClick={() => { navigate('addStudent') }}>
                                                 <a className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
                                                     <i className="pi pi-user-plus mr-2"></i>
                                                     <span className="font-medium">Add Students</span>
@@ -163,6 +163,13 @@ export default function Profile() {
                                             </a>
                                         </li>
                                     </ul>
+                                    <li onClick={() => navigate('settings')}>
+                                        <a className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100">
+                                            <i className="pi pi-user-edit mr-2"></i>
+                                            <span className="font-medium">Edit Profile</span>
+                                            <Ripple />
+                                        </a>
+                                    </li>
 
                                 </ul>
                             </div>

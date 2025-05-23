@@ -89,6 +89,33 @@ const signUp = async (req, res) => {
     }
 }
 
+const updateUser = async (req, res) => {
+    const { name, email, password } = req.body;
+    const id = req.user.id;
+
+    if (!name || !email || !password) {
+        return res.status(400).json({ err: "missing fields" });
+    }
+
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const updatedUser = await User.findByIdAndUpdate(
+            id,
+            { name, email, password: hashedPassword },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({ err: "User not found" });
+        }
+
+        return res.status(200).json(updatedUser);
+    } catch (err) {
+        return res.status(500).json({ message: "Internal server error", error: err.message });
+    }
+};
+
+
 const addProfile = async (req, res) => {
 
     const { id } = req.user;
@@ -199,5 +226,6 @@ module.exports = {
     signUp,
     addProfile,
     getAllLessons,
-    getUserByToken
+    getUserByToken,
+    updateUser
 };
