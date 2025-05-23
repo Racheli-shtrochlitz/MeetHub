@@ -86,6 +86,12 @@ export default function Signup() {
             }
         }
         catch(error) {
+            toast.current.show({
+                severity: 'error',
+                summary: 'Signup Error',
+                detail: error.message,
+                life: 4000
+            });
             console.error('There was a problem with the fetch operation:', error);
         }
     }

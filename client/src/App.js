@@ -58,7 +58,7 @@ function App() {
           <Route path="addLesson" element={<AddLesson/>} />
           <Route path="calendar" element={<Calendar />} />
           <Route path="records" element={<>demo</>} />
-          <Route path="students" element={< >demo</>} />
+          <Route path="students" element={<StudentTable/>} />
           <Route path="addStudent" element={< AddStudent/>} />
           <Route path="messages" element={< >demo</>} />
           <Route path="sendMessage" element={<SendMessage/>} />
@@ -71,8 +71,6 @@ function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/upload" element={<UploadFiles/>}/>
-        {/* <Route path="/calendar" element={<Calendar/>}/> */}
-        {/* <Route path="/addStudent" element={<AddStudent/>}/> */}
 
 
       </Routes>
