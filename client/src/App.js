@@ -17,6 +17,9 @@ const UploadFiles = lazy(() => import('./Components/UploadFiles'));
 const AddLesson = lazy(() => import('./Components/AddLesson'));
 const Calendar = lazy(() => import('./Components/Calendar'));
 const AddStudent = lazy(() => import('./Components/AddStudent'));
+const StudentTable = lazy(() => import('./Components/StudentTable'));
+const Settings = lazy(() => import('./Components/Settings'));
+
 
 
 function App() {
@@ -54,11 +57,13 @@ function App() {
           <Route path="addLesson" element={<AddLesson/>} />
           <Route path="calendar" element={<Calendar />} />
           <Route path="records" element={<>demo</>} />
-          <Route path="students" element={< >demo</>} />
+          <Route path="students" element={<StudentTable/>} />
           <Route path="addStudent" element={<AddStudent/>} />
           <Route path="messages" element={< >demo</>} />
           <Route path="sendMessage" element={< >demo</>} />
           <Route path="messageSettings" element={<>demo</>} />
+          <Route path="settings" element={<Settings/>} />
+
         </Route>
         <Route path="/signup" element={<SignUp />} />
         <Route path="/" element={<Home />} />
