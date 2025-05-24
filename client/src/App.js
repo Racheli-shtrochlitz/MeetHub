@@ -39,7 +39,7 @@ function App() {
           email: data.email,
           activeRole: data.activeRole
         }));
-        
+
         console.log(data);
       } catch (err) {
         console.error(err);
@@ -54,23 +54,24 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/profile" element={<Profile />} >
+          <Route index element={<Settings />} />
           <Route path="lessons" element={<Table />} />
-          <Route path="addLesson" element={<AddLesson/>} />
+          <Route path="addLesson" element={<AddLesson />} />
           <Route path="calendar" element={<Calendar />} />
           <Route path="records" element={<>demo</>} />
-          <Route path="students" element={<StudentTable/>} />
-          <Route path="addStudent" element={< AddStudent/>} />
+          <Route path="students" element={<StudentTable />} />
+          <Route path="addStudent" element={< AddStudent />} />
           <Route path="messages" element={< >demo</>} />
-          <Route path="sendMessage" element={<SendMessage/>} />
+          <Route path="sendMessage" element={<SendMessage />} />
           <Route path="messageSettings" element={<>demo</>} />
-          <Route path="settings" element={<Settings/>} />
+          <Route path="settings" element={<Settings />} />
 
         </Route>
         <Route path="/signup" element={<SignUp />} />
         <Route path="/" element={<Home />} />
         <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/upload" element={<UploadFiles/>}/>
+        <Route path="/upload" element={<UploadFiles />} />
 
 
       </Routes>

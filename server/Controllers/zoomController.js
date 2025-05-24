@@ -29,7 +29,6 @@ async function getAccessToken() {
 
 const createMeeting=async (req,res)=> {
     try {
-        console.log("======================")
         const token = await getAccessToken();
 
         const response = await axios.post(
