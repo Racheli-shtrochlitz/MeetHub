@@ -8,17 +8,42 @@ import { AutoComplete } from 'primereact/autocomplete';
 import UserAvatar from './UserAvatar';
 import api from '../Services/api';
 import { Outlet } from 'react-router-dom';
+import useUser from '../Hooks/useUser';
+import { useDispatch } from 'react-redux';
+import {setActiveRole} from '../Store/UserSlice'
+import { Button } from 'primereact/button';
+import { Card } from 'primereact/card';
+import { Divider } from 'primereact/divider';
+
 
 export default function Profile() {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const [user, setUser] = useState(null);
 
-    const activeRole = localStorage.getItem('activeRole');
-
-    const usrName = localStorage.getItem('name') || "User";
+    const activeRole = user?.activeRole || "student";
+    const userName = user?.name || "User";
     const [countMess, setCountMess] = useState(0);
     const btnRef1 = useRef(null);
     const btnRef2 = useRef(null);
     const btnRef3 = useRef(null);
+
+    const getUser = async () => {
+        try {
+            const response = await api.get('user/getUserByToken');
+            console.log(response)
+            setUser(response.data);
+        }
+        catch (err) {
+            alert(`getUser failed: ${err.message}`);
+        }
+    }
+
+
+    useEffect(() => {
+        getUser();
+    }, [])
+
 
     function gotToMaterial() {
         fetch('http://localhost:3000/material/getMaterialLink', {
@@ -96,35 +121,35 @@ export default function Profile() {
                                     </li>
                                 </ul>
                                 {activeRole === "teacher" ? (
-                                <ul className="list-none p-3 m-0">
-                                    <li>
-                                        <StyleClass nodeRef={btnRef2} selector="@next" enterFromClassName="hidden" enterActiveClassName="slidedown" leaveToClassName="hidden" leaveActiveClassName="slideup">
-                                            <div ref={btnRef2} className="p-ripple p-3 flex align-items-center justify-content-between text-600 cursor-pointer">
-                                                <span className="font-medium">STUDENTS</span>
-                                                <i className="pi pi-chevron-down"></i>
-                                                <Ripple />
-                                            </div>
-                                        </StyleClass>
-                                        <ul className="list-none p-0 m-0 overflow-hidden">
-                                            <li>
-                                                <a onClick={() => { navigate('students') }} className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
-                                                    <i className="pi pi-users mr-2"></i>
-                                                    <span className="font-medium">your students</span>
-                                                    <span className="inline-flex align-items-center justify-content-center ml-auto bg-blue-500 text-0 border-circle" style={{ minWidth: '1.5rem', height: '1.5rem' }}>
-                                                    </span>
+                                    <ul className="list-none p-3 m-0">
+                                        <li>
+                                            <StyleClass nodeRef={btnRef2} selector="@next" enterFromClassName="hidden" enterActiveClassName="slidedown" leaveToClassName="hidden" leaveActiveClassName="slideup">
+                                                <div ref={btnRef2} className="p-ripple p-3 flex align-items-center justify-content-between text-600 cursor-pointer">
+                                                    <span className="font-medium">STUDENTS</span>
+                                                    <i className="pi pi-chevron-down"></i>
                                                     <Ripple />
-                                                </a>
-                                            </li>
-                                            <li onClick={() => { navigate('addStudent') }}>
-                                                <a className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
-                                                    <i className="pi pi-user-plus mr-2"></i>
-                                                    <span className="font-medium">Add Students</span>
-                                                    <Ripple />
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>) : (<></>)}
+                                                </div>
+                                            </StyleClass>
+                                            <ul className="list-none p-0 m-0 overflow-hidden">
+                                                <li>
+                                                    <a onClick={() => { navigate('students') }} className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
+                                                        <i className="pi pi-users mr-2"></i>
+                                                        <span className="font-medium">your students</span>
+                                                        <span className="inline-flex align-items-center justify-content-center ml-auto bg-blue-500 text-0 border-circle" style={{ minWidth: '1.5rem', height: '1.5rem' }}>
+                                                        </span>
+                                                        <Ripple />
+                                                    </a>
+                                                </li>
+                                                <li onClick={() => { navigate('addStudent') }}>
+                                                    <a className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
+                                                        <i className="pi pi-user-plus mr-2"></i>
+                                                        <span className="font-medium">Add Students</span>
+                                                        <Ripple />
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>) : (<></>)}
                                 <ul className="list-none p-3 m-0">
                                     <StyleClass nodeRef={btnRef3} selector="@next" enterFromClassName="hidden" enterActiveClassName="slidedown" leaveToClassName="hidden" leaveActiveClassName="slideup">
                                         <div ref={btnRef3} className="p-ripple p-3 flex align-items-center justify-content-between text-600 cursor-pointer">
@@ -176,7 +201,7 @@ export default function Profile() {
                             <div className="mt-auto">
                                 <hr className="mb-3 mx-3 border-top-1 border-none surface-border" />
                                 <a className="m-3 flex align-items-center cursor-pointer p-3 gap-2 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple">
-                                    <UserAvatar user={{ name: usrName }} />
+                                    <UserAvatar user={{ name: userName }} />
                                 </a>
                             </div>
                         </div>
@@ -184,6 +209,10 @@ export default function Profile() {
                 </div>
             </div>
             <Outlet />
+
+           
+
+
         </div>
     )
 }
