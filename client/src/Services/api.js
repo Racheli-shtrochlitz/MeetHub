@@ -9,7 +9,8 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-  else{
+  else
+  if(config.baseURL=='user/signIn'){
       alert('you are not connected...😔\n pleas login')
       window.location.href = '/login';
   }
