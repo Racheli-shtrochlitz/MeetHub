@@ -51,18 +51,18 @@ export default function BasicDemo() {
 
         {
             label: 'Add Profile',
-            icon: 'pi-user-plus',
+            icon: 'pi pi-user-plus',
             items: [
                 {
                     label: 'Student',
-                    icon: 'pi-users',
+                    icon: 'pi pi-users',
                     command: () => {
                         connectToServer('student')
                     }
                 },
                 {
                     label: 'Teacher',
-                    icon: 'pi-users',
+                    icon: 'pi pi-users',
                     command: () => {
                         connectToServer('teacher')
                     }
