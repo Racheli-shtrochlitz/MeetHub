@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 import useUser from "../Hooks/useUser";
 export default function SendMessage() {
     const toast = useRef(null);
-    const user = useUser(); 
+    const user = useUser();
 
     const [emailsItems, setEmailsItems] = useState([]);
 
@@ -27,34 +27,35 @@ export default function SendMessage() {
             }
             return errors;
         },
-        onSubmit: ()=>{connectToServer()}
+        onSubmit: () => { connectToServer() }
     });
 
-useEffect(() => {
-    const fetchEmails = async () => {
-    const activeRole = localStorage.getItem('activeRole')
-    let url = '';
-        try {
-            if(activeRole == "teacher") 
-                url = "/teacher/getAllStudents";
-            else if(activeRole == "student")
-                url = "/student/getAllTeachers";
-            const response = await api.get(url);
-            setEmailsItems(response.data);
-        } catch (error) {
-            console.error(`Fetch error:`, error);
-            setEmailsItems([]);
+    useEffect(() => {
+        const fetchEmails = async () => {
+            const activeRole = localStorage.getItem('activeRole')
+            let url = '';
+            try {
+                if (activeRole == "teacher")
+                    url = "/teacher/getAllStudents";
+                else if (activeRole == "student")
+                    url = "/student/getAllTeachers";
+                const response = await api.get(url);
+                console.log("emailresponsedata: ", response.data)
+                setEmailsItems(response.data);
+            } catch (error) {
+                console.error(`Fetch error:`, error);
+                setEmailsItems([]);
+            }
+        };
+
+        fetchEmails();
+    }, []);
+
+    useEffect(() => {
+        if (emailsItems.length > 0) {
+            form.setFieldValue("student", emailsItems[0]._id);
         }
-    };
-
-    fetchEmails();
-}, []);
-
-useEffect(() => {
-    if (emailsItems.length > 0) {
-        form.setFieldValue("student", emailsItems[0]._id); 
-    }
-}, [emailsItems]);
+    }, [emailsItems]);
 
     const emailItemTemplate = (email) => {
         return (
@@ -77,10 +78,11 @@ useEffect(() => {
     const connectToServer = async () => {
         try {
             const response = await api.post("/message/sendMessage", {
+                toName: form.values.emails,
+                formName: user.name,
                 email: form.values.emails,
                 message: form.values.message
             });
-            alert(response)
             toast.current.show({
                 severity: "success",
                 summary: "message sent",
@@ -129,12 +131,12 @@ useEffect(() => {
                         onChange={(e) => form.setFieldValue("emails", e.target.value)}
                         onBlur={form.handleBlur}
                         options={emailsItems}
-                        optionValue="_id"
+                        optionValue="user.email"
                         className="w-full md:w-14rem"
                         itemTemplate={emailItemTemplate}
                         valueTemplate={selectedEmailsTemplate}
                     />
-                    </div>
+                </div>
                 <div className="flex justify-content-end">
                     <InputText
                         id="message"
