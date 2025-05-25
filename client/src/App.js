@@ -9,6 +9,7 @@ import api from './Services/api';
 
 const Login = lazy(() => import('./Components/Login'));
 const Navbar = lazy(() => import('./Components/Navbar'));
+const Footer = lazy(() => import('./Components/Footer'))
 const Table = lazy(() => import('./Components/Table'));
 const SignUp = lazy(() => import('./Components/Signup'));
 const Home = lazy(() => import('./Components/Home'));
@@ -75,6 +76,7 @@ function App() {
 
 
       </Routes>
+      <Footer />
     </Suspense>
   );
 }
