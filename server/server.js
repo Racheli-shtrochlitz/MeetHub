@@ -8,6 +8,7 @@ const materialRoutes = require('./Routes/material.js');
 const lessonRoutes = require('./Routes/lesson.js');
 const userRoutes = require('./Routes/user.js');
 const zoomRoutes = require('./Routes/zoom.js');
+const { sendMail } = require('./Controllers/mailController.js');
 const { authenticateUser } = require('./Middlewares/checkAccess.js');
 const jwt = require('jsonwebtoken');
 
@@ -40,21 +41,7 @@ app.use('/material', authenticateUser, materialRoutes);
 app.use('/lesson', authenticateUser, lessonRoutes);
 app.use('/user', userRoutes);
 app.use('/zoom', authenticateUser, zoomRoutes);
-app.post('/message/sendMessage', authenticateUser, (req, res) => {
-    error.log("req.body: ",req.body)
-    const {message, email} = req.body;
-    if (!email) {
-        return res.status(400).json({ error: "Email not provided" });
-    }
-    try {
-        {/*send email*/ }
-        console.log("Sending email to:", email ,". message:", message);
-        res.status(200).json({ message: "Email sent successfully" });
-    } catch (err) {
-        console.error("Error sending email:", err.message);
-        return res.status(500).json({ message: "Internal server error", error: err.message });
-    }
-})
+app.post('/message/sendMessage', authenticateUser, sendMail)
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
