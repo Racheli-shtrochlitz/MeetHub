@@ -16,23 +16,10 @@ export default function Signup() {
 
     const toast = useRef(null);
 
-    const {
-        control,
-        register,
-        handleSubmit,
-        watch,
-        formState: { errors }
-    } = useForm({
-        defaultValues: {
-            role: '',
-            firstName: '',
-            email: '',
-            password: '',
-            subject: ''
-        },
+    const {control, register, handleSubmit, formState: { errors } } = useForm({
+        defaultValues: { role: '', firstName: '', email: '', password: '' },
         mode: 'onChange'
     });
-
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -40,8 +27,6 @@ export default function Signup() {
     const [isHovered, setIsHovered] = useState(false);
 
     const items = ['student', 'teacher'];
-    const selectedRole = watch("role") || "";
-
 
     async function connectToServer(formData) {
         try {
@@ -49,13 +34,10 @@ export default function Signup() {
                 name: formData.firstName,
                 email: formData.email,
                 password: formData.password,
-                activeRole: formData.role,
-                subject: formData.subject
+                activeRole: formData.role
             });
 
             const data = response.data;
-            console.log(data);
-
             if (data.token) {
                 console.log("token: " + data.token);
                 localStorage.setItem('token', data.token);
@@ -159,20 +141,6 @@ export default function Signup() {
                                         className="w-12rem"
                                     />
                                     {errors.password && <p style={{ color: 'red', fontSize: '12px' }}>{errors.password.message}</p>}
-                                </div>
-
-                                {/* if teacher */}
-                                <div className="flex flex-wrap justify-content-center align-items-center gap-2">
-                                    <label className="w-6rem">Subject</label>
-                                    <InputText
-                                        disabled={selectedRole === "student"}
-                                        placeholder={selectedRole === "student" ? "only for teacher profile" : ""}
-                                        className="w-12rem"
-                                        {...register("subject", {
-                                            required: selectedRole === "teacher" ? "Subject is required for teachers" : false
-                                        })}
-                                    />
-                                    {errors.subject && <p style={{ color: 'red', fontSize: '12px' }}>{errors.subject.message}</p>}
                                 </div>
 
                                 <Button style={{

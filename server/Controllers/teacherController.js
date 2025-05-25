@@ -26,25 +26,6 @@ const getAllStudents = async (req, res) => {
     }
 }
 
-const getAllSubjects = async (req, res) => {
-    const id = req.user.id;
-    try {
-        const teacher = await Teacher.findOne({ user: id })
-        if (!teacher) {
-            return res.status(404).send("Teacher not found");
-        }
-        else {
-            subjects = teacher.subject
-            return res.status(200).json(subjects);
-        }
-
-    } catch (err) {
-        console.error(err.message);
-        return res.status(500).json({ message: "Internal server error", error: err.message });
-    }
-}
-
-
 const getTeacher = async (req, res) => {
     const { id } = req.params;
     try {
@@ -64,10 +45,10 @@ const getTeacher = async (req, res) => {
 };
 
 const createTeacher = async (req, res) => {
-    const { subject, students, lessons } = req.body;
+    const { students, lessons } = req.body;
     try {
         //create a new teacher
-        const newTeacher = await Teacher.create({ subject: subject || [], students: students || [], lessons: lessons || [], user: req.userId || req.user.id, });
+        const newTeacher = await Teacher.create({ students: students || [], lessons: lessons || [], user: req.userId || req.user.id, });
         return res.status(200).json({message : "teacher created successfully!",teacher:newTeacher})
     } catch (err) {
         console.error(err.message);
@@ -79,14 +60,14 @@ const updateTeacher = async (req, res) => {
     const { id } = req.params;
     const { teacher } = req.body;
     try {
-        const newTecher = await Teacher.findByIdAndUpdate({ _id: id }, { ...teacher }, { new: true })
+        const newTeacher = await Teacher.findByIdAndUpdate({ _id: id }, { ...teacher }, { new: true })
             .populate('students')
             .populate('lessons')
             .populate('user');
-        if (!newTecher)
+        if (!newTeacher)
             return res.status(404).send("Teacher not found");
         else
-            return res.status(200).json(newTecher);
+            return res.status(200).json(newTeacher);
     }
     catch (err) {
         console.error(err.message);
@@ -180,7 +161,6 @@ module.exports = {
     deleteTeacher,
     getAllTeachers,
     getAllStudents,
-    getAllSubjects,
     addStudent,
     getTeacherByToken
 };

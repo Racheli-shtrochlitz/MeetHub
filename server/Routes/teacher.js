@@ -6,13 +6,11 @@ const { getTeacher,
     deleteTeacher,
     getAllTeachers,
     getAllStudents ,
-    getAllSubjects,
     addStudent,
     getTeacherByToken} = require('../Controllers/teacherController');
 const {checkOwnership,authenticateUser} = require('../Middlewares/checkAccess.js');
 
 router.get('/getAllStudents',authenticateUser, getAllStudents);
-router.get('/getAllSubjects',authenticateUser, getAllSubjects);
 router.post('/createTeacher',authenticateUser,checkOwnership, createTeacher);
 router.get('/getTeacher/:id',authenticateUser, getTeacher);
 router.post('/updateTeacher/:id',authenticateUser,checkOwnership, updateTeacher);

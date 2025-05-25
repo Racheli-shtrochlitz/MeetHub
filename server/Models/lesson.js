@@ -6,7 +6,7 @@ const lessonSchema = new Schema({
   student: { type: Schema.Types.ObjectId, ref: 'Student', required: true },
   lessonDate: { type: Date, required: true },
   zoomLink: { type: String, required: true },  // קישור זום לשיעור
-  subject:{type:String},
+  title:{type:String},
   materials: { type: String },  // חומרים שהועלו לשיעור
   recording: { type: Boolean },  // קישור להקלטת השיעור (אם יש)
   feedback: { type: String },  // משוב על השיעור

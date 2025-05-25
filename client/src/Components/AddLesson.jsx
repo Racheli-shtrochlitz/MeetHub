@@ -1,4 +1,3 @@
-import { AutoComplete } from "primereact/autocomplete";
 import { ToggleButton } from 'primereact/togglebutton';
 import { Calendar } from "primereact/calendar";
 import React, { useState, useEffect } from "react";
@@ -12,12 +11,11 @@ import api from "../Services/api";
 import { InputText } from "primereact/inputtext";
 
 export default function AddLesson() {
-    const navigate = useNavigate();
     const token = useGetToken();
 
     const [studentValue, setStudentValue] = useState(null);
     const [studentsItems, setStudentsItems] = useState(["temp", "demo"]);
-    const [subjectItems, setSubjectItems] = useState(["demo", "temp"]);
+    const [titleValue, setTitleValue] = useState("")
     const [datetime, setDateTime] = useState(null);
     const [checked, setChecked] = useState(false);
     const [visible, setVisible] = useState(true);
@@ -25,25 +23,11 @@ export default function AddLesson() {
     const [filteredSubjects, setFilteredSubjects] = useState(null);
     const [materialLink, setMaterialLink] = useState('');
     const [teacher, setTeacher] = useState(null);
-
+    //get students for options in form
     useEffect(() => {
         console.log("studentsItems:", studentsItems);
     }, [studentsItems]);
-
-    const search = (event) => {
-        setTimeout(() => {
-            let _filteredSubjects;
-            if (!event.query.trim().length) {
-                _filteredSubjects = [...subjectItems];
-            } else {
-                _filteredSubjects = subjectItems.filter((subject) => {
-                    return subject.toLowerCase().startsWith(event.query.toLowerCase());
-                });
-            }
-            setFilteredSubjects(_filteredSubjects);
-        }, 250);
-    };
-
+    //get current teacher for lesson object
     useEffect(() => {
         if (!token) return;
         const fetchTeacher = async () => {
@@ -57,7 +41,7 @@ export default function AddLesson() {
         };
         fetchTeacher();
     }, [token]);
-
+    //get zoom link for lesson object and create lesson
     async function sendToServer() {
         if (!teacher) return;
         let zoomLink;
@@ -75,7 +59,7 @@ export default function AddLesson() {
                     teacher: teacher?._id,
                     student: studentValue,
                     lessonDate: datetime.toISOString(),
-                    subject: selectedSubject,
+                    title: titleValue,
                     recording: checked,
                     materials: materialLink,
                     zoomLink: zoomLink
@@ -89,25 +73,18 @@ export default function AddLesson() {
             console.error('Lesson fetch error:', error);
         }
     }
-
+    //get all student in page load time 
     useEffect(() => {
         if (!token) return;
-        getAllStudentsAndSubjects("students").then((data) => setStudentsItems(data));
-        getAllStudentsAndSubjects("subjects").then((data) => setSubjectItems(data));
+        getAllStudents().then((data) => setStudentsItems(data));
     }, []);
 
-    const getAllStudentsAndSubjects = async (curFetch) => {
-        let curUrl = '';
-        if (curFetch === "students") {
-            curUrl = 'teacher/getAllStudents';
-        } else if (curFetch === "subjects") {
-            curUrl = 'teacher/getAllSubjects';
-        }
+    const getAllStudents = async () => {
         try {
-            const response = await api.get(curUrl);
+            const response = await api.get('teacher/getAllStudents');
             return response.data;
         } catch (error) {
-            console.error(`Fetch error (${curFetch}):`, error);
+            console.error(`Fetch error (AllStudents):`, error);
             return [];
         }
     };
@@ -123,15 +100,12 @@ export default function AddLesson() {
 
     const selectedStudentTemplate = (student) => {
         if (!student || !student.user) return null;
-
         return (
             <div className="flex align-items-center gap-2">
                 <UserAvatar user={{ name: student.user.name, image: student.user.image }} />
             </div>
         );
     };
-
-
 
     return (
         <div className="card flex justify-content-center">
@@ -156,16 +130,11 @@ export default function AddLesson() {
 
                     <div className="flex-auto">
                         <label htmlFor="buttondisplay" className="font-bold block mb-2">
-                            subject
+                            title
                         </label>
-                        <AutoComplete
-                            field="name"
-                            value={selectedSubject}
-                            suggestions={filteredSubjects}
-                            panelStyle={{ backgroundColor: 'white', color: 'black' }}
-                            completeMethod={search}
-                            onChange={(e) => setSelectedSubject(e.value)}
-                        />
+                        <InputText 
+                        value={titleValue} 
+                        onChange={(e) => setTitleValue(e.target.value)} />
                     </div>
 
                     <div className="flex-auto">
@@ -183,18 +152,18 @@ export default function AddLesson() {
 
                     <div className="flex align-items-center">
                         <ToggleButton
-                            style={{width: '2rem'}}
+                            style={{ width: '2rem' }}
                             checked={checked}
                             onChange={(e) => setChecked(e.value)}
                             className="w-8rem"
-                        /> 
+                        />
                         <label htmlFor="buttondisplay" className="font-bold block mb-2">
                             recording
                         </label>
                     </div>
 
                     <div className="flex-auto">
-                         <label htmlFor="buttondisplay" className="font-bold block mb-2">
+                        <label htmlFor="buttondisplay" className="font-bold block mb-2">
                             material link (in drive)
                         </label>
                         <InputText value={materialLink} onChange={(e) => setMaterialLink(e.target.value)} />
