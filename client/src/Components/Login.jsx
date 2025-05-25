@@ -29,11 +29,15 @@ export default function LoginDemo() {
 
     async function connectToServer(formData) {
         try {
+            console.log({email: formData.email,
+                password: formData.password,
+                activeRole: formData.role})
             const response = await api.post('user/signIn', {
                 email: formData.email,
                 password: formData.password,
                 activeRole: formData.role
             });
+            console.log(response)
             const data = response.data;
             localStorage.setItem('token', data.token);
             localStorage.setItem('activeRole', formData.role)
