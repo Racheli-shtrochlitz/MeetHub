@@ -9,10 +9,6 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-  else{
-      alert('you are not connected...😔\n pleas login')
-      window.location.href = '/login';
-  }
   return config;
 });
 
