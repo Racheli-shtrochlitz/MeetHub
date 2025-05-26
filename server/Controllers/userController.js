@@ -35,7 +35,7 @@ const signIn = async (req, res) => {
             { expiresIn: '1h' }
         );
 
-        return res.status(200).json({ token, message: 'Logged in successfully' });
+        return res.status(200).json({ data:token, message: 'Logged in successfully' });
     } catch (err) {
         console.error(err.message);
         return res.status(500).json({ message: "Internal server error" });
@@ -79,7 +79,7 @@ const signUp = async (req, res) => {
         const savedUser = await newUser.save();
         const token = jwt.sign({ id: newUser._id, activeRole: activeRole }, process.env.SECRET_TOKEN, { expiresIn: '10h' });
 
-        return res.status(201).json({ token, newUser, message: 'User registered successfully' });
+        return res.status(200).json({ data:{token, newUser}, message: 'User registered successfully' });
     } catch (err) {
         console.error(err.message);
         return res.status(500).json({ message: "Internal server error" });
@@ -106,7 +106,7 @@ const updateUser = async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-        return res.status(200).json({ updatedUser, message: "User updated successfully" });
+        return res.status(200).json({data: updatedUser, message: "User updated successfully" });
     } catch (err) {
         return res.status(500).json({ message: "Internal server error" });
     }
@@ -167,7 +167,7 @@ const getAllLessons = async (req, res) => {
             .populate({ path: 'student', populate: { path: 'user' } })
             .populate({ path: 'teacher', populate: { path: 'user' } });
 
-        return res.status(200).json({ lessons, message: 'Lessons fetched successfully' });
+        return res.status(200).json({ data:lessons, message: 'Lessons fetched successfully' });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ message: "Internal server error" });
@@ -186,7 +186,7 @@ const getUserByToken = async (req, res) => {
     try {
         const decoded = jwt.verify(token, process.env.SECRET_TOKEN);
         const user = await User.findById(decoded.id);
-        return res.status(200).json({ user, message: 'User fetched successfully' });
+        return res.status(200).json({data: user, message: 'User fetched successfully' });
     } catch (err) {
         res.status(500).json({ message: "Internal server error" });
     }
@@ -209,7 +209,7 @@ const changeActiveRole = async (req, res) => {
 
         const token = jwt.sign({ id: userId, activeRole }, process.env.SECRET_TOKEN, { expiresIn: '10h' });
 
-        res.status(200).json({ message: 'Role updated successfully', token });
+        res.status(200).json({ message: 'Role updated successfully', data:token });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });

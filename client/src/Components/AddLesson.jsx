@@ -16,29 +16,18 @@ export default function AddLesson() {
     const [teacher, setTeacher] = useState(null);
     const [visible, setVisible] = useState(true);
 
-    const {
-        control,
-        handleSubmit,
-        formState: { errors }
-    } = useForm({
-        defaultValues: {
-            student: null,
-            title: "",
-            datetime: null,
-            recording: false,
-            materials: ""
-        }
-    });
+    const { control, handleSubmit, formState: { errors } } = useForm({
+        defaultValues: { student: null, title: "", datetime: null, recording: false, materials: "" }});
 
     useEffect(() => {
         if (!token) return;
         const fetchTeacher = async () => {
             try {
                 const response = await api.get("teacher/getTeacherByToken");
+                console.log("Teacher data:", response.data);
                 setTeacher(response.data);
             } catch (error) {
                 console.error("Fetch error:", error);
-                alert("שגיאה בטעינת המורה");
             }
         };
         fetchTeacher();
@@ -49,10 +38,10 @@ export default function AddLesson() {
         const fetchStudents = async () => {
             try {
                 const response = await api.get("teacher/getAllStudents");
+                console.log("Students data:", response.data);
                 setStudentsItems(response.data);
             } catch (error) {
                 console.error("Fetch error (students):", error);
-                alert("שגיאה בטעינת תלמידים");
             }
         };
         fetchStudents();
@@ -60,7 +49,6 @@ export default function AddLesson() {
 
     const onSubmit = async (data) => {
         if (!teacher?._id) {
-            alert("המורה לא נטען");
             return;
         }
 
@@ -70,7 +58,6 @@ export default function AddLesson() {
             zoomLink = response.data.joinUrl;
         } catch (error) {
             console.error("Zoom fetch error:", error);
-            alert("שגיאה ביצירת זום");
         }
 
         try {
