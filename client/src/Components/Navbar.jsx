@@ -1,19 +1,29 @@
-
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Menubar } from 'primereact/menubar';
 import { useNavigate } from 'react-router-dom';
 import api from '../Services/api';
 import useUser from '../Hooks/useUser';
 import { useDispatch } from 'react-redux';
-import { logOut } from '../Store/UserSlice'; 
-
-
+import { logOut } from '../Store/UserSlice';
+import { Toast } from 'primereact/toast';
 
 
 export default function BasicDemo() {
 
     const dispatch = useDispatch();
     const user = useUser();
+    const toast = useRef(null);
+
+
+    const showToast = (severity, summary, detail) => {
+        toast.current?.clear();
+        toast.current?.show({
+            severity,
+            summary,
+            detail,
+            life: 3000,
+        });
+    };
 
     async function connectToServer(role) {
         const token = localStorage.getItem('token');
@@ -26,13 +36,15 @@ export default function BasicDemo() {
             const response = await api.post('user/addProfile', {
                 newRole: role
             });
-            alert(response.data.message)
-        } catch (error) {
-            console.error(`Fetch error:`, error.message);
-            alert(error.message)
+            if (response.status === 200) {
+                showToast('success', 'Profile Added', `You've added the ${role} profile.`);
+            } else {
+                showToast('warn', 'Profile Not Added', `Server responded with status ${response.status}.`);
+            }
+        } catch (err) {
+            showToast('error', 'Profile Addition Failed', err.message);
         }
     }
-
 
     const start = <img alt="logo" src="/logo.png" height="40" className="mr-2" />;
     const navigate = useNavigate();
@@ -90,6 +102,7 @@ export default function BasicDemo() {
     return (
         <div className="card">
             <Menubar model={items} start={start} />
+            <Toast ref={toast} />
         </div>
     )
 }
