@@ -1,24 +1,14 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Sidebar } from 'primereact/sidebar';
-import { Avatar } from 'primereact/avatar';
+import { useState, useRef, useEffect } from 'react';
 import { Ripple } from 'primereact/ripple';
 import { StyleClass } from 'primereact/styleclass';
 import { useNavigate } from 'react-router-dom';
-import { AutoComplete } from 'primereact/autocomplete';
 import UserAvatar from './UserAvatar';
 import api from '../Services/api';
 import { Outlet } from 'react-router-dom';
-import useUser from '../Hooks/useUser';
-import { useDispatch } from 'react-redux';
-import {setActiveRole} from '../Store/UserSlice'
-import { Button } from 'primereact/button';
-import { Card } from 'primereact/card';
-import { Divider } from 'primereact/divider';
 
 
 export default function Profile() {
     const navigate = useNavigate();
-    const dispatch = useDispatch();
     const [user, setUser] = useState(null);
 
     const activeRole = user?.activeRole || "student";
@@ -31,33 +21,25 @@ export default function Profile() {
     const getUser = async () => {
         try {
             const response = await api.get('user/getUserByToken');
-            console.log(response)
-            setUser(response.data);
+            setUser(response.data.user);
         }
         catch (err) {
-            alert(`getUser failed: ${err.message}`);
+            console.error('Failed to fetch user:', err);
         }
     }
-
 
     useEffect(() => {
         getUser();
     }, [])
 
-
-    function gotToMaterial() {
-        fetch('http://localhost:3000/material/getMaterialLink', {
-            method: 'GET',
-            headers: {
-                'Authorization': localStorage.getItem('token'),
-            },
-        })
-            .then(response => {
-                response.json()
-            })
-            .then(data => {
-                window.open(data.Link || "https://www.google.com");
-            })
+    async function goToMaterial() {
+        try {
+            const response = await api.get('material/getMaterialLink');
+            const link = response.data.Link || "https://www.google.com";
+            window.open(link, '_blank');
+        } catch (error) {
+            console.error("Failed to get material link:", error);
+        }
     }
     return (
         <div className="min-h-screen flex relative" style={{ height: '92vh !important' }}>
@@ -96,7 +78,7 @@ export default function Profile() {
                                                     <Ripple />
                                                 </a>
                                             </li>
-                                            <li onClick={() => { gotToMaterial() }}>
+                                            <li onClick={() => { goToMaterial() }}>
                                                 <a className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
                                                     <i className="pi pi-chart-line mr-2"></i>
                                                     <span className="font-medium">Materials</span>
@@ -209,10 +191,6 @@ export default function Profile() {
                 </div>
             </div>
             <Outlet />
-
-           
-
-
         </div>
     )
 }

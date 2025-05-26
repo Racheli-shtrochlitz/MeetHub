@@ -29,7 +29,7 @@ export default function MyCalendar() {
 
 
     const getCustomers = (data) => {
-        return [...(data || [])].map((d) => {
+        return [...(data.lessons || [])].map((d) => {
             const relevantUser = user.activeRole === 'teacher' ? d.student.user : d.teacher.user;
             return {
                 ...d,

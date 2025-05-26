@@ -1,48 +1,25 @@
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import { Menubar } from 'primereact/menubar';
 import { useNavigate } from 'react-router-dom';
 import api from '../Services/api';
 import useUser from '../Hooks/useUser';
 import { useDispatch } from 'react-redux';
 import { logOut } from '../Store/UserSlice';
-import { Toast } from 'primereact/toast';
 
 
 export default function BasicDemo() {
 
     const dispatch = useDispatch();
     const user = useUser();
-    const toast = useRef(null);
 
-
-    const showToast = (severity, summary, detail) => {
-        toast.current?.clear();
-        toast.current?.show({
-            severity,
-            summary,
-            detail,
-            life: 3000,
-        });
-    };
 
     async function connectToServer(role) {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            alert("Please login first.");
-            navigate('/login');
-            return;
-        }
         try {
-            const response = await api.post('user/addProfile', {
+            await api.post('user/addProfile', {
                 newRole: role
-            });
-            if (response.status === 200) {
-                showToast('success', 'Profile Added', `You've added the ${role} profile.`);
-            } else {
-                showToast('warn', 'Profile Not Added', `Server responded with status ${response.status}.`);
-            }
+            })
         } catch (err) {
-            showToast('error', 'Profile Addition Failed', err.message);
+            console.error('Failed to connect to server:', err);
         }
     }
 
@@ -102,7 +79,6 @@ export default function BasicDemo() {
     return (
         <div className="card">
             <Menubar model={items} start={start} />
-            <Toast ref={toast} />
         </div>
     )
 }

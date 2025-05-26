@@ -28,22 +28,9 @@ export default function AddStudentForm() {
             const response = await api.post("teacher/addStudent", {
                 email: formik.values.email
             });
-            toast.current.show({
-                severity: "success",
-                summary: "Student Added",
-                detail: response.data.message,
-                life: 2500
-            });
             formik.resetForm();
         } catch (err) {
-            const status = err.response?.status;
-            const serverMessage = err.response?.data?.error || err.message;
-            toast.current.show({
-                severity: "error",
-                summary: `Error ${status || ""}`,
-                detail: serverMessage,
-                life: 3000
-            });
+            console.log("Add student failed: ",err);
         }
     };
 

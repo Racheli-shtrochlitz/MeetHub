@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import  { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
@@ -6,7 +6,6 @@ import { Toast } from 'primereact/toast';
 import { Card } from 'primereact/card';
 import { useNavigate } from 'react-router-dom';
 import api from '../Services/api';
-import useUser from '../Hooks/useUser';
 import { useDispatch } from 'react-redux';
 import { setActiveRole } from '../Store/UserSlice';
 
@@ -19,28 +18,16 @@ export default function Settings() {
     const activeRole = user?.activeRole || (user?.roles?.length === 1 ? user.roles[0] : 'student');
     const userName = user?.name || 'User';
 
-    const {
-        register,
-        handleSubmit,
-        setValue,
-        formState: { errors },
-    } = useForm({
-        defaultValues: {
-            name: '',
-            email: '',
-            password: '',
-        },
-    });
+    const {register, handleSubmit, setValue, formState: { errors }} = 
+    useForm({ defaultValues: {name: '', email: '', password: '',},});
 
     const getUser = async () => {
         try {
             const response = await api.get('user/getUserByToken');
             setUser(response.data);
         } catch (err) {
-            showToast('error', 'Failed to Load User', err.message);
-        }
+            console.error('Error fetching user:', err);}
     };
-
 
     useEffect(() => {
         getUser();
@@ -55,19 +42,8 @@ export default function Settings() {
     const onSubmit = async (data) => {
         try {
             await api.put('/user/updateUser', data);
-            toast.current.show({
-                severity: 'success',
-                summary: 'Update Successful',
-                detail: 'Your details have been updated',
-                life: 3000,
-            });
         } catch (err) {
-            toast.current.show({
-                severity: 'error',
-                summary: 'Update Failed',
-                detail: err.message,
-                life: 3000,
-            });
+            console.error('Error updating user:', err);
         }
     };
 
@@ -76,37 +52,22 @@ export default function Settings() {
             const response = await api.post('user/changeActiveRole', { activeRole: role });
             localStorage.setItem('token', response.data.token);
             dispatch(setActiveRole(role));
-            showToast('success', 'Role Switched', `You are now using the system as a ${role}.`);
             await getUser();  // יעדכן את תצוגת התפקיד
             navigate('/home');
         } catch (err) {
-            showToast('error', 'Role Switch Failed', err.message);
-        }
-    };
-
-
-    const showToast = (severity, summary, detail) => {
-        toast.current?.clear();
-        toast.current?.show({
-            severity,
-            summary,
-            detail,
-            life: 3000,
-        });
+            console.error('Error switching role:', err);}
     };
 
     const addProfile = async (newRole) => {
         try {
             const response = await api.post('user/addProfile', { newRole });
             if (response.status === 200) {
-                showToast('success', 'Profile Added', `You've added the ${newRole} profile.`);
                 await getUser();  // לרענון תפקידים חדשים
             } else {
-                showToast('warn', 'Profile Not Added', `Server responded with status ${response.status}.`);
+                // showToast('warn', 'Profile Not Added', `Server responded with status ${response.status}.`);
             }
         } catch (err) {
-            showToast('error', 'Profile Addition Failed', err.message);
-        }
+            console.error('Error adding profile:', err);}
     };
 
     return (
