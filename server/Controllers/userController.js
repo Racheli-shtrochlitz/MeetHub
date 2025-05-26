@@ -137,14 +137,13 @@ const addProfile = async (req, res) => {
 
     if (!['student', 'teacher'].includes(newRole))
         return res.status(500).json({ message: `invalid role: ${newRole}` });
-
     try {
         if (newRole === 'teacher') {
-            await createTeacher(req, res);
+            await Teacher.create({ students: [], lessons: [], user: req.userId || req.user.id, });
             await User.findByIdAndUpdate(id, { $push: { roles: newRole } });//update the remote array
         }
         else {
-            await createStudent(req, res);
+            await Student.create({ user: req.userId || req.user.id, lessons: [] });
             await User.findByIdAndUpdate(id, { $push: { roles: newRole } });//update the remote array
         }
 
@@ -182,22 +181,22 @@ const getAllLessons = async (req, res) => {
         const filter = activeRole === "teacher" ? { teacher: object._id } : { student: object._id };
 
         const lessons = await Lesson.find(filter)
-        .populate({
-            path: 'student',
-            populate: { path: 'user' }
-        })
-        .populate({
-            path: 'teacher',
-            populate: { path: 'user' }
-        });
+            .populate({
+                path: 'student',
+                populate: { path: 'user' }
+            })
+            .populate({
+                path: 'teacher',
+                populate: { path: 'user' }
+            });
         return res.status(200).json(lessons);
 
 
-    }catch (err) {
-        console.error(err); 
+    } catch (err) {
+        console.error(err);
         return res.status(500).json({ message: "Internal server error", error: err.message });
     }
-    
+
 };
 
 const getUserByToken = async (req, res) => {
@@ -213,7 +212,7 @@ const getUserByToken = async (req, res) => {
         const secret = process.env.SECRET_TOKEN;
         const decoded = jwt.verify(token, secret);
         const { id } = decoded;
-        const user=await User.findById(id);
+        const user = await User.findById(id);
         return res.status(200).json(user);
     }
     catch (err) {
@@ -221,15 +220,15 @@ const getUserByToken = async (req, res) => {
     }
 }
 
-const changeActiveRole=async(req,res)=>{
+const changeActiveRole = async (req, res) => {
     try {
-        const userId = req.user.id; 
+        const userId = req.user.id;
         const { activeRole } = req.body;
-    
+
         if (!activeRole || !['teacher', 'student'].includes(activeRole)) {
-          return res.status(400).json({ message: 'Invalid role' });
+            return res.status(400).json({ message: 'Invalid role' });
         }
-    
+
         const user = await User.findById(userId);
         if (!user) return res.status(404).json({ message: 'User not found' });
 
@@ -238,12 +237,12 @@ const changeActiveRole=async(req,res)=>{
 
         const token = jwt.sign({ id: userId, activeRole: activeRole }, process.env.SECRET_TOKEN, { expiresIn: '10h' });
 
-    
+
         res.status(200).json({ message: 'Role updated successfully', token });
-      } catch (error) {
+    } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });
-      }
+    }
 }
 
 

@@ -4,7 +4,6 @@ const Student = require('../Models/student');
 
 
 const dotenv = require('dotenv');
-const student = require('../Models/student');
 dotenv.config();
 
 
