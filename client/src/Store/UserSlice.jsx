@@ -3,7 +3,6 @@ const initialValue = {
         name: "",
         email: "",
        activeRole: "",
-       //isAuthenticated: false
 }
 
 const userSlice = createSlice({
@@ -13,13 +12,12 @@ const userSlice = createSlice({
         setUserDetails: (state, action) => {
             state.user = action.payload
         },
-        logOut: () => initialValue
-        // setActiveRole: (state, action) => {
-        //     state.activeRole = action.payload.activeRole;
-        // },
-        // getActiveRole: (state) => {
-        //     return state.activeRole;
-        // },
+        logOut: () => initialValue,
+
+        setActiveRole: (state, action) => {
+            state.user = { ...state.user, activeRole: action.payload };
+        }
+
     }
 })
 
