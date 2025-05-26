@@ -21,7 +21,7 @@ export default function Profile() {
     const getUser = async () => {
         try {
             const response = await api.get('user/getUserByToken');
-            setUser(response.data);
+            setUser(response.data.user);
         }
         catch (err) {
             console.error('Failed to fetch user:', err);
