@@ -9,19 +9,18 @@ import useGetToken from '../Hooks/useGetToken';
 import UserAvatar from '../Components/UserAvatar';
 import api from "../Services/api";
 import { InputText } from "primereact/inputtext";
+import { useForm } from 'react-hook-form';
+import { Controller } from "react-hook-form";
 
 export default function AddLesson() {
     const token = useGetToken();
 
-    const [studentValue, setStudentValue] = useState(null);
+    const { control, register, handleSubmit, formState: { errors } } = useForm({
+        defaultValues: { student: null, title: 'lesson', dateAndTime: null, recording: false, materialLink: '' },
+    });
+
     const [studentsItems, setStudentsItems] = useState(["temp", "demo"]);
-    const [titleValue, setTitleValue] = useState("")
-    const [datetime, setDateTime] = useState(null);
-    const [checked, setChecked] = useState(false);
     const [visible, setVisible] = useState(true);
-    const [selectedSubject, setSelectedSubject] = useState(null);
-    const [filteredSubjects, setFilteredSubjects] = useState(null);
-    const [materialLink, setMaterialLink] = useState('');
     const [teacher, setTeacher] = useState(null);
     //get students for options in form
     useEffect(() => {
@@ -42,7 +41,7 @@ export default function AddLesson() {
         fetchTeacher();
     }, [token]);
     //get zoom link for lesson object and create lesson
-    async function sendToServer() {
+    async function sendToServer(data) {
         if (!teacher) return;
         let zoomLink;
         try {
@@ -57,17 +56,17 @@ export default function AddLesson() {
             const response = await api.post('lesson/addLesson', {
                 lesson: {
                     teacher: teacher?._id,
-                    student: studentValue,
-                    lessonDate: datetime.toISOString(),
-                    title: titleValue,
-                    recording: checked,
-                    materials: materialLink,
+                    student: data.student,
+                    lessonDate: data.dateAndTime.toISOString(),
+                    title: data.title,
+                    recording: data.recording,
+                    materials: data.materialLink,
                     zoomLink: zoomLink
                 }
             });
-            const data = response.data;
+            const responseData = response.data;
             alert("Lesson added successfully!");
-            console.log("Response:", data);
+            console.log("Response:", responseData);
         } catch (error) {
             alert("Failed to add lesson. Please try again.");
             console.error('Lesson fetch error:', error);
@@ -109,81 +108,84 @@ export default function AddLesson() {
 
     return (
         <div className="card flex justify-content-center">
-            <Dialog header="add lesson" visible={visible} style={{ width: '30vw' }} onHide={() => setVisible(false)}>
-                <div className="card flex flex-wrap gap-3 p-fluid">
-                    <div className="flex-auto">
+            <form onSubmit={handleSubmit((data) => {
+                if (!teacher?._id) {
+                    alert("Teacher not loaded yet.");
+                    return;
+                }
+                sendToServer(data);
+                setVisible(false);
+            })}>
+                <Dialog header="add lesson" visible={visible} style={{ width: '30vw' }} onHide={() => setVisible(false)}>
+                    <div className="card flex flex-wrap gap-3 p-fluid">
+                        <div className="flex-auto">
 
-                        <label htmlFor="buttondisplay" className="font-bold block mb-2">
-                            student
-                        </label>
-                        <Dropdown
-                            value={studentValue}
-                            onChange={(e) => setStudentValue(e.value)}
-                            options={studentsItems || []}
-                            optionValue="_id"
-                            className="w-full md:w-14rem"
-                            itemTemplate={studentItemTemplate}
-                            valueTemplate={selectedStudentTemplate}
+                            <label htmlFor="buttondisplay" className="font-bold block mb-2">
+                                student
+                            </label>
+                            <Controller
+                                name="student"
+                                control={control}
+                                rules={{ required: true }}
+                                render={({ field, fieldState }) => (
+                                    <Dropdown
+                                        {...field}
+                                        options={studentsItems || []}
+                                        optionValue="_id"
+                                        className={`w-full md:w-14rem ${fieldState.invalid ? 'p-invalid' : ''}`}
+                                        itemTemplate={studentItemTemplate}
+                                        valueTemplate={selectedStudentTemplate}
+                                    />
+                                )}
+                            />
+                        </div>
+                        <div className="flex-auto">
+                            <label htmlFor="buttondisplay" className="font-bold block mb-2">
+                                title
+                            </label>
+                            <InputText {...register("title", { required: true })} />
+                        </div>
+                        <div className="flex-auto">
+                            <label htmlFor="buttondisplay" className="font-bold block mb-2">
+                                date and time
+                            </label>
+                            <Calendar {...register("datAndTime", { required: true })} showTime hourFormat="24" showIcon />
+                        </div>
+                        <div className="flex align-items-center">
+                            <Controller
+                                name="recording"
+                                control={control}
+                                rules={{ required: true }}
+                                render={({ field, fieldState }) => (
+                                    <ToggleButton
+                                        {...field}
+                                        checked={field.value}
+                                        onChange={(e) => field.onChange(e.value)}
+                                        style={{ width: '2rem' }}
+                                        className={`w-8rem ${fieldState.invalid ? 'p-invalid' : ''}`}
+                                    />
+                                )}
+                            />
+                            <label htmlFor="buttondisplay" className="font-bold block mb-2">
+                                recording
+                            </label>
+                        </div>
+
+                        <div className="flex-auto">
+                            <label htmlFor="buttondisplay" className="font-bold block mb-2">
+                                material link (in drive)
+                            </label>
+                            <InputText {...register("materialLink", { required: true })} />
+                        </div>
+                        <Button
+                            label="Ok"
+                            type="submit"
+                            icon="pi pi-check"
+                            autoFocus
                         />
-
                     </div>
-
-                    <div className="flex-auto">
-                        <label htmlFor="buttondisplay" className="font-bold block mb-2">
-                            title
-                        </label>
-                        <InputText 
-                        value={titleValue} 
-                        onChange={(e) => setTitleValue(e.target.value)} />
-                    </div>
-
-                    <div className="flex-auto">
-                        <label htmlFor="buttondisplay" className="font-bold block mb-2">
-                            date and time
-                        </label>
-                        <Calendar
-                            value={datetime}
-                            onChange={(e) => setDateTime(e.value)}
-                            showTime
-                            hourFormat="24"
-                            showIcon
-                        />
-                    </div>
-
-                    <div className="flex align-items-center">
-                        <ToggleButton
-                            style={{ width: '2rem' }}
-                            checked={checked}
-                            onChange={(e) => setChecked(e.value)}
-                            className="w-8rem"
-                        />
-                        <label htmlFor="buttondisplay" className="font-bold block mb-2">
-                            recording
-                        </label>
-                    </div>
-
-                    <div className="flex-auto">
-                        <label htmlFor="buttondisplay" className="font-bold block mb-2">
-                            material link (in drive)
-                        </label>
-                        <InputText value={materialLink} onChange={(e) => setMaterialLink(e.target.value)} />
-                    </div>
-
-                    <Button
-                        label="Ok"
-                        icon="pi pi-check"
-                        onClick={() => {
-                            if (!teacher?._id) {
-                                alert("Teacher not loaded yet.");
-                                return;
-                            }
-                            sendToServer();
-                            setVisible(false);
-                        }}
-                        autoFocus
-                    />
-                </div>
-            </Dialog>
+                </Dialog>
+            </form>
         </div>
     );
 }
