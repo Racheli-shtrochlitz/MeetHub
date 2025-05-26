@@ -83,7 +83,7 @@ export default function BasicDemo() {
         },
 
         {
-            label: localStorage.getItem('token') ? 'Logout' : 'Login',
+            label: user ? 'Logout' : 'Login',
             icon: localStorage.getItem('token') ? 'pi pi-sign-out' : 'pi pi-sign-in',
             command: () => {
                 if (localStorage.getItem('token')) {
