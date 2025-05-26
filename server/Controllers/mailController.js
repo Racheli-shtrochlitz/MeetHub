@@ -12,7 +12,7 @@ const sendMail = (req, res) => {
     console.log("req.body: ",req.body)
     const { toName, formName, message, email } = req.body;
     if (!email) {
-        return res.status(400).json({ error: "Email not provided" });
+        return res.status(400).json({ message: "Email not provided" });
     }
     transport.sendMail({
         from:'mindy05832@gmail.com',
