@@ -10,16 +10,16 @@ const userSlice = createSlice({
     initialState: initialValue,
     reducers: {
         setUserDetails: (state, action) => {
-            state.user = action.payload
+            return { ...state, ...action.payload };
         },
-
         logOut: () => initialValue,
 
-        setActiveRole: (state, action) => {
-            state.activeRole = action.payload;
-        },
+       setActiveRole: (state, action) => {
+            state.user = { ...state.user, activeRole: action.payload };
+        }
     }
 })
+
 
 export const { setUserDetails, logOut, setActiveRole } = userSlice.actions
 export default userSlice.reducer

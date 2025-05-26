@@ -186,7 +186,7 @@ const getUserByToken = async (req, res) => {
     try {
         const decoded = jwt.verify(token, process.env.SECRET_TOKEN);
         const user = await User.findById(decoded.id);
-        return res.status(200).json({ user, message: 'User fetched successfully' });
+        return res.status(200).json({ data:user, message: 'User fetched successfully' });
     } catch (err) {
         res.status(500).json({ message: "Internal server error" });
     }
@@ -209,7 +209,7 @@ const changeActiveRole = async (req, res) => {
 
         const token = jwt.sign({ id: userId, activeRole }, process.env.SECRET_TOKEN, { expiresIn: '10h' });
 
-        res.status(200).json({ message: 'Role updated successfully', token });
+        res.status(200).json({ message: 'Role updated successfully', token:token });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });
