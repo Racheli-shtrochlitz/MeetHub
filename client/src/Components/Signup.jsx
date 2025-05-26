@@ -38,6 +38,7 @@ export default function Signup() {
             });
 
             const data = response.data;
+            console.log(response);
             if (data.token) {
                 console.log("token: " + data.token);
                 localStorage.setItem('token', data.token);

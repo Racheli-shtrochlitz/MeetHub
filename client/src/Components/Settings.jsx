@@ -37,9 +37,10 @@ export default function Settings() {
             const response = await api.get('user/getUserByToken');
             setUser(response.data);
         } catch (err) {
-            alert(`getUser failed: ${err.message}`);
+            showToast('error', 'Failed to Load User', err.message);
         }
     };
+
 
     useEffect(() => {
         getUser();
@@ -73,39 +74,60 @@ export default function Settings() {
     const switchRole = async (role) => {
         try {
             const response = await api.post('user/changeActiveRole', { activeRole: role });
-            const data = response.data;
-            localStorage.setItem('token', data.token);
+            localStorage.setItem('token', response.data.token);
             dispatch(setActiveRole(role));
-            getUser();
+            showToast('success', 'Role Switched', `You are now using the system as a ${role}.`);
+            await getUser();  // יעדכן את תצוגת התפקיד
+            navigate('/home');
         } catch (err) {
-            toast.current.show({
-                severity: 'error',
-                summary: 'Role switch failed',
-                detail: err.message,
-                life: 3000,
-            });
+            showToast('error', 'Role Switch Failed', err.message);
+        }
+    };
+
+
+    const showToast = (severity, summary, detail) => {
+        toast.current?.clear();
+        toast.current?.show({
+            severity,
+            summary,
+            detail,
+            life: 3000,
+        });
+    };
+
+    const addProfile = async (newRole) => {
+        try {
+            const response = await api.post('user/addProfile', { newRole });
+            if (response.status === 200) {
+                showToast('success', 'Profile Added', `You've added the ${newRole} profile.`);
+                await getUser();  // לרענון תפקידים חדשים
+            } else {
+                showToast('warn', 'Profile Not Added', `Server responded with status ${response.status}.`);
+            }
+        } catch (err) {
+            showToast('error', 'Profile Addition Failed', err.message);
         }
     };
 
     return (
-        <main className="p-6 max-w-5xl mx-auto flex flex-col gap-10">
+        <main className="p-6 max-w-3xl mx-auto flex flex-col gap-10">
             {/* סקשן הכרטיסים — רוחב מלא, פריסה לרוחב */}
             <section>
                 <h1 className="text-4xl font-extrabold text-gray-900 mb-2">Welcome back, {userName}!</h1>
                 <p className="text-gray-600 text-lg mb-8">Here’s what you can do today</p>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">                    {/* הכרטיסים כאן */}
+                <div className="flex flex-col gap-8 items-stretch">
                     {activeRole === 'student' && user?.roles?.length <= 1 && (
                         <Card title="Want to become a teacher?" className="shadow-lg border border-gray-200">
                             <p className="mb-4 text-gray-700">You can apply to become a teacher and start managing your own lessons.</p>
-                            <Button label="Apply as Teacher" icon="pi pi-user-plus" onClick={() => navigate('/applyTeacher')} />
+                            <Button label="Apply as Teacher" icon="pi pi-user-plus" onClick={() => addProfile("teacher")} />
                         </Card>
                     )}
 
                     {activeRole === 'teacher' && user?.roles?.length <= 1 && (
                         <Card title="Want to join as a student?" className="shadow-lg border border-gray-200">
                             <p className="mb-4 text-gray-700">Add your student profile and learn from other teachers.</p>
-                            <Button label="Add Student Profile" icon="pi pi-user-edit" className="p-button-success" onClick={() => navigate('/addStudentProfile')} />
+                            <Button label="Add Student Profile" icon="pi pi-user-edit" className="p-button-success" onClick={() => addProfile("student")} />
                         </Card>
                     )}
 
