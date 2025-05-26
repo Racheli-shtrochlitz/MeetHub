@@ -1,4 +1,4 @@
-import { useFormik } from "formik";
+import { useForm, Controller } from "react-hook-form";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { classNames } from "primereact/utils";
@@ -6,37 +6,39 @@ import api from "../Services/api";
 import UserAvatar from "./UserAvatar";
 import { Dropdown } from 'primereact/dropdown';
 import { useEffect, useState } from "react";
-import useUser from "../Hooks/useUser";
-export default function SendMessage() {
-    const user = useUser();
+import { useSelector } from "react-redux";
 
+export default function SendMessage() {
+
+    const user = useSelector((state) => state.user);
     const [emailsItems, setEmailsItems] = useState([]);
 
-    const form = useFormik({
-        initialValues: { emails: "", message: "" },
-        validate: (data) => {
-            const errors = {};
-            if (!data.emails) {
-                errors.emails = "Student is required.";
-            }
-            if (!data.message) {
-                errors.message = "Message is required.";
-            }
-            return errors;
+    const {
+        control,
+        handleSubmit,
+        reset,
+        setValue,
+        formState: { errors, isDirty, isValid }
+    } = useForm({
+        defaultValues: {
+            emails: "",
+            message: ""
         },
-        onSubmit: () => { connectToServer() }
+        mode: "onChange"
     });
 
     useEffect(() => {
         const fetchEmails = async () => {
             const activeRole = user.activeRole;
+            console.log("Active role:", activeRole);
             let url = '';
             try {
-                if (activeRole == "teacher")
+                if (activeRole === "teacher")
                     url = "/teacher/getAllStudents";
-                else if (activeRole == "student")
+                else if (activeRole === "student")
                     url = "/student/getAllTeachers";
                 const response = await api.get(url);
+                console.log("Emails data:", response.data);
                 setEmailsItems(response.data);
             } catch (error) {
                 console.error(`Fetch error:`, error);
@@ -48,11 +50,32 @@ export default function SendMessage() {
 
     useEffect(() => {
         if (emailsItems.length > 0) {
-            form.setFieldValue("student", emailsItems[0]._id);
+            setValue("emails", emailsItems[0]);
         }
-    }, [emailsItems]);
+    }, [emailsItems, setValue]);
 
-    const emailItemTemplate = (email) => {
+    const onSubmit = async (data) => {
+        try {
+            await api.post("/message/sendMessage", {
+                toName: data.emails,
+                formName: user.name,
+                email: data.emails.user?.email,
+                message: data.message
+            });
+            reset();
+        } catch (err) {
+            console.error("Send message failed: ", err);
+        }
+    };
+
+    const emailItemTemplate = (email) => (
+        <div className="flex align-items-center gap-2">
+            <UserAvatar user={{ name: email.user.name, image: email.user.image }} />
+        </div>
+    );
+
+    const selectedEmailsTemplate = (email) => {
+        if (!email || !email.user) return null;
         return (
             <div className="flex align-items-center gap-2">
                 <UserAvatar user={{ name: email.user.name, image: email.user.image }} />
@@ -60,82 +83,64 @@ export default function SendMessage() {
         );
     };
 
-    const selectedEmailsTemplate = (emails) => {
-        if (!emails || !emails.user) return null;
-
-        return (
-            <div className="flex align-items-center gap-2">
-                <UserAvatar user={{ name: emails.user.name, image: emails.user.image }} />
-            </div>
-        );
-    };
-
-    const connectToServer = async () => {
-        try {
-            const response = await api.post("/message/sendMessage", {
-                toName: form.values.emails,
-                formName: user.name,
-                email: form.values.emails,
-                message: form.values.message
-            });
-            form.resetForm();
-        } catch (err) {
-            console.error("Send message failed: ", err);
-        }
-    };
-
-    const isFormFieldInvalid = (name) =>
-        !!(form.touched[name] && form.errors[name]);
-
-    const getFormErrorMessage = (name) =>
-        isFormFieldInvalid(name) ? (
-            <small className="p-error">{form.errors[name]}</small>
-        ) : (
-            <small className="p-error">&nbsp;</small>
-        )
     return (
         <div className="p-4 flex flex-column align-items-center justify-content-center" style={{ minWidth: "300px" }}>
             <form
-                onSubmit={form.handleSubmit}
+                onSubmit={handleSubmit(onSubmit)}
                 className="w-full flex flex-column gap-3"
                 style={{ maxWidth: "320px" }}
             >
                 <div className="flex flex-column">
-                    <label htmlFor="email" className="mb-2 font-semibold text-sm">
+                    <label htmlFor="emails" className="mb-2 font-semibold text-sm">
                         Emails
                     </label>
-
-                    <Dropdown
-                        id="emails"
+                    <Controller
                         name="emails"
-                        value={form.values.emails}
-                        onChange={(e) => form.setFieldValue("emails", e.target.value)}
-                        onBlur={form.handleBlur}
-                        options={emailsItems}
-                        optionValue="user.email"
-                        className="w-full md:w-14rem"
-                        itemTemplate={emailItemTemplate}
-                        valueTemplate={selectedEmailsTemplate}
+                        control={control}
+                        rules={{ required: "Student is required." }}
+                        render={({ field }) => (
+                            <Dropdown
+                                {...field}
+                                id="emails"
+                                options={emailsItems}
+                                optionValue="user.email"
+                                className={classNames("w-full md:w-14rem", {
+                                    "p-invalid": !!errors.emails
+                                })}
+                                itemTemplate={emailItemTemplate}
+                                valueTemplate={selectedEmailsTemplate}
+                            />
+                        )}
                     />
+                    {errors.emails && <small className="p-error">{errors.emails.message}</small>}
                 </div>
-                <div className="flex justify-content-end">
-                    <InputText
-                        id="message"
+
+                <div className="flex flex-column">
+                    <label htmlFor="message" className="mb-2 font-semibold text-sm">
+                        Message
+                    </label>
+                    <Controller
                         name="message"
-                        value={form.values.message}
-                        onChange={(e) => form.setFieldValue("message", e.target.value)}
-                        onBlur={form.handleBlur}
-                        placeholder="this is your message"
-                        className={classNames({ "p-invalid": isFormFieldInvalid("message") })}
+                        control={control}
+                        rules={{ required: "Message is required." }}
+                        render={({ field }) => (
+                            <InputText
+                                {...field}
+                                id="message"
+                                placeholder="this is your message"
+                                className={classNames({ "p-invalid": !!errors.message })}
+                            />
+                        )}
                     />
-                    {getFormErrorMessage("message")}
+                    {errors.message && <small className="p-error">{errors.message.message}</small>}
                 </div>
+
                 <div className="flex justify-content-end">
                     <Button
                         type="submit"
                         label="Send"
                         size="small"
-                        disabled={!form.isValid || !form.dirty}
+                        disabled={!isDirty || !isValid}
                     />
                 </div>
             </form>

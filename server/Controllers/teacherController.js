@@ -48,7 +48,7 @@ const createTeacher = async (req, res) => {
     const { students, lessons } = req.body;
     try {
         //create a new teacher
-        const newTeacher = await Teacher.create({ subject: subject || [], students: students || [], lessons: lessons || [], user: req.userId || req.user.id, });
+        const newTeacher = await Teacher.create({ students: students || [], lessons: lessons || [], user: req.userId || req.user.id, });
         return res.status(200).json({data:newTeacher, message: "Teacher created successfully!"});
     } catch (err) {
         console.error(err.message);
