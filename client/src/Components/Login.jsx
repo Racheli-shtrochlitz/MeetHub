@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Divider } from 'primereact/divider';
 import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
@@ -9,12 +9,8 @@ import { setUserDetails } from '../Store/UserSlice';
 import { useForm, Controller } from 'react-hook-form';
 import { Dialog } from 'primereact/dialog';
 import api from '../Services/api';
-import { Toast } from 'primereact/toast';
-import { useRef } from 'react';
-
 export default function LoginDemo() {
 
-    const toast = useRef(null);
     const [isLIHovered, setIsLIHovered] = useState(false);
     const [isSIHovered, setIsSIHovered] = useState(false);
     const items = ['student', 'teacher'];
@@ -29,40 +25,21 @@ export default function LoginDemo() {
 
     async function connectToServer(formData) {
         try {
-            console.log({email: formData.email,
-                password: formData.password,
-                activeRole: formData.role})
             const response = await api.post('user/signIn', {
                 email: formData.email,
                 password: formData.password,
                 activeRole: formData.role
             });
-            console.log(response)
             const data = response.data;
             localStorage.setItem('token', data.token);
-            localStorage.setItem('activeRole', formData.role)
             dispatch(setUserDetails({
                 email: formData.email,
                 password: formData.password,
                 activeRole: formData.role
             }));
-            toast.current.show({
-                severity: 'success',
-                summary: 'Login success',
-                detail: 'Welcome back!',
-                life: 2000
-            });
-
             navigate('/home');
-
         } catch (error) {
             console.error('Login failed:', error);
-            toast.current.show({
-                severity: 'error',
-                summary: 'Login Failed',
-                detail: 'Invalid credentials',
-                life: 3000
-            });
         }
     }
 
@@ -154,7 +131,6 @@ export default function LoginDemo() {
                     </form>
                 </div>
             </Dialog>
-            <Toast ref={toast} />
         </div>
     )
 }

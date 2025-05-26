@@ -1,7 +1,5 @@
 import { ToggleButton } from 'primereact/togglebutton';
 import { Calendar } from "primereact/calendar";
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { Dropdown } from 'primereact/dropdown';
@@ -11,6 +9,7 @@ import api from "../Services/api";
 import { InputText } from "primereact/inputtext";
 import { useForm } from 'react-hook-form';
 import { Controller } from "react-hook-form";
+import { useEffect, useState } from "react";
 
 export default function AddLesson() {
     const token = useGetToken();
@@ -35,7 +34,6 @@ export default function AddLesson() {
                 setTeacher(response.data);
             } catch (error) {
                 console.error('Fetch error:', error);
-                alert('Fetch error: ' + error.message);
             }
         };
         fetchTeacher();
@@ -49,11 +47,10 @@ export default function AddLesson() {
             const data = response.data;
             zoomLink = data.joinUrl;
         } catch (error) {
-            alert("Failed to create Zoom meeting. Using default link.");
             console.error('Zoom fetch error:', error);
         }
         try {
-            const response = await api.post('lesson/addLesson', {
+            await api.post('lesson/addLesson', {
                 lesson: {
                     teacher: teacher?._id,
                     student: data.student,
@@ -64,15 +61,11 @@ export default function AddLesson() {
                     zoomLink: zoomLink
                 }
             });
-            const responseData = response.data;
-            alert("Lesson added successfully!");
-            console.log("Response:", responseData);
         } catch (error) {
-            alert("Failed to add lesson. Please try again.");
             console.error('Lesson fetch error:', error);
         }
     }
-    //get all student in page load time 
+    //get all student ,in page load time 
     useEffect(() => {
         if (!token) return;
         getAllStudents().then((data) => setStudentsItems(data));
@@ -83,7 +76,7 @@ export default function AddLesson() {
             const response = await api.get('teacher/getAllStudents');
             return response.data;
         } catch (error) {
-            console.error(`Fetch error (AllStudents):`, error);
+            console.error(`Fetch error getAllStudents:`, error);
             return [];
         }
     };

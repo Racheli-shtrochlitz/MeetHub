@@ -1,8 +1,6 @@
-import React, { useRef } from "react";
 import { useFormik } from "formik";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-import { Toast } from "primereact/toast";
 import { classNames } from "primereact/utils";
 import api from "../Services/api";
 import UserAvatar from "./UserAvatar";
@@ -10,7 +8,6 @@ import { Dropdown } from 'primereact/dropdown';
 import { useEffect, useState } from "react";
 import useUser from "../Hooks/useUser";
 export default function SendMessage() {
-    const toast = useRef(null);
     const user = useUser();
 
     const [emailsItems, setEmailsItems] = useState([]);
@@ -32,7 +29,7 @@ export default function SendMessage() {
 
     useEffect(() => {
         const fetchEmails = async () => {
-            const activeRole = localStorage.getItem('activeRole')
+            const activeRole = user.activeRole;
             let url = '';
             try {
                 if (activeRole == "teacher")
@@ -40,14 +37,12 @@ export default function SendMessage() {
                 else if (activeRole == "student")
                     url = "/student/getAllTeachers";
                 const response = await api.get(url);
-                console.log("emailresponsedata: ", response.data)
                 setEmailsItems(response.data);
             } catch (error) {
                 console.error(`Fetch error:`, error);
                 setEmailsItems([]);
             }
         };
-
         fetchEmails();
     }, []);
 
@@ -83,22 +78,9 @@ export default function SendMessage() {
                 email: form.values.emails,
                 message: form.values.message
             });
-            toast.current.show({
-                severity: "success",
-                summary: "message sent",
-                detail: response.data.message,
-                life: 2500
-            });
             form.resetForm();
         } catch (err) {
-            const status = err.response?.status;
-            const serverMessage = err.response?.data?.error || err.message;
-            toast.current.show({
-                severity: "error",
-                summary: `Error ${status || ""}`,
-                detail: serverMessage,
-                life: 3000
-            });
+            console.error("Send message failed: ", err);
         }
     };
 
@@ -113,7 +95,6 @@ export default function SendMessage() {
         )
     return (
         <div className="p-4 flex flex-column align-items-center justify-content-center" style={{ minWidth: "300px" }}>
-            <Toast ref={toast} />
             <form
                 onSubmit={form.handleSubmit}
                 className="w-full flex flex-column gap-3"

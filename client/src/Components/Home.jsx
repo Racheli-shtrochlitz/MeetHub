@@ -1,11 +1,5 @@
-import React from 'react';
-import { Button } from 'primereact/button';
-import { useNavigate } from 'react-router-dom';
-import api from '../Services/api';
 
 export default function Home() {
-    const navigate = useNavigate();
-
     return (
         <div class="antialiased pb-6 relative">
             <div style={{
