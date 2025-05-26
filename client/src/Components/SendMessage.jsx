@@ -29,7 +29,7 @@ export default function SendMessage() {
 
     useEffect(() => {
         const fetchEmails = async () => {
-            const activeRole = user.activeRole;
+            const activeRole = "teacher"|| user.activeRole;
             console.log("Active role:", activeRole);
             let url = '';
             try {
@@ -38,8 +38,9 @@ export default function SendMessage() {
                 else if (activeRole === "student")
                     url = "/student/getAllTeachers";
                 const response = await api.get(url);
-                console.log("Emails data:", response.data);
-                setEmailsItems(response.data);
+                console.log("Emails data:", response.data.data);
+            
+                setEmailsItems(response.data.data);
             } catch (error) {
                 console.error(`Fetch error:`, error);
                 setEmailsItems([]);
@@ -56,10 +57,11 @@ export default function SendMessage() {
 
     const onSubmit = async (data) => {
         try {
+            console.log("Sending message with data:", data);
             await api.post("/message/sendMessage", {
                 toName: data.emails,
                 formName: user.name,
-                email: data.emails.user?.email,
+                email: data.emails,
                 message: data.message
             });
             reset();
