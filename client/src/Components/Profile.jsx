@@ -5,32 +5,19 @@ import { useNavigate } from 'react-router-dom';
 import UserAvatar from './UserAvatar';
 import api from '../Services/api';
 import { Outlet } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 
 export default function Profile() {
     const navigate = useNavigate();
-    const [user, setUser] = useState(null);
+    const user = useSelector(state => state.user);
 
-    const activeRole = user?.activeRole || "student";
-    const userName = user?.name || "User";
+    const activeRole = user?.activeRole;
+    const userName = user?.name ;
     const [countMess, setCountMess] = useState(0);
     const btnRef1 = useRef(null);
     const btnRef2 = useRef(null);
     const btnRef3 = useRef(null);
-
-    const getUser = async () => {
-        try {
-            const response = await api.get('user/getUserByToken');
-            setUser(response.data.user);
-        }
-        catch (err) {
-            console.error('Failed to fetch user:', err);
-        }
-    }
-
-    useEffect(() => {
-        getUser();
-    }, [])
 
     async function goToMaterial() {
         try {

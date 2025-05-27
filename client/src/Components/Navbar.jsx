@@ -1,17 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Menubar } from 'primereact/menubar';
 import { useNavigate } from 'react-router-dom';
 import api from '../Services/api';
 import useUser from '../Hooks/useUser';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { logOut } from '../Store/UserSlice';
+import { setActiveRole } from '../Store/UserSlice';
 
 
 export default function BasicDemo() {
 
     const dispatch = useDispatch();
-    const user = useUser();
-
+    const user = useSelector(state => state.user);
+    async function switchRole(role) {
+        try {
+            const response = await api.get('user/getUserByToken');
+            const selectedRole = response.data.data.roles.find(r => r.role === role);
+            if (selectedRole) {
+                dispatch(setActiveRole(role));
+            }            // Update the active role in local storage/slice
+        } catch (err) {
+            console.error('Error fetching user:', err);
+        }
+    }
 
     async function connectToServer(role) {
         try {
@@ -37,6 +48,27 @@ export default function BasicDemo() {
             icon: 'pi pi-home',
             command: () => navigate('/home')
         },
+        {
+            label: 'Switch Profile',
+            icon: 'pi pi-sync',
+            items: [
+                {
+                    label: 'Student',
+                    icon: 'pi pi-users',
+                    command: () => {
+                        switchRole('student')
+                    }
+                },
+                {
+                    label: 'Teacher',
+                    icon: 'pi pi-users',
+                    command: () => {
+                        switchRole('teacher')
+                    }
+                }
+            ]
+        },
+
 
         {
             label: 'Add Profile',

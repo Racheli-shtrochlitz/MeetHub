@@ -8,7 +8,7 @@ import { InputText } from "primereact/inputtext";
 import useGetToken from "../Hooks/useGetToken";
 import UserAvatar from "../Components/UserAvatar";
 import api from "../Services/api";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function AddLesson() {
     const token = useGetToken();
@@ -17,7 +17,8 @@ export default function AddLesson() {
     const [visible, setVisible] = useState(true);
 
     const { control, handleSubmit, formState: { errors } } = useForm({
-        defaultValues: { student: null, title: "", datetime: null, recording: false, materials: "" }});
+        defaultValues: { student: null, title: "", datetime: null, recording: false, materials: "" }
+    });
 
     useEffect(() => {
         if (!token) return;
@@ -25,13 +26,13 @@ export default function AddLesson() {
             try {
                 const response = await api.get("teacher/getTeacherByToken");
                 console.log("Teacher data:", response.data);
-                setTeacher(response.data);
+                setTeacher(response.data.data);
             } catch (error) {
                 console.error("Fetch error:", error);
             }
         };
         fetchTeacher();
-    }, [token]);
+    }, []);
 
     useEffect(() => {
         if (!token) return;
@@ -39,7 +40,7 @@ export default function AddLesson() {
             try {
                 const response = await api.get("teacher/getAllStudents");
                 console.log("Students data:", response.data);
-                setStudentsItems(response.data);
+                setStudentsItems(response.data.data);
             } catch (error) {
                 console.error("Fetch error (students):", error);
             }
@@ -48,14 +49,15 @@ export default function AddLesson() {
     }, []);
 
     const onSubmit = async (data) => {
-        if (!teacher?._id) {
-            return;
+        let zoomLink = ""
+        if (!teacher) {
+            console.error("Teacher data is not available.");
         }
-
-        let zoomLink = "";
         try {
             const response = await api.post("zoom/createMeeting");
-            zoomLink = response.data.joinUrl;
+            zoomLink = response.data.data.joinUrl;
+            console.log("Zoom meeting created successfully:", response);
+            console.log("Zoom link:", zoomLink);
         } catch (error) {
             console.error("Zoom fetch error:", error);
         }
@@ -72,12 +74,10 @@ export default function AddLesson() {
                     zoomLink: zoomLink
                 }
             });
-            alert("השיעור נוסף בהצלחה");
             setVisible(false);
             //reset();
         } catch (error) {
             console.error("Lesson error:", error);
-            alert("שגיאה בהוספת שיעור");
         }
     };
 
@@ -111,7 +111,7 @@ export default function AddLesson() {
                         <Controller
                             name="student"
                             control={control}
-                            rules={{ required: "חובה לבחור תלמיד" }}
+                            rules={{ required: "student is required" }}
                             render={({ field }) => (
                                 <Dropdown
                                     {...field}
@@ -132,7 +132,7 @@ export default function AddLesson() {
                         <Controller
                             name="title"
                             control={control}
-                            rules={{ required: "נא להזין כותרת" }}
+                            rules={{ required: "pleas enter a title" }}
                             render={({ field }) => (
                                 <InputText {...field} className={errors.title ? "p-invalid" : ""} />
                             )}
@@ -188,7 +188,7 @@ export default function AddLesson() {
                             rules={{
                                 pattern: {
                                     value: /^https:\/\/(drive|docs)\.google\.com/,
-                                    message: "הקישור חייב להיות ל-Google Drive"
+                                    message: "link must to -Google Drive"
                                 }
                             }}
                             render={({ field }) => (

@@ -1,8 +1,10 @@
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
     const navigate = useNavigate();
 
+    console.log("slice:",useSelector((state) => state.user));
     const colors = {
         gray: 'rgb(228, 228, 230)',
         mustard: 'rgb(240, 175, 58)',

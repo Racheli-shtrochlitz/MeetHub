@@ -2,13 +2,10 @@ import React, { useRef } from "react";
 import { useFormik } from "formik";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-import { Toast } from "primereact/toast";
 import { classNames } from "primereact/utils";
 import api from "../Services/api";
 
 export default function AddStudentForm() {
-    const toast = useRef(null);
-
     const formik = useFormik({
         initialValues: { email: "" },
         validate: (data) => {
@@ -25,7 +22,7 @@ export default function AddStudentForm() {
 
     const connectToServer = async () => {
         try {
-            const response = await api.post("teacher/addStudent", {
+            await api.post("teacher/addStudent", {
                 email: formik.values.email
             });
             formik.resetForm();
@@ -46,7 +43,6 @@ export default function AddStudentForm() {
 
     return (
         <div className="p-4 flex flex-column align-items-center justify-content-center" style={{ minWidth: "300px" }}>
-            <Toast ref={toast} />
             <form
                 onSubmit={formik.handleSubmit}
                 className="w-full flex flex-column gap-3"

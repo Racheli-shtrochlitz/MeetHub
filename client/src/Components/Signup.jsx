@@ -1,4 +1,4 @@
-import { useState, React, Suspense } from 'react';
+import { useState } from 'react';
 import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
@@ -8,13 +8,9 @@ import { useDispatch } from 'react-redux';
 import { setUserDetails } from '../Store/UserSlice';
 import { Dialog } from 'primereact/dialog';
 import api from '../Services/api';
-import { Toast } from 'primereact/toast';
-import { useRef } from 'react';
 
 
 export default function Signup() {
-
-    const toast = useRef(null);
 
     const {control, register, handleSubmit, formState: { errors } } = useForm({
         defaultValues: { role: '', firstName: '', email: '', password: '' },
@@ -36,45 +32,23 @@ export default function Signup() {
                 password: formData.password,
                 activeRole: formData.role
             });
-
             const data = response.data;
             console.log(response);
-            if (data.token) {
-                console.log("token: " + data.token);
-                localStorage.setItem('token', data.token);
-
-                toast.current.show({
-                    severity: 'success',
-                    summary: 'Signup Success',
-                    detail: `Hi ${data.newUser.name}! Thanks for joining us.`,
-                    life: 4000
-                });
+            if (data.data) {
+                localStorage.setItem('token', data.data);
 
                 dispatch(setUserDetails({
                     email: formData.email,
-                    password: formData.password,
+                    name: formData.firstName,
                     activeRole: formData.role
                 }));
-
                 navigate('/home');
 
             } else {
-                toast.current.show({
-                    severity: 'error',
-                    summary: 'Signup Error',
-                    detail: data.message,
-                    life: 4000
-                });
                 console.log(data.message);
             }
         }
         catch(error) {
-            toast.current.show({
-                severity: 'error',
-                summary: 'Signup Error',
-                detail: error.message,
-                life: 4000
-            });
             console.error('There was a problem with the fetch operation:', error);
         }
     }
@@ -161,7 +135,6 @@ export default function Signup() {
                     </form>
                 </div>
             </Dialog>
-            <Toast ref={toast} />
         </>
     )
 }
