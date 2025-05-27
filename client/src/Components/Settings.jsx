@@ -6,97 +6,98 @@ import { Toast } from 'primereact/toast';
 import api from '../Services/api';
 
 const customStyles = `
-
+    body {
+        background: linear-gradient(135deg, #e4e4e6 0%, #f0f0f2 100%);
+    }
     .custom-main {
-        background: linear-gradient(135deg, rgb(228, 228, 230) 0%, rgb(240, 240, 242) 100%);
+        background: linear-gradient(135deg, #e4e4e6 0%, #f0f0f2 100%);
         min-height: 100vh;
         padding: 2rem 1rem;
     }
-    
     .custom-title {
-        color: rgb(0, 1, 40);
-        background: linear-gradient(135deg, rgb(0, 1, 40) 0%, rgb(130, 43, 105) 100%);
+        color: #001128;
+        background: linear-gradient(135deg, #001128 0%, #822b69 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        text-shadow: 0 2px 4px rgba(0,0,0,0.08);
+        letter-spacing: 1px;
     }
-    
     .custom-form-container {
-        background: white;
-        border: 2px solid rgb(228, 228, 230);
+        background: #fff;
+        border: 2px solid #e4e4e6;
         border-radius: 20px;
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 8px 32px rgba(0,1,40,0.08);
         position: relative;
         overflow: hidden;
+        padding: 2.5rem 2rem;
+        /* שינוי רוחב וגובה כדי להתקרב לריבוע */
+        width: 370px;
+        min-height: 370px;
+        max-width: 95vw;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
-    
     .custom-form-container::before {
         content: '';
         position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
+        top: 0; left: 0; right: 0;
         height: 4px;
-        background: linear-gradient(90deg, rgb(240, 175, 58) 0%, rgb(130, 43, 105) 50%, rgb(0, 1, 40) 100%);
+        background: linear-gradient(90deg, #f0af3a 0%, #822b69 50%, #001128 100%);
     }
-    
+    .custom-label {
+        color: #001128;
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        display: block;
+        letter-spacing: 0.5px;
+    }
     .custom-input {
-        border: 2px solid rgb(228, 228, 230);
+        border: 2px solid #e4e4e6;
         border-radius: 12px;
         padding: 0.875rem 1rem;
         font-size: 1rem;
-        transition: all 0.3s ease;
-        background: white;
+        transition: all 0.3s;
+        background: #fff;
+        color: #001128;
     }
-    
     .custom-input:focus {
-        border-color: rgb(240, 175, 58);
-        box-shadow: 0 0 0 3px rgba(240, 175, 58, 0.2);
+        border-color: #f0af3a;
+        box-shadow: 0 0 0 3px rgba(240,175,58,0.13);
         outline: none;
     }
-    
     .custom-input.error {
         border-color: #e74c3c;
     }
-    
     .custom-input.error:focus {
         border-color: #e74c3c;
-        box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2);
+        box-shadow: 0 0 0 3px rgba(231,76,60,0.13);
     }
-    
-    .custom-label {
-        color: rgb(0, 1, 40);
-        font-weight: 600;
-        font-size: 0.95rem;
-        margin-bottom: 0.5rem;
-        display: block;
-    }
-    
     .custom-error {
         color: #e74c3c;
         font-size: 0.85rem;
         margin-top: 0.25rem;
         font-weight: 500;
     }
-    
     .custom-btn-submit {
-        background: linear-gradient(135deg, rgb(0, 1, 40) 0%, rgb(130, 43, 105) 100%);
+        background: linear-gradient(135deg, #001128 0%, #822b69 100%);
         border: none;
-        color: white;
+        color: #fff;
         font-weight: 700;
         padding: 1rem 2rem;
         border-radius: 14px;
         font-size: 1.1rem;
-        transition: all 0.3s ease;
-        box-shadow: 0 6px 20px rgba(0, 1, 40, 0.3);
+        transition: all 0.3s;
+        box-shadow: 0 6px 20px rgba(0,1,40,0.13);
         width: 100%;
+        letter-spacing: 1px;
     }
-    
     .custom-btn-submit:hover {
-        background: linear-gradient(135deg, rgb(130, 43, 105) 0%, rgb(0, 1, 40) 100%);
-        transform: translateY(-3px);
-        box-shadow: 0 10px 30px rgba(0, 1, 40, 0.4);
+        background: linear-gradient(135deg, #822b69 0%, #001128 100%);
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 10px 30px rgba(0,1,40,0.18);
     }
 `;
 
