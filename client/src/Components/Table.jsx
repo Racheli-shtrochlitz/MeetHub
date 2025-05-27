@@ -26,7 +26,6 @@ export default function CustomDateFilterDemo() {
         userId: { value: null, matchMode: FilterMatchMode.IN },
     });
 
-    const token = useGetToken();
     const user = useUser();
 
     const userBodyTemplate = (rowData) => <UserAvatar user={rowData.user} />;
@@ -34,17 +33,17 @@ export default function CustomDateFilterDemo() {
 
 
     useEffect(() => {
-        if (!token || !user?.activeRole) return;
+        if (!user?.activeRole) return;
         CustomerService.getData().then((data) => {
             setCustomers(getCustomers(data));
         });
-    }, [user, token]);
+    }, [user]);
 
     useEffect(() => {
-        if (!token || !user?.activeRole) return;
+        if (!user?.activeRole) return;
 
         const fetchusers = async () => {
-            const users = await CustomerService.getUsers(user, token);
+            const users = await CustomerService.getUsers(user);
             const mapped = users.map(u => ({
                 id: u.user?._id,
                 name: u.user?.name,
@@ -66,7 +65,7 @@ export default function CustomDateFilterDemo() {
         };
 
         fetchusers();
-    }, [user, token]);
+    }, [user]);
 
 
 
@@ -77,7 +76,7 @@ export default function CustomDateFilterDemo() {
                 ...d,
                 id: d._id || d.id,
                 date: new Date(d.lessonDate),
-                subject: d.subject || '',
+                title: d.title || '',
                 userDisplay: relevantUser.name,
                 user: {
                     name: relevantUser.name,
@@ -148,10 +147,10 @@ export default function CustomDateFilterDemo() {
                 emptyMessage="No lessons found." sortField="date"
                 sortOrder={-1}>
                 <Column field="date" header="Date" body={(rowData) => rowData.date?.toLocaleString() || '—'} style={{ minWidth: '12rem' }} />
-                <Column field="subject" header="Subject" filter filterPlaceholder="Search by subject" style={{ minWidth: '12rem' }} />
+                <Column field="title" header="Title" filter filterPlaceholder="Search by title" style={{ minWidth: '12rem' }} />
 
                 <Column
-                    header="User"
+                    header={user?.activeRole==='teacher'?'Student':'Teacher'}
                     filterField="userId"
                     showFilterMenu={false}
                     filterMenuStyle={{ width: '14rem' }}
