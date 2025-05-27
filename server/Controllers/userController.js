@@ -209,7 +209,10 @@ const changeActiveRole = async (req, res) => {
         if (!user) return res.status(404).json({ message: 'User not found' });
 
         if(user.activeRole===activeRole)
-            return res.status(403).json({message:`you are already ${activeRole}`})
+            return res.status(403).json({message:`You are already ${activeRole}`})
+
+        if(user.roles.length<=1)
+            return res.status(403).json({message:`You are not a ${activeRole}`})
 
         user.activeRole = activeRole;
         await user.save();
