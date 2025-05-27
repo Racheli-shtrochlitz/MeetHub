@@ -147,9 +147,15 @@ const addStudent = async (req, res) => {
 
 
 const getTeacherByToken = async (req, res) => {
+    console.log("Fetching teacher by token...",req.user);
+    const id = req.user.id;
+    console.log("User ID from token:", id);
+    if (!id) {
+        return res.status(400).json({ message: "User ID is required." });
+    }
     try {
-        const teacher = await Teacher.findOne({ user: req.user.id });
-        return res.status(200).json({ data: teacher });
+        const teacher = await Teacher.findOne({ user: id });
+        return res.status(200).json({ data: teacher, message : "Teacher retrieved successfully!" });
     }
     catch (err) {
         return res.status(500).json({ error: err.message, message: "Invalid token." });
