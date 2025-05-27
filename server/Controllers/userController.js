@@ -79,7 +79,7 @@ const signUp = async (req, res) => {
         const savedUser = await newUser.save();
         const token = jwt.sign({ id: newUser._id, activeRole: activeRole }, process.env.SECRET_TOKEN, { expiresIn: '10h' });
 
-        return res.status(200).json({ data:{token, newUser}, message: 'User registered successfully' });
+        return res.status(200).json({ data:token, message: 'User registered successfully' });
     } catch (err) {
         console.error(err.message);
         return res.status(500).json({ message: "Internal server error" });

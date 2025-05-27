@@ -31,7 +31,8 @@ export default function LoginDemo() {
                 activeRole: formData.role
             });
             const data = response.data;
-            localStorage.setItem('token', data.token);
+            console.log("response: ",data.data);
+            localStorage.setItem('token', data.data);
             dispatch(setUserDetails({
                 email: formData.email,
                 password: formData.password,

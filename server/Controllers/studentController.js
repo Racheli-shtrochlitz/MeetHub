@@ -44,7 +44,7 @@ const createStudent = async (req, res) => {
             lessons: req.lessons || []
         });
 
-        return res.status(200).json({ data:newStudent, message: "Student created successfully!"});
+        return newStudent;
     } catch (err) {
         console.error(err.message);
         return res.status(500).json({ message: "Internal server error", error: err.message });

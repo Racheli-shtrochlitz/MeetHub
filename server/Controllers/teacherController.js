@@ -9,15 +9,20 @@ const getAllStudents = async (req, res) => {
         const teacher = await Teacher.findOne({ user: id })
             .populate({
                 path: 'students',
-                populate: { path: 'user', model: 'User' }
+                populate: {
+                    path: 'user',
+                    model: 'User',
+                    select: 'name email image' 
+                }
             });
         if (!teacher) {
-            return res.status(404).json({message:"Teacher not found"});
+            return res.status(404).json({ message: "Teacher not found" });
         }
         else {
             console.log("teacher: ", teacher)
             const students = teacher.students;
-            return res.status(200).json({data:students,message:"Students retrieved successfully!"});
+            console.log("students: ", students);
+            return res.status(200).json({ data: students, message: "Students retrieved successfully!" });
         }
 
     } catch (err) {
@@ -34,10 +39,10 @@ const getTeacher = async (req, res) => {
             .populate('lessons')
             .populate('user');
         if (!teacher) {
-            return res.status(404).json({message:"Teacher not found"});
+            return res.status(404).json({ message: "Teacher not found" });
         }
         else
-            return res.status(200).json({data:teacher,message:"Teacher retrieved successfully!"});
+            return res.status(200).json({ data: teacher, message: "Teacher retrieved successfully!" });
     } catch (err) {
         console.error(err.message);
         return res.status(500).json({ message: "Internal server error", error: err.message });
@@ -49,10 +54,10 @@ const createTeacher = async (req, res) => {
     try {
         //create a new teacher
         const newTeacher = await Teacher.create({ students: students || [], lessons: lessons || [], user: req.userId || req.user.id, });
-        return res.status(200).json({data:newTeacher, message: "Teacher created successfully!"});
+        return newTeacher;
     } catch (err) {
         console.error(err.message);
-        return res.status(500).json({ message: "Internal server error", error: err.message });
+        return  err;
     }
 };
 
@@ -65,9 +70,9 @@ const updateTeacher = async (req, res) => {
             .populate('lessons')
             .populate('user');
         if (!newTeacher)
-            return res.status(404).json({message:"Teacher not found"});
+            return res.status(404).json({ message: "Teacher not found" });
         else
-            return res.status(200).json({data:newTeacher});
+            return res.status(200).json({ data: newTeacher });
     }
     catch (err) {
         console.error(err.message);
@@ -83,7 +88,7 @@ const deleteTeacher = async (req, res) => {
             .populate('lessons')
             .populate('user');
         if (!teacher)
-            return res.status(404).json({message:"Teacher not found"});
+            return res.status(404).json({ message: "Teacher not found" });
         else
             res.status(200).json({ data: teacher, message: "deleted successfully!!!" });
     }
@@ -100,10 +105,10 @@ const getAllTeachers = async (req, res) => {
             .populate('lessons')
             .populate('user');
         if (!teachers || teachers.length === 0) {
-            return res.status(404).json({message:"No teachers found"});
+            return res.status(404).json({ message: "No teachers found" });
         }
         else
-            return res.status(200).json({data:teachers,message:"All teachers fetched successfully!"});
+            return res.status(200).json({ data: teachers, message: "All teachers fetched successfully!" });
     }
     catch (err) {
         console.error(err.message);
@@ -126,7 +131,7 @@ const addStudent = async (req, res) => {
 
         if (teacher.students.some(id => id.equals(student._id))) {
             return res.status(400).json({ message: "Student already exists" });
-        }        
+        }
 
         await Teacher.findByIdAndUpdate(
             teacher._id,
@@ -142,9 +147,9 @@ const addStudent = async (req, res) => {
 
 
 const getTeacherByToken = async (req, res) => {
-    try{
-        const teacher=await Teacher.findOne({user:req.user.id});
-        return res.status(200).json({data:teacher});
+    try {
+        const teacher = await Teacher.findOne({ user: req.user.id });
+        return res.status(200).json({ data: teacher });
     }
     catch (err) {
         return res.status(500).json({ error: err.message, message: "Invalid token." });

@@ -16,7 +16,8 @@ export default function StudentTable() {
         const fetchStudents = async () => {
             try {
                 const response = await api.get('/teacher/getAllStudents');
-                const data = response.data || [];
+                console.log('Fetched students response:', response);
+                const data = response.data.data || [];
                 const formatted = data.map((s) => ({
                     id: s._id,
                     name: s.user.name || '—',
