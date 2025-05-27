@@ -1,20 +1,23 @@
 const jwt = require('jsonwebtoken');
 
-const authenticateUser=(req,res,next)=>{
-    const token=req.header('Authorization');
-    if(!token){
+const authenticateUser = (req, res, next) => {
+    const token = req.header('Authorization');
+    console.log(token);
+    if (!token) {
         return res.status(401).send("Access denied. No token provided.");
     }
-    try{
-        const decoded=jwt.verify(token,process.env.SECRET_TOKEN);//checking if the token is valid and validity
-        if(!decoded){
+    const tokenWithoutBearer = token.startsWith('Bearer ') ? token.slice(7) : token;
+    try {
+        const decoded = jwt.verify(tokenWithoutBearer, process.env.SECRET_TOKEN);//checking if the token is valid and validity
+        if (!decoded) {
             return res.status(401).send("Invalid token.");
         }
-        req.user=decoded;//save the data of the user in the request object
+        req.user = decoded;//save the data of the user in the request object
+        console.log("User authenticated:", req.user);
         next();//continue to the next middleware or crud function
     }
-    catch(err){
-        return res.status(400).send("Invalid token.");
+    catch (err) {
+        return res.status(500).json({ error: err.message, message: "Invalid token." });
     }
 }
 
@@ -31,18 +34,39 @@ const checkRole = (requiredRole) => {
     };
 };
 
-const checkOwnership = () => {
-    return (req, res, next) => {
-        const userIdFromToken = req.user.id; // ה-ID של המשתמש מהטוקן
-        const userIdFromRequest = req.params.id || req.body.userId; // ה-ID שנשלח בבקשה (לדוגמה, בפרמטרים או בגוף הבקשה)
+// const checkOwnership = (req, res, next) => {
+//     console.log("in checkOwnership")
+//     // Middleware to check if the user is the owner of the resource
+//     return (req, res, next) => {
+//         const userIdFromToken = req.user.id; // ה-ID של המשתמש מהטוקן
+//         const userIdFromRequest = req.params.id || req.body.userId; // ה-ID שנשלח בבקשה (לדוגמה, בפרמטרים או בגוף הבקשה)
 
-        if (!userIdFromRequest || userIdFromToken !== userIdFromRequest) {
-            return res.status(403).json({ message: 'Access denied. You can only modify your own data.' });
-        }
+//         if (!userIdFromRequest || userIdFromToken !== userIdFromRequest) {
+//             return res.status(403).json({ message: 'Access denied. You can only modify your own data.' });
+//         }
 
-        next(); 
-    };
-};
+//         next();
+//     };
+// };
 
+
+const checkOwnership = (req, res, next) => {
+    console.log("in checkOwnership")
+
+    const userIdFromToken = req.user.id;
+    const userIdFromRequest = req.params.id || req.body.userId;
+
+    console.log("userIdFromToken: ", userIdFromToken);
+    console.log("userIdFromRequest: ", userIdFromRequest);
+    console.log("req.params: ", req.params);
+    if (!userIdFromRequest || userIdFromToken !== userIdFromRequest) {
+        return res.status(403).json({ message: 'Access denied. You can only modify your own data.' });
+    }
+    console.log(token);
+    if (!token) {
+        return res.status(401).send("Access denied. No token provided.");
+    }
+    next();
+}
 
 module.exports = { authenticateUser, checkRole, checkOwnership };

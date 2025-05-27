@@ -10,6 +10,7 @@ const userSchema = new Schema({
     enum: ['teacher', 'student'],
     default: [],
   },  
+  profileImage: { type: String },
   activeRole:{type:String,enum: ['teacher', 'student']},
   createdAt: { type: Date, default: Date.now },
   student: { type: mongoose.Schema.types.objectId, required: true},
