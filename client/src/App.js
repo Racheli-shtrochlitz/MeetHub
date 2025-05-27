@@ -37,7 +37,7 @@ function App() {
     async function fetchData() {
       try {
         const response = await api.get('user/getUserByToken');
-        const data = response.data;
+        const data = response.data.data;
 
         dispatch(setUserDetails({
           name: data.name,

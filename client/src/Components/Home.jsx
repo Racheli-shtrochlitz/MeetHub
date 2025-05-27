@@ -1,8 +1,11 @@
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import useUser from '../Hooks/useUser';
+
 
 export default function Home() {
     const navigate = useNavigate();
+    const user=useUser();
 
     console.log("slice:",useSelector((state) => state.user));
     const colors = {
@@ -94,15 +97,17 @@ export default function Home() {
                         </span>
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+
                         <button
-                            onClick={() => navigate('/profile/lessons')}
+                            onClick={() => user.email?navigate('/profile/lessons'):navigate('/login')}
                             className="p-button p-button-lg"
                             style={primaryButtonStyle}
                         >
                             <span className="p-button-label">Start Meeting Now</span>
                         </button>
+
                         <button
-                            onClick={() => navigate('/profile/addLesson')}
+                            onClick={() => user.email?navigate('/profile/lessons'):navigate('/login')}
                             className="p-button p-button-outlined p-button-lg"
                             style={outlineButtonStyle}
                         >

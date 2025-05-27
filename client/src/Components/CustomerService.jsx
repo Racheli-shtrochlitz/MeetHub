@@ -5,9 +5,10 @@ export const CustomerService = {
     async getData() {
         console.log("Fetching lessons data...");
         const response = await api.get('user/getAllLessons');
-        console.log("Fetched lessons response:", response);
-        const data = response.data.data;
-        return data;
+        const data = response.data;
+        console.log("Fetched lessons response:", data.data);
+
+        return data.data;
     },
 
     async getUsers(user) {

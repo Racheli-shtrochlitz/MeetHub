@@ -7,35 +7,38 @@ import { useEffect, useState } from 'react';
 
 export default function MyCalendar() {
 
-    const token = useGetToken();
+    // const token = useGetToken();
     const user = useUser();
 
     const [events, setEvents] = useState([]);
 
     useEffect(() => {
-        if(!user||!token) return;
-        CustomerService.getData(token).then((data) => {
+        if (!user) return;
+    
+        CustomerService.getData().then((data) => {
             const calendarEvents = getCustomers(data).map((lesson) => ({
                 id: lesson.id,
-                title: `${lesson.name} - ${lesson.subject}`,
+                title: `${lesson.name} - ${lesson.title}`,
                 start: lesson.date,
                 allDay: true
             }));
             setEvents(calendarEvents);
+            console.log("calendarEvents: ", calendarEvents);
         });
-    }, [token, user])
+    }, [user]);
+    
 
 
 
 
     const getCustomers = (data) => {
-        return [...(data.lessons || [])].map((d) => {
+        return [...(data || [])].map((d) => {
             const relevantUser = user.activeRole === 'teacher' ? d.student.user : d.teacher.user;
             return {
                 ...d,
                 id: d._id || d.id,
                 date: new Date(d.lessonDate),
-                subject: d.subject || '',
+                title: d.title || '',
                 name: relevantUser.name
             };
         });

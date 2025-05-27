@@ -1,5 +1,3 @@
-// src/Store/UserSlice.js
-
 import { createSlice } from "@reduxjs/toolkit"
 
 const initialValue = {
@@ -13,7 +11,6 @@ const userSlice = createSlice({
     initialState: initialValue,
     reducers: {
         setUserDetails: (state, action) => {
-            // מפזר את הערכים לתוך הסטייט הראשי
             state.email = action.payload.email;
             state.activeRole = action.payload.activeRole;
             state.name = action.payload.name || ""; // אם יש שם, אחרת שומר ריק
@@ -22,8 +19,9 @@ const userSlice = createSlice({
         logOut: () => initialValue,
 
         setActiveRole: (state, action) => {
-            state.activeRole = action.payload;
-        },
+            return { ...state, activeRole: action.payload };
+        }
+        
     }
 })
 

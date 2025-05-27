@@ -11,14 +11,12 @@ import { setActiveRole } from '../Store/UserSlice';
 export default function BasicDemo() {
 
     const dispatch = useDispatch();
-    const user = useSelector(state => state.user);
+    const user = useUser();
+    
     async function switchRole(role) {
         try {
-            const response = await api.get('user/getUserByToken');
-            const selectedRole = response.data.data.roles.find(r => r.role === role);
-            if (selectedRole) {
-                dispatch(setActiveRole(role));
-            }            // Update the active role in local storage/slice
+            await api.post('user/changeActiveRole',{activeRole:role});
+            dispatch(setActiveRole(role));
         } catch (err) {
             console.error('Error fetching user:', err);
         }
@@ -37,7 +35,7 @@ export default function BasicDemo() {
     const start = <img alt="logo" src="/logo.png" height="40" className="mr-2" />;
     const navigate = useNavigate();
     const items = [
-        ...(user ? [{
+        ...(user.email ? [{
             label: 'Profile',
             icon: 'pi pi-user',
             command: () => navigate('/profile')
@@ -92,13 +90,12 @@ export default function BasicDemo() {
         },
 
         {
-            label: user ? 'Logout' : 'Login',
-            icon: localStorage.getItem('token') ? 'pi pi-sign-out' : 'pi pi-sign-in',
+            label: user.email ? 'Logout' : 'Login',
+            icon: user.email ? 'pi pi-sign-out' : 'pi pi-sign-in',
             command: () => {
                 if (localStorage.getItem('token')) {
                     localStorage.removeItem('token');
                     dispatch(logOut());
-                    //window.location.reload();
                     navigate('/home');
                 } else {
                     navigate('/login');

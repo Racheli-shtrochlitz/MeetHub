@@ -148,6 +148,8 @@ const getAllLessons = async (req, res) => {
     const id = req.user.id;
     const activeRole = req.user.activeRole;
 
+    console.log("activeRole: ",activeRole)
+
     if (!id || !activeRole) {
         return res.status(400).json({ message: "Missing user or role" });
     }
@@ -167,6 +169,7 @@ const getAllLessons = async (req, res) => {
             .populate({ path: 'student', populate: { path: 'user' } })
             .populate({ path: 'teacher', populate: { path: 'user' } });
 
+            console.log(lessons)
         return res.status(200).json({ data:lessons, message: 'Lessons fetched successfully' });
     } catch (err) {
         console.error(err);
@@ -196,6 +199,7 @@ const changeActiveRole = async (req, res) => {
     try {
         const userId = req.user.id;
         const { activeRole } = req.body;
+        console.log("====================",activeRole)
 
         if (!activeRole || !['teacher', 'student'].includes(activeRole)) {
             return res.status(400).json({ message: 'Invalid role' });
@@ -203,6 +207,9 @@ const changeActiveRole = async (req, res) => {
 
         const user = await User.findById(userId);
         if (!user) return res.status(404).json({ message: 'User not found' });
+
+        if(user.activeRole===activeRole)
+            return res.status(403).json({message:`you are already ${activeRole}`})
 
         user.activeRole = activeRole;
         await user.save();

@@ -6,18 +6,23 @@ import UserAvatar from './UserAvatar';
 import api from '../Services/api';
 import { Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import useUser from '../Hooks/useUser';
+import Settings from './Settings';
 
 
 export default function Profile() {
     const navigate = useNavigate();
-    const user = useSelector(state => state.user);
+    const user = useUser();
 
-    const activeRole = user?.activeRole;
-    const userName = user?.name ;
     const [countMess, setCountMess] = useState(0);
     const btnRef1 = useRef(null);
     const btnRef2 = useRef(null);
     const btnRef3 = useRef(null);
+
+    useEffect ( ()=>{
+        console.log("user fron profile: ",user);
+
+    },[user])
 
     async function goToMaterial() {
         try {
@@ -35,10 +40,6 @@ export default function Profile() {
                     <div id="app-sidebar-2" className="surface-section h-screen block flex-shrink-0 absolute lg:static left-0 top-0 z-1 border-right-1 surface-border select-none" style={{ width: '280px' }}>
                         <div className="flex flex-column h-full">
                             <div className="flex align-items-center justify-content-between px-4 pt-3 flex-shrink-0">
-                                <span className="inline-flex align-items-center gap-2">
-                                    <img alt="logo" src="/logo.png" height="40" className="mr-2" />
-                                    <span className="font-semibold text-2xl text-primary">Dashboard</span>
-                                </span>
                             </div>
                             <div className="overflow-y-auto">
                                 <ul className="list-none p-3 m-0">
@@ -72,7 +73,7 @@ export default function Profile() {
                                                     <Ripple />
                                                 </a>
                                             </li>
-                                            {activeRole === "teacher" ? (<li onClick={() => { navigate('addLesson') }}>
+                                            {user?.activeRole === "teacher" ? (<li onClick={() => { navigate('addLesson') }}>
                                                 <a className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
                                                     <i className="pi pi-calendar-plus mr-2"></i>
                                                     <span className="font-medium">Add lesson</span>
@@ -89,7 +90,7 @@ export default function Profile() {
                                         </ul>
                                     </li>
                                 </ul>
-                                {activeRole === "teacher" ? (
+                                {user?.activeRole === "teacher" ? (
                                     <ul className="list-none p-3 m-0">
                                         <li>
                                             <StyleClass nodeRef={btnRef2} selector="@next" enterFromClassName="hidden" enterActiveClassName="slidedown" leaveToClassName="hidden" leaveActiveClassName="slideup">
@@ -170,7 +171,7 @@ export default function Profile() {
                             <div className="mt-auto">
                                 <hr className="mb-3 mx-3 border-top-1 border-none surface-border" />
                                 <a className="m-3 flex align-items-center cursor-pointer p-3 gap-2 border-round text-700 hover:surface-100 transition-duration-150 transition-colors p-ripple">
-                                    <UserAvatar user={{ name: userName }} />
+                                    <UserAvatar user={{ name: user.name }} />
                                 </a>
                             </div>
                         </div>
