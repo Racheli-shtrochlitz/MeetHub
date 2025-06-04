@@ -21,10 +21,13 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+function toShow(response){
+    const isGet = response.config.method?.toLowerCase() === 'get';
+    return !isGet && (response?.data?.message || response?.status != 200);
+}
 api.interceptors.response.use(
   (response) => {
-    const isGet = response.config.method?.toLowerCase() === 'get';
-    if (!isGet && response?.data?.message) {
+    if (toShow(response)) {
       showToast({
         severity: 'success',
         summary: 'Success',
@@ -39,12 +42,13 @@ api.interceptors.response.use(
       localStorage.removeItem('token');
       window.location.href = '/login';
     }
-    showToast({
-      severity: 'error',
-      summary: 'Error',
-      detail: error.response?.data?.message || 'Something went wrong',
-      life: 3000,
-    });
+    if (toShow(error.response))
+      showToast({
+        severity: 'error',
+        summary: 'Error',
+        detail: error.response?.data?.message || 'Something went wrong',
+        life: 3000,
+      });
 
     return Promise.reject(error);
   }

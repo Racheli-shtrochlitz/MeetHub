@@ -30,7 +30,7 @@ function App() {
   const toastRef = useRef(null);
 
   useEffect(() => {
-    setToastInstance(toastRef); // חשוב! מעביר את הרפרנס ל־api.js
+    setToastInstance(toastRef); 
   }, []);
 
   useEffect(() => {
