@@ -142,15 +142,31 @@ export default function CustomDateFilterDemo() {
     };
 
     return (
-        <div className="card">
-            <DataTable value={customers} paginator rows={10} dataKey="id" filters={filters} filterDisplay="row"
-                emptyMessage="No lessons found." sortField="date"
-                sortOrder={-1}>
+        <div className="card" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
+            <DataTable
+                value={customers}
+                paginator
+                rows={10}
+                dataKey="id"
+                filters={filters}
+                filterDisplay="row"
+                emptyMessage="No lessons found."
+                sortField="date"
+                sortOrder={-1}
+                style={{
+                    width: '100%',
+                    margin: '0 auto', // מרכז אופקית
+                    background: 'white',
+                    // borderRadius: '20px',
+                    // boxShadow: '0 8px 32px rgba(0,1,40,0.08)',
+                    padding: '1.5rem'
+                }}
+            >
                 <Column field="date" header="Date" body={(rowData) => rowData.date?.toLocaleString() || '—'} style={{ minWidth: '12rem' }} />
                 <Column field="title" header="Title" filter filterPlaceholder="Search by title" style={{ minWidth: '12rem' }} />
 
                 <Column
-                    header={user?.activeRole==='teacher'?'Student':'Teacher'}
+                    header={user?.activeRole === 'teacher' ? 'Student' : 'Teacher'}
                     filterField="userId"
                     showFilterMenu={false}
                     filterMenuStyle={{ width: '14rem' }}
@@ -209,7 +225,7 @@ export default function CustomDateFilterDemo() {
                             onClick={() => handleDelete(rowData)}
                             tooltip="Delete Lesson"
                             tooltipOptions={{ position: 'top' }}
-                            style={{ color: 'var(--blue)'}}
+                            style={{ color: 'var(--blue)' }}
                         />
                     )}
                     style={{ width: '3rem', textAlign: 'center' }}

@@ -107,7 +107,7 @@ export default function Home() {
                         </button>
 
                         <button
-                            onClick={() => user.email?navigate('/profile/lessons'):navigate('/login')}
+                            onClick={() => user.email?navigate('/profile/calendar'):navigate('/login')}
                             className="p-button p-button-outlined p-button-lg"
                             style={outlineButtonStyle}
                         >
