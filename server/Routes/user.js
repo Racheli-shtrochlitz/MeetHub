@@ -7,7 +7,9 @@ const { signIn,
     getAllLessons,
     getUserByToken,
     updateUser,
-    changeActiveRole
+    changeActiveRole,
+    verifyEmail,
+    SendVerificationEmail
 } = require('../Controllers/userController');
 
 router.post('/signIn', signIn);
@@ -17,6 +19,7 @@ router.post('/addProfile', authenticateUser, addProfile);
 router.post('/changeActiveRole', authenticateUser, changeActiveRole);
 router.get('/getAllLessons', authenticateUser, getAllLessons);
 router.get('/getUserByToken', getUserByToken);
-
+router.post('/verifyEmail', verifyEmail);
+router.post('/sendVerificationEmail', SendVerificationEmail);
 
 module.exports = router;

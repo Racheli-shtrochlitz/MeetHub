@@ -17,7 +17,7 @@ const sendMail = (req, res) => {
     transport.sendMail({
         from:'mindy05832@gmail.com',
         to: email,
-        subject: `hi ${toName} sent from ${formName} by educonnect`,
+        subject: `hi ${toName} sent from ${formName} by meetHub`,
         html: message
     }).then(() => {
         console.log("Sending email to:", email, ". message:", message);

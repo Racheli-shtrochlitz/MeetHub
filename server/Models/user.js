@@ -9,7 +9,8 @@ const userSchema = new Schema({
     type: [String],
     enum: ['teacher', 'student'],
     default: [],
-  },  
+  },
+  verificationEmailCode: { type: String, default: null },//for email verification
   profileImage: { type: String },
   activeRole:{type:String,enum: ['teacher', 'student']},
   createdAt: { type: Date, default: Date.now },
