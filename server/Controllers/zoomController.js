@@ -48,6 +48,8 @@ const createMeeting=async (req,res)=> {
             }
         );
 
+        console.log({data:{meetingId: response.data.id, joinUrl: response.data.join_url, startUrl: response.data.start_url},
+            message: "Meeting created successfully!"})
         res.status(200).json({data:{meetingId: response.data.id, joinUrl: response.data.join_url, startUrl: response.data.start_url},
              message: "Meeting created successfully!"});
     } catch (error) {

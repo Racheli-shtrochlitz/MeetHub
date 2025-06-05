@@ -239,7 +239,6 @@ const changeActiveRole = async (req, res) => {
     try {
         const userId = req.user.id;
         const { activeRole } = req.body;
-        console.log("====================", activeRole)
 
         if (!activeRole || !['teacher', 'student'].includes(activeRole)) {
             return res.status(400).json({ message: 'Invalid role' });

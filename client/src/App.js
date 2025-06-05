@@ -57,7 +57,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/profile" element={<Profile />} >
-          <Route index element={<Settings />} />
+          <Route index element={<Calendar />} />
           <Route path="lessons" element={<Table />} />
           <Route path="addLesson" element={<AddLesson />} />
           <Route path="calendar" element={<Calendar />} />

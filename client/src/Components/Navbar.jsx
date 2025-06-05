@@ -15,7 +15,8 @@ export default function BasicDemo() {
     
     async function switchRole(role) {
         try {
-            await api.post('user/changeActiveRole',{activeRole:role});
+            const response=await api.post('user/changeActiveRole',{activeRole:role});
+            localStorage.setItem("token",response.data.data)
             dispatch(setActiveRole(role));
         } catch (err) {
             console.error('Error fetching user:', err);

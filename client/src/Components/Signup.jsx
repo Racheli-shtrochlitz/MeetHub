@@ -55,7 +55,7 @@ export default function Signup() {
 
     return (
         <>
-            <Dialog header="log in" visible={true} style={{ width: '50vw' }} onHide={() => { navigate('/login'); }}>
+            <Dialog header="Sign Up" visible={true} style={{ width: '50vw' }} onHide={() => { navigate('/login'); }}>
                 <div className="card" >
                     <form onSubmit={handleSubmit(connectToServer)}>
                         <div className="flex flex-column md:flex-row">
