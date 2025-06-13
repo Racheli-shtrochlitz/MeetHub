@@ -21,6 +21,21 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+// פונקציה שמחליפה טקסטים של מורה/תלמיד ל-Host/Member
+function replaceTeacherStudent(text) {
+  if (!text || typeof text !== "string") return text;
+  return text
+    .replace(/teacher/gi, "host")
+    .replace(/student/gi, "member")
+    .replace(/Teacher/gi, "Host")
+    .replace(/Student/gi, "Member")
+    .replace(/lesson/gi, "meeting")
+    .replace(/lessons/gi, "meetings")
+    .replace(/Lesson/gi, "Meeting")
+    .replace(/Lessons/gi, "Meetings")
+}
+
 api.interceptors.response.use(
   (response) => {
     const isGet = response.config.method?.toLowerCase() === 'get';
@@ -28,7 +43,7 @@ api.interceptors.response.use(
       showToast({
         severity: 'success',
         summary: 'Success',
-        detail: response.data.message,
+        detail: replaceTeacherStudent(response.data.message),
         life: 2000,
       });
     }
@@ -42,7 +57,7 @@ api.interceptors.response.use(
     showToast({
       severity: 'error',
       summary: 'Error',
-      detail: error.response?.data?.message || 'Something went wrong',
+      detail: replaceTeacherStudent(error.response?.data?.message || 'Something went wrong'),
       life: 3000,
     });
 

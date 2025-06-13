@@ -143,14 +143,22 @@ export default function CustomDateFilterDemo() {
 
     return (
         <div className="card">
-            <DataTable value={customers} paginator rows={10} dataKey="id" filters={filters} filterDisplay="row"
-                emptyMessage="No lessons found." sortField="date"
-                sortOrder={-1}>
+            <DataTable
+                value={customers}
+                paginator
+                rows={10}
+                dataKey="id"
+                filters={filters}
+                filterDisplay="row"
+                emptyMessage="No meetings found."
+                sortField="date"
+                sortOrder={-1}
+            >
                 <Column field="date" header="Date" body={(rowData) => rowData.date?.toLocaleString() || '—'} style={{ minWidth: '12rem' }} />
-                <Column field="title" header="Title" filter filterPlaceholder="Search by title" style={{ minWidth: '12rem' }} />
+                <Column field="title" header="Meeting Title" filter filterPlaceholder="Search by title" style={{ minWidth: '12rem' }} />
 
                 <Column
-                    header={user?.activeRole==='teacher'?'Student':'Teacher'}
+                    header={user?.activeRole === 'teacher' ? 'Member' : 'Host'}
                     filterField="userId"
                     showFilterMenu={false}
                     filterMenuStyle={{ width: '14rem' }}
@@ -171,7 +179,7 @@ export default function CustomDateFilterDemo() {
                         : '—'} style={{ minWidth: '10rem' }} />
 
                 <Column
-                    header="Start Lesson"
+                    header="Start Meeting"
                     body={(rowData) => {
                         const now = new Date();
                         const lessonTime = new Date(rowData.date);
@@ -190,8 +198,6 @@ export default function CustomDateFilterDemo() {
                                 }}
                                 onClick={() => {
                                     if (canStart) {
-
-                                        console.log('Starting lesson...');
                                         window.open(rowData.zoomLink, '_blank');
                                     }
                                 }}
@@ -207,9 +213,9 @@ export default function CustomDateFilterDemo() {
                             icon={<FaTrash />}
                             className="p-button-rounded p-button-text"
                             onClick={() => handleDelete(rowData)}
-                            tooltip="Delete Lesson"
+                            tooltip="Delete Meeting"
                             tooltipOptions={{ position: 'top' }}
-                            style={{ color: 'var(--blue)'}}
+                            style={{ color: 'var(--blue)' }}
                         />
                     )}
                     style={{ width: '3rem', textAlign: 'center' }}

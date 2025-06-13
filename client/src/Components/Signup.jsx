@@ -22,7 +22,11 @@ export default function Signup() {
 
     const [isHovered, setIsHovered] = useState(false);
 
-    const items = ['student', 'teacher'];
+    // עדכון: מערך תפקידים עם label ו-value
+    const items = [
+        { label: 'host', value: 'teacher' },
+        { label: 'member', value: 'student' }
+    ];
 
     async function connectToServer(formData) {
         try {
@@ -55,7 +59,7 @@ export default function Signup() {
 
     return (
         <>
-            <Dialog header="log in" visible={true} style={{ width: '50vw' }} onHide={() => { navigate('/login'); }}>
+            <Dialog header="Sign Up" visible={true} style={{ width: '50vw' }} onHide={() => { navigate('/login'); }}>
                 <div className="card" >
                     <form onSubmit={handleSubmit(connectToServer)}>
                         <div className="flex flex-column md:flex-row">
@@ -68,7 +72,14 @@ export default function Signup() {
                                         control={control}
                                         rules={{ required: true }}
                                         render={({ field }) => (
-                                            <Dropdown {...field} options={items} className="w-12rem" />
+                                            <Dropdown
+                                                {...field}
+                                                options={items}
+                                                optionLabel="label"
+                                                optionValue="value"
+                                                className="w-12rem"
+                                                placeholder="Select role"
+                                            />
                                         )}
                                     />
                                     {errors.role && <p style={{ color: 'red', fontSize: '12px' }}>This field is required</p>}

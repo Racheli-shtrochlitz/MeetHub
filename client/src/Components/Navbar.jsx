@@ -51,14 +51,14 @@ export default function BasicDemo() {
             icon: 'pi pi-sync',
             items: [
                 {
-                    label: 'Student',
+                    label: 'Member',
                     icon: 'pi pi-users',
                     command: () => {
                         switchRole('student')
                     }
                 },
                 {
-                    label: 'Teacher',
+                    label: 'Host',
                     icon: 'pi pi-users',
                     command: () => {
                         switchRole('teacher')
@@ -73,14 +73,14 @@ export default function BasicDemo() {
             icon: 'pi pi-user-plus',
             items: [
                 {
-                    label: 'Student',
+                    label: 'Member',
                     icon: 'pi pi-users',
                     command: () => {
                         connectToServer('student')
                     }
                 },
                 {
-                    label: 'Teacher',
+                    label: 'Host',
                     icon: 'pi pi-users',
                     command: () => {
                         connectToServer('teacher')

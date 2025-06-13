@@ -48,6 +48,7 @@ const UserAvatar = ({ user }) => {
                 </div>
             )}
             <span>{user.name}</span>
+            <span style={{ fontSize: '0.8em', color: '#888' }}>{user.role === 'teacher' ? 'Host' : user.role === 'student' ? 'Member' : ''}</span>
         </div>
     );
 };
