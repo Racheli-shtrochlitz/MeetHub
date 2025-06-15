@@ -12,7 +12,6 @@ const userSchema = new Schema({
   },  
   activeRole:{type:String,enum: ['teacher', 'student']},
   createdAt: { type: Date, default: Date.now },
-  student: { type: mongoose.Schema.types.objectId, required: true},
 });
 
 module.exports = mongoose.model('User', userSchema);
