@@ -11,7 +11,7 @@ export const showToast = (options) => {
 };
 
 const api = axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: 'https://student-teacher-platform-1.onrender.com',
 });
 
 api.interceptors.request.use((config) => {
