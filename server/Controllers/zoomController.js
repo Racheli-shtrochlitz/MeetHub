@@ -29,7 +29,6 @@ async function getAccessToken() {
 
 const createMeeting=async (req,res)=> {
     try {
-        console.log("======================")
         const token = await getAccessToken();
 
         const response = await axios.post(
@@ -49,14 +48,11 @@ const createMeeting=async (req,res)=> {
             }
         );
 
-        res.json({
-            meetingId: response.data.id,
-            joinUrl: response.data.join_url,
-            startUrl: response.data.start_url,
-        });
+        res.status(200).json({data:{meetingId: response.data.id, joinUrl: response.data.join_url, startUrl: response.data.start_url},
+             message: "Meeting created successfully!"});
     } catch (error) {
         console.error("Error creating meeting:", error.response?.data || error.message);
-        res.status(500).json({ error: "Failed to create Zoom meeting" });
+        res.status(500).json({ message: "Failed to create Zoom meeting" });
     }
 };
 

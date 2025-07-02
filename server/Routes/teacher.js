@@ -4,13 +4,20 @@ const { getTeacher,
     createTeacher,
     updateTeacher,
     deleteTeacher,
-    getAllTeachers } = require('../Controllers/teacherController');
-const {checkOwnership} = require('../Middlewares/checkAccess.js');
+    getAllTeachers,
+    getAllStudents ,
+    addStudent,
+    getTeacherByToken} = require('../Controllers/teacherController');
+const {checkOwnership,authenticateUser} = require('../Middlewares/checkAccess.js');
 
-router.get('/createTeacher',checkOwnership, createTeacher);
-router.get('/getTeacher/:id', getTeacher);
-router.post('/updateTeacher/:id',checkOwnership, updateTeacher);
-router.delete('/deleteTeacher/:id',checkOwnership, deleteTeacher);
-router.get('/getAllTeachers', getAllTeachers);
+router.get('/getAllStudents',authenticateUser, getAllStudents);
+router.post('/createTeacher',authenticateUser,checkOwnership, createTeacher);
+router.get('/getTeacher/:id',authenticateUser, getTeacher);
+router.post('/updateTeacher/:id',authenticateUser,checkOwnership, updateTeacher);
+router.post('/addStudent',authenticateUser, addStudent);
+router.delete('/deleteTeacher/:id',authenticateUser,checkOwnership, deleteTeacher);
+router.get('/getAllTeachers',authenticateUser, getAllTeachers);
+router.get('/getTeacherByToken',authenticateUser, getTeacherByToken);
+
 
 module.exports = router;

@@ -1,0 +1,35 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* מכאן אני הוספתי */
+
+:root {
+  --text-color: rgb(0, 1, 40);
+   --primary-color: #0a58ca; 
+  --surface-ground: #f9f9f9; 
+  --purple: rgb(130, 43, 105);
+}
+
+body {
+  color: var(--text-color);
+}
+
+.p-menuitem-text {
+  color: var(--text-color) !important;
+}
+
+.p-tooltip .p-tooltip-text {
+  white-space: nowrap !important;
+  writing-mode: horizontal-tb !important;
+}
