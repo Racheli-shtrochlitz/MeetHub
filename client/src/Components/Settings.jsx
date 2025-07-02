@@ -142,6 +142,9 @@ export default function Settings() {
                     {/* סקשן הטופס — רוחב מצומצם ומרכז */}
                     <section className="custom-form-container p-10 max-w-lg mx-auto w-full">
                         <h2 className="text-2xl font-bold text-center mb-6 custom-title">Update Profile</h2>
+                        <p className="text-center mb-4" style={{ color: '#822b69' }}>
+                            Update your MeetHub profile details
+                        </p>
                         <form style={{ display: 'flex', flexDirection: 'column'}} onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8 w-full">
                             <div>
                                 <label htmlFor="name" className="custom-label">

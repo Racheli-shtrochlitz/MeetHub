@@ -13,7 +13,10 @@ export default function LoginDemo() {
 
     const [isLIHovered, setIsLIHovered] = useState(false);
     const [isSIHovered, setIsSIHovered] = useState(false);
-    const items = ['student', 'teacher'];
+    const items = [
+        { label: 'host', value: 'teacher' },
+        { label: 'member', value: 'student' }
+    ];
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -31,7 +34,7 @@ export default function LoginDemo() {
                 activeRole: formData.role
             });
             const data = response.data;
-            console.log("response: ",data.data);
+            console.log("response: ", data.data);
             localStorage.setItem('token', data.data);
             dispatch(setUserDetails({
                 email: formData.email,
@@ -58,8 +61,14 @@ export default function LoginDemo() {
                                         control={control}
                                         rules={{ required: true }}
                                         render={({ field }) => (
-                                            <Dropdown {...field} options={items} className="w-12rem" />
-                                        )}
+                                            <Dropdown
+                                                {...field}
+                                                options={items}
+                                                optionLabel="label"
+                                                optionValue="value"
+                                                className="w-12rem"
+                                                placeholder="Select role"
+                                            />)}
                                     />
                                     {errors.role && <p style={{ color: 'red', fontSize: '12px' }}>This field is required</p>}
                                 </div>

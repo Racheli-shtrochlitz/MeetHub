@@ -192,19 +192,19 @@ export default function AddLesson() {
         <div className="card flex justify-content-center custom-main">
             <style>{customStyles}</style>
             <Dialog
-                header="Add Lesson"
+                header="Schedule Meeting"
                 visible={visible}
                 style={{ width: "30vw" }}
                 onHide={() => setVisible(false)}
             >
                 <form onSubmit={handleSubmit(onSubmit)} className="card flex flex-wrap gap-3 p-fluid custom-form-container">
-                    {/* STUDENT */}
+                    {/* MEMBER */}
                     <div className="flex-auto">
-                        <label className="font-bold block mb-2 custom-label">Student</label>
+                        <label className="font-bold block mb-2 custom-label">Member</label>
                         <Controller
                             name="student"
                             control={control}
-                            rules={{ required: "student is required" }}
+                            rules={{ required: "member is required" }}
                             render={({ field }) => (
                                 <Dropdown
                                     {...field}
@@ -221,11 +221,11 @@ export default function AddLesson() {
 
                     {/* TITLE */}
                     <div className="flex-auto">
-                        <label className="font-bold block mb-2 custom-label">Title</label>
+                        <label className="font-bold block mb-2 custom-label">Meeting Title</label>
                         <Controller
                             name="title"
                             control={control}
-                            rules={{ required: "pleas enter a title" }}
+                            rules={{ required: "Please enter a title" }}
                             render={({ field }) => (
                                 <InputText {...field} className={errors.title ? "p-invalid custom-input" : "custom-input"} />
                             )}
@@ -240,7 +240,7 @@ export default function AddLesson() {
                         rules={{ required: "Date and time is required" }}
                         render={({ field, fieldState }) => (
                             <div className="flex flex-column">
-                                <label className="font-bold block mb-2 custom-label">Date and time</label>
+                                <label className="font-bold block mb-2 custom-label">Date and Time</label>
                                 <Calendar
                                     {...field}
                                     showTime
@@ -274,14 +274,14 @@ export default function AddLesson() {
 
                     {/* MATERIAL LINK */}
                     <div className="flex-auto">
-                        <label className="font-bold block mb-2 custom-label">Material Link (Google Drive)</label>
+                        <label className="font-bold block mb-2 custom-label">Resource Link (Google Drive)</label>
                         <Controller
                             name="materials"
                             control={control}
                             rules={{
                                 pattern: {
                                     value: /^https:\/\/(drive|docs)\.google\.com/,
-                                    message: "link must to -Google Drive"
+                                    message: "Link must be to Google Drive"
                                 }
                             }}
                             render={({ field }) => (
@@ -292,7 +292,7 @@ export default function AddLesson() {
                     </div>
 
                     {/* SUBMIT */}
-                    <Button type="submit" label="Add" icon="pi pi-check" className="custom-btn-submit" />
+                    <Button type="submit" label="Schedule" icon="pi pi-check" className="custom-btn-submit" />
                 </form>
             </Dialog>
         </div>

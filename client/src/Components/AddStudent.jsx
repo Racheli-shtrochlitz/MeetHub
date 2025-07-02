@@ -27,7 +27,7 @@ export default function AddStudentForm() {
             });
             formik.resetForm();
         } catch (err) {
-            console.log("Add student failed: ",err);
+            console.log("Add student failed: ", err);
         }
     };
 
@@ -50,7 +50,7 @@ export default function AddStudentForm() {
             >
                 <div className="flex flex-column">
                     <label htmlFor="email" className="mb-2 font-semibold text-sm">
-                        Student Email
+                        Member Email
                     </label>
                     <InputText
                         id="email"
@@ -58,7 +58,7 @@ export default function AddStudentForm() {
                         value={formik.values.email}
                         onChange={(e) => formik.setFieldValue("email", e.target.value)}
                         onBlur={formik.handleBlur}
-                        placeholder="example@student.com"
+                        placeholder="example@member.com"
                         className={classNames({ "p-invalid": isFormFieldInvalid("email") })}
                     />
                     {getFormErrorMessage("email")}
@@ -66,7 +66,7 @@ export default function AddStudentForm() {
                 <div className="flex justify-content-end">
                     <Button
                         type="submit"
-                        label="Add"
+                        label="Add Member"
                         size="small"
                         disabled={!formik.isValid || !formik.dirty}
                     />

@@ -9,7 +9,6 @@ import { useSelector } from 'react-redux';
 import useUser from '../Hooks/useUser';
 import Settings from './Settings';
 
-
 export default function Profile() {
     const navigate = useNavigate();
     const user = useUser();
@@ -19,10 +18,9 @@ export default function Profile() {
     const btnRef2 = useRef(null);
     const btnRef3 = useRef(null);
 
-    useEffect ( ()=>{
-        console.log("user fron profile: ",user);
-
-    },[user])
+    useEffect(() => {
+        console.log("user fron profile: ", user);
+    }, [user]);
 
     async function goToMaterial() {
         try {
@@ -33,6 +31,7 @@ export default function Profile() {
             console.error("Failed to get material link:", error);
         }
     }
+
     return (
         <div className="min-h-screen flex relative" style={{ height: '92vh !important' }}>
             <div className="surface-section h-screen flex-shrink-0 border-right-1 surface-border select-none" style={{ width: '280px', backgroundColor: 'white' }}>
@@ -46,7 +45,7 @@ export default function Profile() {
                                     <li>
                                         <StyleClass nodeRef={btnRef1} selector="@next" enterFromClassName="hidden" enterActiveClassName="slidedown" leaveToClassName="hidden" leaveActiveClassName="slideup">
                                             <div ref={btnRef1} className="p-ripple p-3 flex align-items-center justify-content-between text-600 cursor-pointer">
-                                                <span className="font-medium">LESSONS</span>
+                                                <span className="font-medium">MEETINGS</span>
                                                 <i className="pi pi-chevron-down"></i>
                                                 <Ripple />
                                             </div>
@@ -55,28 +54,28 @@ export default function Profile() {
                                             <li onClick={() => { navigate("lessons"); }}>
                                                 <a className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
                                                     <i className="pi pi-home mr-2"></i>
-                                                    <span className="font-medium">My Lessons</span>
+                                                    <span className="font-medium">My Meetings</span>
                                                     <Ripple />
                                                 </a>
                                             </li>
                                             <li onClick={() => { navigate('records'); }}>
                                                 <a className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
                                                     <i className="pi pi-microphone mr-2"></i>
-                                                    <span className="font-medium">Records</span>
+                                                    <span className="font-medium">Recordings</span>
                                                     <Ripple />
                                                 </a>
                                             </li>
                                             <li onClick={() => { goToMaterial() }}>
                                                 <a className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
                                                     <i className="pi pi-chart-line mr-2"></i>
-                                                    <span className="font-medium">Materials</span>
+                                                    <span className="font-medium">Resources</span>
                                                     <Ripple />
                                                 </a>
                                             </li>
                                             {user?.activeRole === "teacher" ? (<li onClick={() => { navigate('addLesson') }}>
                                                 <a className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
                                                     <i className="pi pi-calendar-plus mr-2"></i>
-                                                    <span className="font-medium">Add lesson</span>
+                                                    <span className="font-medium">Schedule Meeting</span>
                                                     <Ripple />
                                                 </a>
                                             </li>) : <></>}
@@ -95,7 +94,7 @@ export default function Profile() {
                                         <li>
                                             <StyleClass nodeRef={btnRef2} selector="@next" enterFromClassName="hidden" enterActiveClassName="slidedown" leaveToClassName="hidden" leaveActiveClassName="slideup">
                                                 <div ref={btnRef2} className="p-ripple p-3 flex align-items-center justify-content-between text-600 cursor-pointer">
-                                                    <span className="font-medium">STUDENTS</span>
+                                                    <span className="font-medium">MEMBERS</span>
                                                     <i className="pi pi-chevron-down"></i>
                                                     <Ripple />
                                                 </div>
@@ -104,7 +103,7 @@ export default function Profile() {
                                                 <li>
                                                     <a onClick={() => { navigate('students') }} className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
                                                         <i className="pi pi-users mr-2"></i>
-                                                        <span className="font-medium">your students</span>
+                                                        <span className="font-medium">Your Members</span>
                                                         <span className="inline-flex align-items-center justify-content-center ml-auto bg-blue-500 text-0 border-circle" style={{ minWidth: '1.5rem', height: '1.5rem' }}>
                                                         </span>
                                                         <Ripple />
@@ -113,7 +112,7 @@ export default function Profile() {
                                                 <li onClick={() => { navigate('addStudent') }}>
                                                     <a className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
                                                         <i className="pi pi-user-plus mr-2"></i>
-                                                        <span className="font-medium">Add Students</span>
+                                                        <span className="font-medium">Add Member</span>
                                                         <Ripple />
                                                     </a>
                                                 </li>
@@ -132,7 +131,7 @@ export default function Profile() {
                                         <li onClick={() => { navigate('messages') }}>
                                             <a className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
                                                 <i className="pi pi-comments mr-2"></i>
-                                                <span className="font-medium">your messages</span>
+                                                <span className="font-medium">Your Messages</span>
                                                 <span className="inline-flex align-items-center justify-content-center ml-auto bg-blue-500 text-0 border-circle" style={{ minWidth: '1.5rem', height: '1.5rem' }}>
                                                     {countMess}
                                                 </span>
@@ -142,7 +141,7 @@ export default function Profile() {
                                         <li onClick={() => { navigate('sendMessage') }}>
                                             <a className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
                                                 <i className="pi pi-send mr-2"></i>
-                                                <span className="font-medium">send message</span>
+                                                <span className="font-medium">Send Message</span>
                                                 <span className="inline-flex align-items-center justify-content-center ml-auto bg-blue-500 text-0 border-circle" style={{ minWidth: '1.5rem', height: '1.5rem' }}>
                                                 </span>
                                                 <Ripple />
@@ -151,7 +150,7 @@ export default function Profile() {
                                         <li onClick={() => { navigate('messageSettings') }}>
                                             <a className="p-ripple flex align-items-center cursor-pointer p-3 border-round text-700 hover:surface-100 transition-duration-150 transition-colors w-full">
                                                 <i className="pi pi-cog mr-2"></i>
-                                                <span className="font-medium">messages settings</span>
+                                                <span className="font-medium">Messages Settings</span>
                                                 <span className="inline-flex align-items-center justify-content-center ml-auto bg-blue-500 text-0 border-circle" style={{ minWidth: '1.5rem', height: '1.5rem' }}>
                                                 </span>
                                                 <Ripple />
@@ -165,7 +164,6 @@ export default function Profile() {
                                             <Ripple />
                                         </a>
                                     </li>
-
                                 </ul>
                             </div>
                             <div className="mt-auto">

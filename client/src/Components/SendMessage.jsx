@@ -29,8 +29,7 @@ export default function SendMessage() {
 
     useEffect(() => {
         const fetchEmails = async () => {
-            const activeRole = "teacher"|| user.activeRole;
-            console.log("Active role:", activeRole);
+            const activeRole = "teacher" || user.activeRole;
             let url = '';
             try {
                 if (activeRole === "teacher")
@@ -38,11 +37,8 @@ export default function SendMessage() {
                 else if (activeRole === "student")
                     url = "/student/getAllTeachers";
                 const response = await api.get(url);
-                console.log("Emails data:", response.data.data);
-            
                 setEmailsItems(response.data.data);
             } catch (error) {
-                console.error(`Fetch error:`, error);
                 setEmailsItems([]);
             }
         };
@@ -57,7 +53,6 @@ export default function SendMessage() {
 
     const onSubmit = async (data) => {
         try {
-            console.log("Sending message with data:", data);
             await api.post("/message/sendMessage", {
                 toName: data.emails,
                 formName: user.name,
@@ -94,12 +89,12 @@ export default function SendMessage() {
             >
                 <div className="flex flex-column">
                     <label htmlFor="emails" className="mb-2 font-semibold text-sm">
-                        Emails
+                        {user.activeRole === "teacher" ? "Member Email" : "Host Email"}
                     </label>
                     <Controller
                         name="emails"
                         control={control}
-                        rules={{ required: "Student is required." }}
+                        rules={{ required: user.activeRole === "teacher" ? "Member is required." : "Host is required." }}
                         render={({ field }) => (
                             <Dropdown
                                 {...field}
@@ -129,7 +124,7 @@ export default function SendMessage() {
                             <InputText
                                 {...field}
                                 id="message"
-                                placeholder="this is your message"
+                                placeholder="This is your message"
                                 className={classNames({ "p-invalid": !!errors.message })}
                             />
                         )}
